@@ -4,9 +4,7 @@ This repository provides a save editor for Touhou Labyrinth 2, capable of editin
 
 TODO: Insert some pictures here?
 
-The editor is compatible with both the legacy save format from the Comiket version, available through DLSite, and with the Steam save format version. You can also choose which format to export your edited save to, so this tool also works as a converter between formats. *Keep in mind dungeon map progress cannot be carried over between format changes!*
-
-![](img/demo2.png)
+The editor is compatible with both the legacy save format (from the Comiket version, available through DLSite) and the Steam save format. You can also choose which format to export your edited save to, so this tool also works as a converter between formats. **Keep in mind dungeon map progress cannot be carried over between format changes!**
 
 ## Build Instructions
 
