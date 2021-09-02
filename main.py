@@ -1,5 +1,6 @@
 from PySide6 import QtWidgets
 
+from charaselect import CharacterSelect
 from fileselect import FileSelect
 from mainmenu import MainMenu
 from savefile import SaveFile
@@ -21,16 +22,24 @@ class MainWidget(QtWidgets.QWidget):
     self.original = copy.deepcopy(self.save)
     self.loadMainMenu()
 
-  def mainMenuChange(self, target):
-    if (target == "back"):
+  def changeCallback(self, target):
+    target = target.split('-')
+    command = target[0]
+    if (command == "load"):
       self.loadSelectScreen()
-    elif (target == "exLegacy"):
-      target = askForDir()
-      self.save.exportLegacy(target)
-    elif (target == "exSteam"):
-      target = askForDatFile(False)
-      if (target != ""):
-        self.save.exportSteam(target)
+    elif (command == "main"):
+      self.loadMainMenu()
+    elif (command == "characters"):
+      self.loadCharacterSelectScreen()
+    elif (command == "character"):
+      print(target[1])
+    elif (command == "exLegacy"):
+      command = askForDir()
+      self.save.exportLegacy(command)
+    elif (command == "exSteam"):
+      command = askForDatFile(False)
+      if (command != ""):
+        self.save.exportSteam(command)
         self.mainMenu.exportSteam.setError("Export success!")
 
   def loadSelectScreen(self):
@@ -45,9 +54,18 @@ class MainWidget(QtWidgets.QWidget):
       self.layout.setCurrentWidget(self.mainMenu)
       self.mainMenu.updateSave(self.save)
       return
-    self.mainMenu = MainMenu(self.save, self.mainMenuChange)
+    self.mainMenu = MainMenu(self.save, self.changeCallback)
     self.layout.addWidget(self.mainMenu)
     self.layout.setCurrentWidget(self.mainMenu)
+
+  def loadCharacterSelectScreen(self):
+    if (self.charaSelect is not None):
+      self.layout.setCurrentWidget(self.charaSelect)
+      self.charaSelect.updateSave(self.save)
+      return
+    self.charaSelect = CharacterSelect(self.save, self.changeCallback)
+    self.layout.addWidget(self.charaSelect)
+    self.layout.setCurrentWidget(self.charaSelect)
 
   def __init__(self):
     super().__init__()
@@ -56,6 +74,7 @@ class MainWidget(QtWidgets.QWidget):
 
     self.fileSelect = None
     self.mainMenu = None
+    self.charaSelect = None
 
     self.loadSelectScreen()
     self.setLayout(self.layout)

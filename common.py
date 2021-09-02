@@ -1,5 +1,22 @@
 from PySide6 import QtCore, QtWidgets, QtGui
 
+characterFilenames = [
+  "Reimu", "Marisa", "Kourin", "Keine",
+  "Momiji", "Youmu", "Kogasa", "Rumia",
+  "Cirno", "Minoriko", "Komachi", "Chen",
+  "Nitori", "Parsee", "Wriggle", "Kaguya",
+  "Mokou", "Aya", "Mystia", "Kasen",
+  "Nazrin", "Hina", "Rin", "Utsuho",
+  "Satori", "Yuugi", "Meirin", "Alice",
+  "Patchouli", "Eirin", "Reisen", "Sanae",
+  "Iku", "Suika", "Ran", "Remilia",
+  "Sakuya", "Kanako", "Suwako", "Tensi",
+  "Flandre", "Yuyuko", "Yuuka", "Yukari",
+  "Hijiri", "Eiki", "Renko", "Maribel",
+  "Toramaru", "Mamizou", "Futo", "Miko",
+  "Kokoro", "Tokiko", "Koisi", "Akyuu"
+]
+
 def convert2Bytes(data, little=True):
   raw = iter(data)
   if little:
@@ -46,7 +63,7 @@ def imgWidget(filename, height):
 
 def iconWidget(filename):
   image = QtGui.QPixmap("img/" + filename)
-  return QtGui.QIcon(image)
+  return [QtGui.QIcon(image), image.rect().size()]
 
 def textWidget(text, pt, bold):
   label = QtWidgets.QLabel()
@@ -67,3 +84,19 @@ def buttonWidget(text, func, pt=0):
     font.setPointSize(pt)
     button.setFont(font)
   return button
+
+def imgButtonWidget(filename, func):
+  button = QtWidgets.QPushButton()
+  icon, size = iconWidget(filename)
+  button.setIcon(icon)
+  button.setIconSize(size)
+  button.clicked.connect(func)
+  return button
+
+class SaveWidget(QtWidgets.QWidget):
+  def updateSave(self, save):
+    self.save = save
+
+  def __init__(self, save):
+    super().__init__()
+    self.save = save

@@ -1,4 +1,4 @@
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtWidgets
 
 from buttonerror import ButtonError
 from iconbutton import IconButton
@@ -6,12 +6,12 @@ from fileform import FileForm
 
 from common import *
 
-class MainMenu(QtWidgets.QWidget):
+class MainMenu(SaveWidget):
   def updateSave(self, save):
-    self.save = save
+    super().updateSave(save)
     self.exportLegacy.setError("")
     self.exportSteam.setError("")
-    self.path.setText("Loaded Save: "+save.path)
+    self.path.setText("Loaded Save: "+self.save.path)
 
   def exportFunc(self, target, widget):
     try:
@@ -22,12 +22,11 @@ class MainMenu(QtWidgets.QWidget):
       widget.setError("Error exporting data!")
 
   def __init__(self, save, changeCallback):
-    super().__init__()
-    self.save = save
+    super().__init__(save)
     self.changeCallback = changeCallback
     layout = QtWidgets.QGridLayout()
 
-    cchar = lambda: self.changeCallback("character")
+    cchar = lambda: self.changeCallback("characters")
     cinventory = lambda: self.changeCallback("inventory")
     cachievement = lambda: self.changeCallback("achievement")
     cmap = lambda: self.changeCallback("map")
@@ -35,7 +34,7 @@ class MainMenu(QtWidgets.QWidget):
     cbestiary = lambda: self.changeCallback("bestiary")
     cgeneral = lambda: self.changeCallback("general")
     ceventFlags = lambda: self.changeCallback("eventFlags")
-    cback = lambda: self.changeCallback("back")
+    cback = lambda: self.changeCallback("load")
     cexLegacy = lambda: self.exportFunc("exLegacy", self.exportLegacy)
     cexSteam = lambda: self.exportFunc("exSteam", self.exportSteam)
 
@@ -68,7 +67,6 @@ class MainMenu(QtWidgets.QWidget):
     self.exportLegacy = ButtonError("Export as Legacy Files", cexLegacy, 12)
     self.exportSteam = ButtonError("Export as Steam File", cexSteam, 12)
 
-    self.character.setEnabled(False)
     self.inventory.setEnabled(False)
     self.achievement.setEnabled(False)
     self.map.setEnabled(False)
