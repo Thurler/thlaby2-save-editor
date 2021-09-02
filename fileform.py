@@ -8,7 +8,10 @@ class FileForm(QtWidgets.QWidget):
     self.chosen.setText("")
 
   def updateChosen(self):
-    self.chosenFull = askForDir()
+    if (self.isFolder):
+      self.chosenFull = askForDir()
+    else:
+      self.chosenFull = askForDatFile()
     # Show only last 39 characters if more than 42 characters
     if (len(self.chosenFull) > 42):
       self.chosen.setText("..." + self.chosenFull[-39:])
@@ -17,9 +20,10 @@ class FileForm(QtWidgets.QWidget):
     if (self.changeCallback is not None):
       self.changeCallback()
 
-  def __init__(self, headerText, buttonText, changeCallback=None):
+  def __init__(self, headerText, buttonText, isFolder, changeCallback=None):
     super().__init__()
     self.changeCallback = changeCallback
+    self.isFolder = isFolder
     layout = QtWidgets.QGridLayout()
     
     self.title = textWidget(headerText, 16, True)

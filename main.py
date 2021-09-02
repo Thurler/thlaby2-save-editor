@@ -1,21 +1,44 @@
 from PySide6 import QtWidgets
 
 from fileselect import FileSelect
+from mainmenu import MainMenu
+from savefile import SaveFile
 
 import sys
+import copy
 
 class MainWidget(QtWidgets.QWidget):
   def loadLegacySave(self, path):
-    print(path)
-    raise Exception()
+    self.save = SaveFile()
+    self.save.loadLegacy(path)
+    self.original = copy.deepcopy(self.save)
+    self.loadMainMenu()
 
   def loadSteamSave(self, path):
-    print(path)
-    raise Exception()
+    self.save = SaveFile()
+    self.save.loadSteam(path)
+    self.original = copy.deepcopy(self.save)
+    self.loadMainMenu()
+
+  def mainMenuChange(self, target):
+    if (target == "back"):
+      self.loadSelectScreen()
 
   def loadSelectScreen(self):
+    if (self.fileSelect is not None):
+      self.layout.setCurrentIndex(0)
+      return
     self.fileSelect = FileSelect(self.loadLegacySave, self.loadSteamSave)
     self.layout.addWidget(self.fileSelect)
+
+  def loadMainMenu(self):
+    if (self.mainMenu is not None):
+      self.layout.setCurrentIndex(1)
+      self.mainMenu.updateSave(self.save)
+      return
+    self.mainMenu = MainMenu(self.save, self.mainMenuChange)
+    self.layout.addWidget(self.mainMenu)
+    self.layout.setCurrentIndex(1)
 
   def __init__(self):
     super().__init__()
@@ -23,8 +46,9 @@ class MainWidget(QtWidgets.QWidget):
     self.layout = QtWidgets.QStackedLayout()
 
     self.fileSelect = None
-    self.loadSelectScreen()
+    self.mainMenu = None
 
+    self.loadSelectScreen()
     self.setLayout(self.layout)
 
 if __name__ == "__main__":

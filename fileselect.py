@@ -34,8 +34,12 @@ class FileSelect(QtWidgets.QWidget):
 
     self.title = imgWidget("title.png", 240)
     self.version = textWidget("Save Editor v0.0.1", 14, True)
-    self.legacyFile = FileForm("Use Legacy Save Format", "Choose directory", lf)
-    self.steamFile = FileForm("Use Steam Save Format", "Choose file", ls)
+    self.legacyFile = FileForm(
+      "Use Legacy Save Format", "Choose directory", True, lf
+    )
+    self.steamFile = FileForm(
+      "Use Steam Save Format", "Choose file", False, ls
+    )
     self.start = ButtonError("Load Save File", self.loadSaveFile, False)
 
     layout.addWidget(self.title, 0, 0, 8, 11)
