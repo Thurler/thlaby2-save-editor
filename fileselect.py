@@ -42,6 +42,8 @@ class FileSelect(QtWidgets.QWidget):
     )
     self.start = ButtonError("Load Save File", self.loadSaveFile, False)
 
+    self.legacyFile.setEnabled(False)
+
     layout.addWidget(self.title, 0, 0, 8, 11)
     layout.addWidget(self.version, 8, 0, 1, 11)
     layout.addWidget(self.legacyFile, 9, 1, 3, 4)
