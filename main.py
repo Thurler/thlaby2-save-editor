@@ -1,10 +1,9 @@
-from PySide6 import QtWidgets
+from common import *
 
 from charaselect import CharacterSelect
 from fileselect import FileSelect
 from mainmenu import MainMenu
 from savefile import SaveFile
-from common import *
 
 import sys
 import copy

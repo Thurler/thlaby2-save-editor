@@ -1,5 +1,3 @@
-from PySide6 import QtWidgets
-
 from common import *
 
 class ButtonError(QtWidgets.QWidget):

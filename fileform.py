@@ -1,5 +1,3 @@
-from PySide6 import QtWidgets
-
 from common import *
 
 class FileForm(QtWidgets.QWidget):

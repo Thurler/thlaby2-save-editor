@@ -1,5 +1,3 @@
-from PySide6 import QtWidgets
-
 from buttonerror import ButtonError
 from iconbutton import IconButton
 from fileform import FileForm
