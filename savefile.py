@@ -243,10 +243,6 @@ class SaveFile():
       saveFile[0x33e8e+(i*0x1000):0x33e8e+((i+1)*0x1000)] = m.data
     if (len(saveFile) != 257678):
       raise Exception("ERROR: File is not the correct length")
-    for i, c in enumerate(saveFile):
-      if isinstance(c, float):
-        print(hex(i))
-        print(c)
     saveFile = [((i & 0xff) ^ c) for i, c in enumerate(saveFile)]
     if (path[-4:] != ".dat"):
       path += ".dat"

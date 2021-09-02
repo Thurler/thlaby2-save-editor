@@ -29,7 +29,9 @@ class MainWidget(QtWidgets.QWidget):
       self.save.exportLegacy(target)
     elif (target == "exSteam"):
       target = askForDatFile(False)
-      self.save.exportSteam(target)
+      if (target != ""):
+        self.save.exportSteam(target)
+        self.mainMenu.exportSteam.setError("Export success!")
 
   def loadSelectScreen(self):
     if (self.fileSelect is not None):

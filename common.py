@@ -31,7 +31,11 @@ def askForDatFile(exists=True):
     dialog.setFileMode(QtWidgets.QFileDialog.AnyFile)
   dialog.setNameFilters(["Steam save files (*.dat)"])
   dialog.exec()
-  return dialog.selectedFiles()[0]
+  files = dialog.selectedFiles()
+  if (len(files) > 0):
+    return files[0]
+  else:
+    return ""
 
 def imgWidget(filename, height):
   image = QtGui.QPixmap("img/" + filename)
@@ -63,24 +67,3 @@ def buttonWidget(text, func, pt=0):
     font.setPointSize(pt)
     button.setFont(font)
   return button
-
-class IconButton(QtWidgets.QWidget):
-  def __init__(self, left, text, filename, height, func, pt=0):
-    super().__init__()
-    layout = QtWidgets.QGridLayout()
-
-    self.icon = imgWidget(filename, height)
-    self.button = buttonWidget(text, func, pt)
-
-    if (left):
-      layout.addWidget(self.icon, 0, 0, 1, 1)
-      layout.addWidget(self.button, 0, 1, 1, 2)
-    else:
-      layout.addWidget(self.button, 0, 0, 1, 2)
-      layout.addWidget(self.icon, 0, 2, 1, 1)
-
-    for i in range(1):
-      layout.setRowStretch(i, 1)
-    for i in range(3):
-      layout.setColumnStretch(i, 1)
-    self.setLayout(layout)

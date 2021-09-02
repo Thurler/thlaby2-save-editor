@@ -1,4 +1,7 @@
+from PySide6 import QtCore, QtWidgets, QtGui
+
 from buttonerror import ButtonError
+from iconbutton import IconButton
 from fileform import FileForm
 
 from common import *
@@ -6,13 +9,14 @@ from common import *
 class MainMenu(QtWidgets.QWidget):
   def updateSave(self, save):
     self.save = save
+    self.exportLegacy.setError("")
+    self.exportSteam.setError("")
     self.path.setText("Loaded Save: "+save.path)
 
   def exportFunc(self, target, widget):
     try:
       widget.setError("")
       self.changeCallback(target)
-      widget.setError("Export success!")
     except Exception as e:
       print(e)
       widget.setError("Error exporting data!")
