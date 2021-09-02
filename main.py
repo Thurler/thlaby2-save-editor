@@ -35,19 +35,19 @@ class MainWidget(QtWidgets.QWidget):
 
   def loadSelectScreen(self):
     if (self.fileSelect is not None):
-      self.layout.setCurrentIndex(0)
+      self.layout.setCurrentWidget(self.fileSelect)
       return
     self.fileSelect = FileSelect(self.loadLegacySave, self.loadSteamSave)
     self.layout.addWidget(self.fileSelect)
 
   def loadMainMenu(self):
     if (self.mainMenu is not None):
-      self.layout.setCurrentIndex(1)
+      self.layout.setCurrentWidget(self.mainMenu)
       self.mainMenu.updateSave(self.save)
       return
     self.mainMenu = MainMenu(self.save, self.mainMenuChange)
     self.layout.addWidget(self.mainMenu)
-    self.layout.setCurrentIndex(1)
+    self.layout.setCurrentWidget(self.mainMenu)
 
   def __init__(self):
     super().__init__()
