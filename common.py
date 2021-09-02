@@ -7,6 +7,15 @@ def convert2Bytes(data, little=True):
   else:
     return [256*x + next(raw) for x in raw]
 
+def convertTo2Bytes(data, little=True):
+  result = []
+  for d in data:
+    if little:
+      result += [d%256, d//256]
+    else:
+      result += [d//256, d%256]
+  return result
+
 def askForDir():
   dialog = QtWidgets.QFileDialog()
   dialog.setFileMode(QtWidgets.QFileDialog.Directory)
@@ -14,9 +23,12 @@ def askForDir():
   dialog.exec()
   return dialog.directory().absolutePath()
 
-def askForDatFile():
+def askForDatFile(exists=True):
   dialog = QtWidgets.QFileDialog()
-  dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
+  if (exists):
+    dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
+  else:
+    dialog.setFileMode(QtWidgets.QFileDialog.AnyFile)
   dialog.setNameFilters(["Steam save files (*.dat)"])
   dialog.exec()
   return dialog.selectedFiles()[0]

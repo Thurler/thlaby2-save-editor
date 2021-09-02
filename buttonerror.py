@@ -9,11 +9,11 @@ class ButtonError(QtWidgets.QWidget):
   def setError(self, error):
     self.error.setText(error)
 
-  def __init__(self, buttonText, buttonFunc, enabled):
+  def __init__(self, buttonText, buttonFunc, size, enabled=True):
     super().__init__()
     layout = QtWidgets.QGridLayout()
     
-    self.button = buttonWidget(buttonText, buttonFunc, 14)
+    self.button = buttonWidget(buttonText, buttonFunc, size)
     self.error = textWidget("", 12, False)
 
     self.button.setEnabled(enabled)

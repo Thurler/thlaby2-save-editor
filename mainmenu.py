@@ -8,6 +8,15 @@ class MainMenu(QtWidgets.QWidget):
     self.save = save
     self.path.setText("Loaded Save: "+save.path)
 
+  def exportFunc(self, target, widget):
+    try:
+      widget.setError("")
+      self.changeCallback(target)
+      widget.setError("Export success!")
+    except Exception as e:
+      print(e)
+      widget.setError("Error exporting data!")
+
   def __init__(self, save, changeCallback):
     super().__init__()
     self.save = save
@@ -23,8 +32,8 @@ class MainMenu(QtWidgets.QWidget):
     cgeneral = lambda: self.changeCallback("general")
     ceventFlags = lambda: self.changeCallback("eventFlags")
     cback = lambda: self.changeCallback("back")
-    cexLegacy = lambda: self.changeCallback("exLegacy")
-    cexSteam = lambda: self.changeCallback("exSteam")
+    cexLegacy = lambda: self.exportFunc("exLegacy", self.exportLegacy)
+    cexSteam = lambda: self.exportFunc("exSteam", self.exportSteam)
 
     self.path = textWidget("Loaded Save: "+save.path, 12, False)
     self.character = IconButton(
@@ -51,9 +60,9 @@ class MainMenu(QtWidgets.QWidget):
     self.eventFlags = IconButton(
       False, "Event Flags", "event.png", 50, ceventFlags, 16
     )
-    self.back = buttonWidget("Back to File Select", cback, 12)
-    self.exportLegacy = buttonWidget("Export as Legacy Files", cexLegacy, 12)
-    self.exportSteam = buttonWidget("Export as Steam File", cexSteam, 12)
+    self.back = ButtonError("Back to File Select", cback, 12)
+    self.exportLegacy = ButtonError("Export as Legacy Files", cexLegacy, 12)
+    self.exportSteam = ButtonError("Export as Steam File", cexSteam, 12)
 
     self.character.setEnabled(False)
     self.inventory.setEnabled(False)
@@ -64,7 +73,6 @@ class MainMenu(QtWidgets.QWidget):
     self.general.setEnabled(False)
     self.eventFlags.setEnabled(False)
     self.exportLegacy.setEnabled(False)
-    self.exportSteam.setEnabled(False)
 
     layout.addWidget(self.path, 0, 0, 1, 13)
     layout.addWidget(self.character, 1, 1, 3, 5)
@@ -79,7 +87,7 @@ class MainMenu(QtWidgets.QWidget):
     layout.addWidget(self.exportLegacy, 13, 5, 1, 3)
     layout.addWidget(self.exportSteam, 13, 9, 1, 3)
 
-    for i in range(15):
+    for i in range(14):
       layout.setRowStretch(i, 1)
     for i in range(13):
       layout.setColumnStretch(i, 1)

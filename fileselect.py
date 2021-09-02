@@ -40,7 +40,7 @@ class FileSelect(QtWidgets.QWidget):
     self.steamFile = FileForm(
       "Use Steam Save Format", "Choose file", False, ls
     )
-    self.start = ButtonError("Load Save File", self.loadSaveFile, False)
+    self.start = ButtonError("Load Save File", self.loadSaveFile, 14, False)
 
     self.legacyFile.setEnabled(False)
 

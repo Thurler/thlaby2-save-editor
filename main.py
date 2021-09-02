@@ -3,6 +3,7 @@ from PySide6 import QtWidgets
 from fileselect import FileSelect
 from mainmenu import MainMenu
 from savefile import SaveFile
+from common import *
 
 import sys
 import copy
@@ -23,6 +24,12 @@ class MainWidget(QtWidgets.QWidget):
   def mainMenuChange(self, target):
     if (target == "back"):
       self.loadSelectScreen()
+    elif (target == "exLegacy"):
+      target = askForDir()
+      self.save.exportLegacy(target)
+    elif (target == "exSteam"):
+      target = askForDatFile(False)
+      self.save.exportSteam(target)
 
   def loadSelectScreen(self):
     if (self.fileSelect is not None):
