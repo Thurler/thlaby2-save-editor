@@ -1,7 +1,9 @@
 from common import *
 
 from charaselect import CharacterSelect
+from charaunlock import CharacterUnlock
 from fileselect import FileSelect
+from partyedit import PartyEdit
 from mainmenu import MainMenu
 from savefile import SaveFile
 
@@ -30,6 +32,10 @@ class MainWidget(QtWidgets.QWidget):
       self.loadMainMenu()
     elif (command == "characters"):
       self.loadCharacterSelectScreen()
+    elif (command == "party"):
+      self.loadPartyScreen()
+    elif (command == "recruit"):
+      self.loadRecruitScreen()
     elif (command == "character"):
       print(target[1])
     elif (command == "exLegacy"):
@@ -57,6 +63,24 @@ class MainWidget(QtWidgets.QWidget):
     self.layout.addWidget(self.mainMenu)
     self.layout.setCurrentWidget(self.mainMenu)
 
+  def loadPartyScreen(self):
+    if (self.partyMenu is not None):
+      self.layout.setCurrentWidget(self.partyMenu)
+      self.partyMenu.updateSave(self.save)
+      return
+    self.partyMenu = PartyEdit(self.save, self.changeCallback)
+    self.layout.addWidget(self.partyMenu)
+    self.layout.setCurrentWidget(self.partyMenu)
+
+  def loadRecruitScreen(self):
+    if (self.recruitMenu is not None):
+      self.layout.setCurrentWidget(self.recruitMenu)
+      self.recruitMenu.updateSave(self.save)
+      return
+    self.recruitMenu = CharacterUnlock(self.save, self.changeCallback)
+    self.layout.addWidget(self.recruitMenu)
+    self.layout.setCurrentWidget(self.recruitMenu)
+
   def loadCharacterSelectScreen(self):
     if (self.charaSelect is not None):
       self.layout.setCurrentWidget(self.charaSelect)
@@ -73,6 +97,8 @@ class MainWidget(QtWidgets.QWidget):
 
     self.fileSelect = None
     self.mainMenu = None
+    self.partyMenu = None
+    self.recruitMenu = None
     self.charaSelect = None
 
     self.loadSelectScreen()

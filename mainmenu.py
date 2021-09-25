@@ -68,7 +68,6 @@ class MainMenu(SaveWidget):
     self.inventory.setEnabled(False)
     self.achievement.setEnabled(False)
     self.map.setEnabled(False)
-    self.party.setEnabled(False)
     self.bestiary.setEnabled(False)
     self.general.setEnabled(False)
     self.eventFlags.setEnabled(False)

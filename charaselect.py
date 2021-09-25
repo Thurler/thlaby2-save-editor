@@ -1,6 +1,14 @@
 from common import *
 
 class CharacterSelect(SaveWidget):
+  def updateSave(self, save):
+    super().updateSave(save)
+    for i in range(56):
+      if (self.save.charsUnlock[i] == 0):
+        self.characters[i].setEnabled(False)
+      else:
+        self.characters[i].setEnabled(True)
+
   def __init__(self, save, changeCallback):
     super().__init__(save)
     self.changeCallback = changeCallback
@@ -10,7 +18,6 @@ class CharacterSelect(SaveWidget):
 
     self.title = textWidget("Select Character", 22, True)
     self.characters = []
-    self.callbacks = []
     for i in range(56):
       ccback = lambda x=False, c=str(i): self.changeCallback("character-"+c)
       self.characters += [
@@ -24,7 +31,7 @@ class CharacterSelect(SaveWidget):
     for i in range(56):
       if (self.save.charsUnlock[i] == 0):
         self.characters[i].setEnabled(False)
-      layout.addWidget(self.characters[i], 1 + (i//4), 1 + (4*(i%4)), 1, 1)
+      layout.addWidget(self.characters[i], 1 + (i//4), 1 + (4*(i%4)), 1, 3)
     layout.addWidget(self.back, 15, 5, 1, 7)
 
     for i in range(16):

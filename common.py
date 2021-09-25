@@ -61,9 +61,13 @@ def imgWidget(filename, height):
   label.setAlignment(QtCore.Qt.AlignCenter)
   return label
 
-def iconWidget(filename):
+def iconWidget(filename, disabled=False):
   image = QtGui.QPixmap("img/" + filename)
-  return [QtGui.QIcon(image), image.rect().size()]
+  icon = QtGui.QIcon(image)
+  if (disabled):
+    gray = icon.pixmap(image.rect().size(), QtGui.QIcon.Disabled)
+    icon.addPixmap(gray, QtGui.QIcon.Normal)
+  return [icon, image.rect().size()]
 
 def textWidget(text, pt, bold):
   label = QtWidgets.QLabel()
@@ -85,9 +89,9 @@ def buttonWidget(text, func, pt=0):
     button.setFont(font)
   return button
 
-def imgButtonWidget(filename, func):
+def imgButtonWidget(filename, func, grayscale=False):
   button = QtWidgets.QPushButton()
-  icon, size = iconWidget(filename)
+  icon, size = iconWidget(filename, grayscale)
   button.setIcon(icon)
   button.setIconSize(size)
   button.clicked.connect(func)
@@ -100,3 +104,47 @@ class SaveWidget(QtWidgets.QWidget):
   def __init__(self, save):
     super().__init__()
     self.save = save
+
+class EditWidget(SaveWidget):
+  def __init__(self, save):
+    super().__init__(save)
+    self.commitButton = buttonWidget("Commit Changes", self.commit, 12)
+    self.commitButton.setEnabled(False)
+    self.revertButton = buttonWidget("Revert Changes", self.revert, 12)
+    self.revertButton.setEnabled(False)
+    self.errorMsg = ("WARNING! You have uncommited changes. Discard changes " +
+      "and go back anyway?")
+    self.error = textWidget("", 12, False)
+    self.error.setStyleSheet("QLabel { color: red; }")
+
+  def updateSave(self, save):
+    super().updateSave(save)
+    self.commit()
+    self.revert()
+
+  def revert(self):
+    self.commitButton.setEnabled(False)
+    self.revertButton.setEnabled(False)
+    self.error.setText("")
+
+  def commit(self):
+    self.commitButton.setEnabled(False)
+    self.revertButton.setEnabled(False)
+    self.error.setText("")
+
+  def hasChanges(self):
+    raise NotImplementedError()
+
+  def checkChanges(self):
+    if (self.hasChanges()):
+      self.commitButton.setEnabled(True)
+      self.revertButton.setEnabled(True)
+    else:
+      self.commitButton.setEnabled(False)
+      self.revertButton.setEnabled(False)
+
+  def checkChangesToBack(self):
+    if (self.error.text() == "" and self.hasChanges()):
+      self.error.setText(self.errorMsg)
+      return False
+    return True
