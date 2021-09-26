@@ -74,8 +74,8 @@ class CharacterUnlock(EditWidget):
       ]
     self.back = buttonWidget("Back to Main Menu", self.checkChangesToBack, 12)
 
-    layout.addWidget(self.party, 0, 1, 1, 7)
-    layout.addWidget(self.title, 0, 9, 1, 7)
+    layout.addWidget(self.party, 0, 2, 1, 5)
+    layout.addWidget(self.title, 0, 10, 1, 5)
     for i in range(56):
       layout.addWidget(self.characters[i], 1 + (i//4), 1 + (4*(i%4)), 1, 3)
     layout.addWidget(self.back, 15, 1, 1, 4)

@@ -26,6 +26,7 @@ class MainWidget(QtWidgets.QWidget):
   def changeCallback(self, target):
     target = target.split('-')
     command = target[0]
+    arguments = target[1:]
     if (command == "load"):
       self.loadSelectScreen()
     elif (command == "main"):
@@ -33,11 +34,20 @@ class MainWidget(QtWidgets.QWidget):
     elif (command == "characters"):
       self.loadCharacterSelectScreen()
     elif (command == "party"):
-      self.loadPartyScreen()
+      if (len(arguments) > 0):
+        self.loadPartySelectScreen()
+        self.partyChange = int(arguments[0])
+      else:
+        self.loadPartyScreen()
     elif (command == "recruit"):
       self.loadRecruitScreen()
     elif (command == "character"):
-      print(target[1])
+      if (self.partyChange >= 0):
+        self.partyMenu.changeSlot(self.partyChange, int(arguments[0]))
+        self.loadPartyScreen()
+        self.partyChange = -1
+      else:
+        print(arguments[0])
     elif (command == "exLegacy"):
       command = askForDir()
       self.save.exportLegacy(command)
@@ -66,7 +76,8 @@ class MainWidget(QtWidgets.QWidget):
   def loadPartyScreen(self):
     if (self.partyMenu is not None):
       self.layout.setCurrentWidget(self.partyMenu)
-      self.partyMenu.updateSave(self.save)
+      if (self.partyChange == -1):
+        self.partyMenu.updateSave(self.save)
       return
     self.partyMenu = PartyEdit(self.save, self.changeCallback)
     self.layout.addWidget(self.partyMenu)
@@ -90,6 +101,15 @@ class MainWidget(QtWidgets.QWidget):
     self.layout.addWidget(self.charaSelect)
     self.layout.setCurrentWidget(self.charaSelect)
 
+  def loadPartySelectScreen(self):
+    if (self.partySelect is not None):
+      self.layout.setCurrentWidget(self.partySelect)
+      self.partySelect.updateSave(self.save)
+      return
+    self.partySelect = CharacterSelect(self.save, self.changeCallback, True)
+    self.layout.addWidget(self.partySelect)
+    self.layout.setCurrentWidget(self.partySelect)
+
   def __init__(self):
     super().__init__()
     self.setFixedSize(960, 540)
@@ -100,6 +120,9 @@ class MainWidget(QtWidgets.QWidget):
     self.partyMenu = None
     self.recruitMenu = None
     self.charaSelect = None
+    self.partySelect = None
+
+    self.partyChange = -1
 
     self.loadSelectScreen()
     self.setLayout(self.layout)
