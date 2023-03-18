@@ -19,6 +19,10 @@ class MyApp extends StatelessWidget {
       title: 'Touhou Labyrinth 2 Save Editor',
       theme: ThemeData(
         primarySwatch: Colors.green,
+        scrollbarTheme: ScrollbarThemeData(
+          thumbColor: MaterialStateProperty.all(Colors.green),
+          thumbVisibility: MaterialStateProperty.all(true),
+        ),
       ),
       home: const MainWidget(),
       debugShowCheckedModeBanner: false,
