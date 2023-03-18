@@ -71,14 +71,12 @@ linter:
     prefer_asserts_in_initializer_lists: true
     prefer_asserts_with_message: true
     prefer_constructors_over_static_methods: true
-    prefer_final_in_for_each: true
     prefer_for_elements_to_map_fromIterable: true
     prefer_int_literals: true
     prefer_null_aware_method_calls: true
     prefer_single_quotes: true
     require_trailing_commas: true
     sized_box_shrink_expand: true
-    sort_constructors_first: true
     sort_unnamed_constructors_first: true
     tighten_type_of_initializing_formals: true
     type_annotate_public_apis: true
