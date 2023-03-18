@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/steam.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
@@ -19,38 +19,34 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MyHomePage(title: 'Touhou Labyrinth 2 Save Editor'),
+      home: const MainWidget(title: 'Touhou Labyrinth 2 Save Editor'),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({required this.title, super.key});
+class MainWidget extends StatefulWidget {
+  const MainWidget({required this.title, super.key});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MainWidget> createState() => MainState();
 }
 
-List<T> buildSeparatedList<T>(List<T> base, T separator) {
-  List<T> result = <T>[separator];
-  for (T element in base) {
-    result.addAll(<T>[element, separator]);
-  }
-  return result;
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final Logger logger = Logger();
-
+class MainState extends CommonState<MainWidget> {
   Future<void> _loadSteamSaveFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: <String>['dat'],
+    );
+    if (result == null) {
+      return;
+    }
     try {
-      File f = File('save.dat');
-      List<int> bytes = await f.readAsBytes();
-      SteamSaveFile s = SteamSaveFile.fromBytes(bytes);
-      await logger.log(s);
+      File rawFile = File(result.files.first.name);
+      List<int> bytes = await rawFile.readAsBytes();
+      saveFile = SteamSaveFile.fromBytes(bytes);
     } on FileSystemException {
       // Do nothing for now
     } on FileSizeException {
@@ -60,7 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
     } catch (e) {
       await logger.log(e);
     }
-    print("shit's fine");
   }
 
   @override
