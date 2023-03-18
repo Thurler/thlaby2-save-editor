@@ -65,7 +65,6 @@ linter:
     noop_primitive_operations: true
     one_member_abstracts: true
     only_throw_errors: true
-    parameter_assignments: true
     prefer_asserts_in_initializer_lists: true
     prefer_asserts_with_message: true
     prefer_constructors_over_static_methods: true
