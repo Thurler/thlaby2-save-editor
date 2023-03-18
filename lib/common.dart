@@ -6,6 +6,27 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
   final Logger logger = Logger();
   final SaveFileWrapper saveFileWrapper = SaveFileWrapper();
 
+  final List<String> characterFilenames = <String>[
+    'Reimu', 'Marisa', 'Kourin', 'Keine',
+    'Momiji', 'Youmu', 'Kogasa', 'Rumia',
+    'Cirno', 'Minoriko', 'Komachi', 'Chen',
+    'Nitori', 'Parsee', 'Wriggle', 'Kaguya',
+    'Mokou', 'Aya', 'Mystia', 'Kasen',
+    'Nazrin', 'Hina', 'Rin', 'Utsuho',
+    'Satori', 'Yuugi', 'Meirin', 'Alice',
+    'Patchouli', 'Eirin', 'Reisen', 'Sanae',
+    'Iku', 'Suika', 'Ran', 'Remilia',
+    'Sakuya', 'Kanako', 'Suwako', 'Tensi',
+    'Flandre', 'Yuyuko', 'Yuuka', 'Yukari',
+    'Hijiri', 'Eiki', 'Renko', 'Maribel',
+    'Toramaru', 'Mamizou', 'Futo', 'Miko',
+    'Kokoro', 'Tokiko', 'Koisi', 'Akyuu'
+  ];
+
+  String getCharacterFilename(CharacterName c) {
+    return characterFilenames[c.index];
+  }
+
   List<U> buildSeparatedList<U>(
     List<U> base,
     U separator, {

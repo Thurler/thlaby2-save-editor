@@ -1,4 +1,6 @@
-enum Character {
+import 'package:flutter/material.dart';
+
+enum CharacterName {
   reimu,
   marisa,
   rinnosuke,
@@ -58,7 +60,7 @@ enum Character {
 }
 
 class CharacterUnlockFlag {
-  final Character character;
+  final CharacterName character;
   bool isUnlocked;
 
   CharacterUnlockFlag({
@@ -85,7 +87,7 @@ class SaveFileWrapper {
 }
 
 abstract class SaveFile {
-  late List<CharacterUnlockFlag> _characterUnlockFlags;
+  late List<CharacterUnlockFlag> characterUnlockFlags;
   List<int> achievementData = <int>[];
   List<int> achievementDataPlus = <int>[];
   List<int> achievementNotificationsData = <int>[];
@@ -118,17 +120,17 @@ abstract class SaveFile {
   //
 
   Iterable<int> getCharacterUnlockFlags() {
-    return _characterUnlockFlags.map<int>(
+    return characterUnlockFlags.map<int>(
       (CharacterUnlockFlag flag) => (flag.isUnlocked) ? 0x1 : 0x0,
     );
   }
 
   void setCharacterUnlockFlagsFromBytes(List<int> bytes) {
-    _characterUnlockFlags = <CharacterUnlockFlag>[];
+    characterUnlockFlags = <CharacterUnlockFlag>[];
     for (int i = 0; i < bytes.length; i++) {
-      _characterUnlockFlags.add(
+      characterUnlockFlags.add(
         CharacterUnlockFlag(
-          character: Character.values.elementAt(i),
+          character: CharacterName.values.elementAt(i),
           isUnlocked: bytes[i] > 0x0,
         ),
       );

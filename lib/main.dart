@@ -64,7 +64,7 @@ class MainState extends CommonState<MainWidget> {
     if (!state.mounted) {
       return;
     }
-    await state.pushReplacement(
+    await state.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => const MenuWidget(),
       ),

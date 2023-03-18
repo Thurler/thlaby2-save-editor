@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
@@ -12,6 +13,14 @@ class MenuWidget extends StatefulWidget {
 }
 
 class MenuState extends CommonState<MenuWidget> {
+  Future<void> _editCharacterUnlock() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const CharacterUnlockWidget(),
+      ),
+    );
+  }
+
   Future<void> _saveSteamSaveFile() async {
     String? result = await FilePicker.platform.saveFile(
       dialogTitle: 'Please select where to save the file:',
@@ -46,9 +55,10 @@ class MenuState extends CommonState<MenuWidget> {
         text: 'Character Data',
         icon: Icons.groups,
       ),
-      const TButton(
+      TButton(
         text: 'Character Unlock Data',
         icon: Icons.lock_person_outlined,
+        onPressed: _editCharacterUnlock,
       ),
       const TButton(
         text: 'Inventory Data',
