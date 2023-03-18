@@ -4,7 +4,7 @@ import 'package:thlaby2_save_editor/save.dart';
 
 abstract class CommonState<T extends StatefulWidget> extends State<T> {
   final Logger logger = Logger();
-  late SaveFile saveFile;
+  final SaveFileWrapper saveFileWrapper = SaveFileWrapper();
 
   List<U> buildSeparatedList<U>(
     List<U> base,

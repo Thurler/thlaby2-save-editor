@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
-import 'package:thlaby2_save_editor/steam.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 class MenuWidget extends StatefulWidget {
@@ -23,10 +22,8 @@ class MenuState extends CommonState<MenuWidget> {
     }
     try {
       File rawFile = File(result);
-      IOSink sink = rawFile.openWrite(mode: FileMode.append);
-      sink.writeln('asdsad');
-      await sink.flush();
-      await sink.close();
+      List<int> contents = saveFileWrapper.saveFile.export();
+      await rawFile.writeAsBytes(contents);
     } on FileSystemException {
       // Do nothing for now
     } catch (e) {

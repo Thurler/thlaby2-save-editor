@@ -50,7 +50,7 @@ class MainState extends CommonState<MainWidget> {
     try {
       File rawFile = File(result.files.first.name);
       List<int> bytes = await rawFile.readAsBytes();
-      saveFile = SteamSaveFile.fromBytes(bytes);
+      saveFileWrapper.saveFile = SteamSaveFile.fromBytes(bytes);
     } on FileSystemException {
       // Do nothing for now
     } on FileSizeException {
@@ -59,6 +59,7 @@ class MainState extends CommonState<MainWidget> {
       // Do nothing for now
     } catch (e) {
       await logger.log(e);
+      return;
     }
     if (!state.mounted) {
       return;
