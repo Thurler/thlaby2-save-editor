@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class TButton extends StatelessWidget {
   final String text;
   final void Function()? onPressed;
-  final Icon? icon;
+  final IconData? icon;
 
   const TButton({
     required this.text,
@@ -28,7 +28,7 @@ class TButton extends StatelessWidget {
     ];
     if (icon != null) {
       children.insertAll(0, <Widget>[
-        icon!,
+        Icon(icon),
         const SizedBox(width: 10),
       ]);
     }
