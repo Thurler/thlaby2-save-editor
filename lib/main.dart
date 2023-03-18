@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-
+import 'package:open_filex/open_filex.dart';
+import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/steam.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 void main() {
@@ -40,21 +43,32 @@ List<T> buildSeparatedList<T>(List<T> base, T separator) {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<void> _loadDLSiteSaveFile() async {
-    // Do nothing for now
-  }
+  final Logger logger = Logger();
 
   Future<void> _loadSteamSaveFile() async {
-    // Do nothing for now
+    try {
+      File f = File('save.dat');
+      List<int> bytes = await f.readAsBytes();
+      SteamSaveFile s = SteamSaveFile.fromBytes(bytes);
+      await logger.log(s);
+    } on FileSystemException {
+      // Do nothing for now
+    } on FileSizeException {
+      // Do nothing for now
+    } on InvalidHeaderException {
+      // Do nothing for now
+    } catch (e) {
+      await logger.log(e);
+    }
+    print("shit's fine");
   }
 
   @override
   Widget build(BuildContext context) {
     List<Widget> buttons = <Widget>[
-      Flexible(
+      const Flexible(
         child: TButton(
           text: 'Open DLSite save file',
-          onPressed: _loadDLSiteSaveFile,
         ),
       ),
       Flexible(
