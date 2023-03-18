@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:thlaby2_save_editor/widgets/button.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -15,6 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       home: const MyHomePage(title: 'Touhou Labyrinth 2 Save Editor'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -28,33 +31,60 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+List<T> buildSeparatedList<T>(List<T> base, T separator) {
+  List<T> result = <T>[separator];
+  for (T element in base) {
+    result.addAll(<T>[element, separator]);
+  }
+  return result;
+}
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+class _MyHomePageState extends State<MyHomePage> {
+  Future<void> _loadDLSiteSaveFile() async {
+    // Do nothing for now
+  }
+
+  Future<void> _loadSteamSaveFile() async {
+    // Do nothing for now
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> buttons = <Widget>[
+      Flexible(
+        child: TButton(
+          text: 'Open DLSite save file',
+          onPressed: _loadDLSiteSaveFile,
+        ),
+      ),
+      Flexible(
+        child: TButton(
+          text: 'Open Steam save file',
+          onPressed: _loadSteamSaveFile,
+        ),
+      ),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('You have pushed the button this many times: $_counter'),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body: ListView(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Image.asset('img/title.png'),
+              ),
+              Row(
+                children: buildSeparatedList<Widget>(
+                  buttons,
+                  const SizedBox(width: 20),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
