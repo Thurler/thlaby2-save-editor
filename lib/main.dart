@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
+import 'package:thlaby2_save_editor/menu.dart';
 import 'package:thlaby2_save_editor/steam.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
@@ -19,16 +20,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const MainWidget(title: 'Touhou Labyrinth 2 Save Editor'),
+      home: const MainWidget(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class MainWidget extends StatefulWidget {
-  const MainWidget({required this.title, super.key});
-
-  final String title;
+  const MainWidget({super.key});
 
   @override
   State<MainWidget> createState() => MainState();
@@ -36,6 +35,7 @@ class MainWidget extends StatefulWidget {
 
 class MainState extends CommonState<MainWidget> {
   Future<void> _loadSteamSaveFile() async {
+    NavigatorState state = Navigator.of(context);
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: <String>['dat'],
@@ -56,42 +56,48 @@ class MainState extends CommonState<MainWidget> {
     } catch (e) {
       await logger.log(e);
     }
+    if (!state.mounted) {
+      return;
+    }
+    await state.pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const MenuWidget(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     List<Widget> buttons = <Widget>[
-      const Flexible(
-        child: TButton(
-          text: 'Open DLSite save file',
-        ),
+      const TButton(
+        text: 'Open DLSite save file',
+        icon: Icons.upload_file,
       ),
-      Flexible(
-        child: TButton(
-          text: 'Open Steam save file',
-          onPressed: _loadSteamSaveFile,
-        ),
+      TButton(
+        text: 'Open Steam save file',
+        onPressed: _loadSteamSaveFile,
+        icon: Icons.upload_file,
       ),
+    ];
+    List<Widget> columnChildren = <Widget>[
+      Image.asset('img/title.png'),
+      makeRowFromWidgets(buttons),
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: const Text('Touhou Labyrinth 2 Save Editor'),
       ),
       body: ListView(
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Image.asset('img/title.png'),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: buildSeparatedList(
+                columnChildren,
+                const SizedBox(height: 20),
+                separateEnds: true,
               ),
-              Row(
-                children: buildSeparatedList<Widget>(
-                  buttons,
-                  const SizedBox(width: 20),
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),
