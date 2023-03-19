@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
+import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
@@ -124,13 +125,11 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
         ),
       ],
     );
+    List<Widget> elements = <Widget>[title, image, footer];
     return GestureDetector(
       onTap: ()=>_toggleUnlockedData(flag),
       child: Column(
-        children: buildSeparatedList(
-          <Widget>[title, image, footer],
-          const SizedBox(height: 2),
-        ),
+        children: elements.separateWith(const SizedBox(height: 2)),
       ),
     );
   }
@@ -140,9 +139,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     super.initState();
     // Make a reference and a deep copy of the list we're changing
     _original = saveFileWrapper.saveFile.characterUnlockFlags;
-    _flags = _original.map(
-      (CharacterUnlockFlag f)=>CharacterUnlockFlag.from(f),
-    ).toList();
+    _flags = _original.deepCopyElements(CharacterUnlockFlag.from);
     // This widget is always the same, no matter the state we're building
     _toggleButtons = Wrap(
       spacing: 20,
@@ -202,10 +199,9 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
-                children: buildSeparatedList(
-                  columnChildren,
+                children: columnChildren.separateWith(
                   const SizedBox(height: 20),
-                  separateEnds: true,
+                  separatorOnEnds: true,
                 ),
               ),
             ),

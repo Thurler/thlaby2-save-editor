@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
+import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 class MenuWidget extends StatefulWidget {
@@ -106,10 +107,9 @@ class MenuState extends CommonState<MenuWidget> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              children: buildSeparatedList(
-                columnChildren,
+              children: columnChildren.separateWith(
                 const SizedBox(height: 20),
-                separateEnds: true,
+                separatorOnEnds: true,
               ),
             ),
           ),

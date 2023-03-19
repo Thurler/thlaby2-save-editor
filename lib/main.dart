@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
+import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/menu.dart';
 import 'package:thlaby2_save_editor/steam.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
@@ -97,10 +98,9 @@ class MainState extends CommonState<MainWidget> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
-              children: buildSeparatedList(
-                columnChildren,
+              children: columnChildren.separateWith(
                 const SizedBox(height: 20),
-                separateEnds: true,
+                separatorOnEnds: true,
               ),
             ),
           ),
