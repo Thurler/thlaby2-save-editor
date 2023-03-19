@@ -15,6 +15,10 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   late List<CharacterUnlockFlag> _original;
   late Widget _toggleButtons;
 
+  //
+  // Properly check for and validate changes, save/commit them
+  //
+
   bool _hasChanges() {
     for (int i = 0; i < _flags.length; i++) {
       if (_flags[i].isUnlocked != _original[i].isUnlocked) {
@@ -28,59 +32,13 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     if (!_hasChanges()) {
       return true;
     }
-    bool? ok = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[
-              Icon(Icons.warning, color: Colors.red, size: 30),
-              SizedBox(width: 10),
-              Flexible(
-                child: Text(
-                  'You have unsaved changes!',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          content: const Text(
-            'Are you sure you want to go back and discard your changes?',
-          ),
-          actionsAlignment: MainAxisAlignment.center,
-          actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
-          actions: <Widget>[
-            Wrap(
-              runSpacing: 10,
-              spacing: 20,
-              children: <Widget>[
-                TButton(
-                  text: 'Yes, discard them',
-                  icon: Icons.check_circle_outline,
-                  usesMaxWidth: false,
-                  fontSize: 16,
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                ),
-                TButton(
-                  text: 'No, keep me here',
-                  icon: Icons.cancel_outlined,
-                  usesMaxWidth: false,
-                  fontSize: 16,
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-    return ok ?? false;
+    return showUnsavedChangesDialog();
   }
+
+  //
+  // Functions to manipulate unlocked state - be that for individual characters
+  // or for entire groups from the preset buttons
+  //
 
   void _toggleUnlockedData(CharacterUnlockFlag flag) {
     setState((){
@@ -110,6 +68,10 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   void _pressAllCharacters() {
     _unlockCharactersUpToIndex(_flags.length);
   }
+
+  //
+  // Helper functions to draw stuff on screen, helps declutter the build method
+  //
 
   Widget _drawCharacter(CharacterUnlockFlag flag) {
     // Character name acts as a title for the box
