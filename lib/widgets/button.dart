@@ -5,11 +5,15 @@ class TButton extends StatelessWidget {
   final String text;
   final void Function()? onPressed;
   final IconData? icon;
+  final double fontSize;
+  final bool usesMaxWidth;
 
   const TButton({
     required this.text,
     this.onPressed,
     this.icon,
+    this.fontSize = 18,
+    this.usesMaxWidth = true,
     super.key,
   }) : super();
 
@@ -19,8 +23,8 @@ class TButton extends StatelessWidget {
       Flexible(
         child: Text(
           text,
-          style: const TextStyle(
-            fontSize: 18,
+          style: TextStyle(
+            fontSize: fontSize,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -37,6 +41,7 @@ class TButton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
+          mainAxisSize: usesMaxWidth ? MainAxisSize.max : MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: children,
         ),
