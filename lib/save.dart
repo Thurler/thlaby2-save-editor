@@ -60,13 +60,18 @@ enum CharacterName {
 }
 
 class CharacterUnlockFlag {
-  final CharacterName character;
-  bool isUnlocked;
+  late CharacterName character;
+  late bool isUnlocked;
 
   CharacterUnlockFlag({
     required this.character,
     required this.isUnlocked,
   });
+
+  CharacterUnlockFlag.from(CharacterUnlockFlag other) {
+    character = other.character;
+    isUnlocked = other.isUnlocked;
+  }
 
   @override
   String toString() {
