@@ -11,23 +11,123 @@ class CharacterUnlockWidget extends StatefulWidget {
 }
 
 class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
-  late List<CharacterUnlockFlag> flags;
+  late List<CharacterUnlockFlag> _flags;
+  late List<CharacterUnlockFlag> _original;
+  late Widget _toggleButtons;
 
-  void toggleUnlockedData(CharacterUnlockFlag flag) {
+  bool _hasChanges() {
+    for (int i = 0; i < _flags.length; i++) {
+      if (_flags[i].isUnlocked != _original[i].isUnlocked) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<bool> _checkChangesAndConfirm() async {
+    if (!_hasChanges()) {
+      return true;
+    }
+    bool? ok = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const <Widget>[
+              Icon(Icons.warning, color: Colors.red, size: 30),
+              SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  'You have unsaved changes!',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Are you sure you want to go back and discard your changes?',
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+          actions: <Widget>[
+            Wrap(
+              runSpacing: 10,
+              spacing: 20,
+              children: <Widget>[
+                TButton(
+                  text: 'Yes, discard them',
+                  icon: Icons.check_circle_outline,
+                  usesMaxWidth: false,
+                  fontSize: 16,
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+                TButton(
+                  text: 'No, keep me here',
+                  icon: Icons.cancel_outlined,
+                  usesMaxWidth: false,
+                  fontSize: 16,
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+    return ok ?? false;
+  }
+
+  void _toggleUnlockedData(CharacterUnlockFlag flag) {
     setState((){
       flag.isUnlocked = !flag.isUnlocked;
     });
   }
 
-  Widget drawCharacter(CharacterUnlockFlag flag) {
-    String characterName = getCharacterFilename(flag.character);
-    String filename = 'img/character/${characterName}_SS.png';
+  void _unlockCharactersUpToIndex(int index) {
+    setState(() {
+      for (int i = 0; i < index; i++) {
+        _flags[i].isUnlocked = true;
+      }
+      for (int i = index; i < _flags.length; i++) {
+        _flags[i].isUnlocked = false;
+      }
+    });
+  }
+
+  void _pressOnlyStartingCharacters() {
+    _unlockCharactersUpToIndex(4);
+  }
+
+  void _pressOnlyBase48Characters() {
+    _unlockCharactersUpToIndex(48);
+  }
+
+  void _pressAllCharacters() {
+    _unlockCharactersUpToIndex(_flags.length);
+  }
+
+  Widget _drawCharacter(CharacterUnlockFlag flag) {
+    // Character name acts as a title for the box
+    String name = flag.character.name;
+    Widget title = Text(
+      name.replaceRange(0, 1, name[0].toUpperCase()),
+      style: const TextStyle(fontWeight: FontWeight.bold),
+    );
+    // Main image using SS variant
+    String characterFilename = getCharacterFilename(flag.character);
+    String filename = 'img/character/${characterFilename}_SS.png';
     Widget image = Image.asset(
       filename,
       fit: BoxFit.contain,
       width: 200,
       height: 29,
     );
+    // Add a grayscale filter if the character is locked
     if (!flag.isUnlocked) {
       image = ColorFiltered(
         colorFilter: const ColorFilter.mode(
@@ -37,14 +137,38 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
         child: image,
       );
     }
-    return GestureDetector(
-      onTap: ()=>toggleUnlockedData(flag),
-      child: DecoratedBox(
-        position: DecorationPosition.foreground,
-        decoration: BoxDecoration(
-          border: Border.all(),
+    // Put it in a DecoratedBox to give it a border - hides the portrait cutoffs
+    image = DecoratedBox(
+      position: DecorationPosition.foreground,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade700),
+      ),
+      child: image,
+    );
+    // Add a footer to explicitly say if a character is locked or not
+    Widget footer = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(
+          (flag.isUnlocked) ? Icons.lock_open : Icons.lock,
+          size: 14,
+          color: (flag.isUnlocked) ? Colors.grey.shade700 : Colors.grey,
         ),
-        child: image,
+        Text(
+          (flag.isUnlocked) ? 'Unlocked' : 'Locked',
+          style: TextStyle(
+            color: (flag.isUnlocked) ? Colors.grey.shade700 : Colors.grey,
+          ),
+        ),
+      ],
+    );
+    return GestureDetector(
+      onTap: ()=>_toggleUnlockedData(flag),
+      child: Column(
+        children: buildSeparatedList(
+          <Widget>[title, image, footer],
+          const SizedBox(height: 2),
+        ),
       ),
     );
   }
@@ -52,41 +176,79 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   @override
   void initState() {
     super.initState();
-    flags = saveFileWrapper.saveFile.characterUnlockFlags;
+    // Make a reference and a deep copy of the list we're changing
+    _original = saveFileWrapper.saveFile.characterUnlockFlags;
+    _flags = _original.map(
+      (CharacterUnlockFlag f)=>CharacterUnlockFlag.from(f),
+    ).toList();
+    // This widget is always the same, no matter the state we're building
+    _toggleButtons = Wrap(
+      spacing: 20,
+      runSpacing: 10,
+      children: <Widget>[
+        TButton(
+          text: 'Only starting characters',
+          icon: Icons.person,
+          onPressed: _pressOnlyStartingCharacters,
+          usesMaxWidth: false,
+        ),
+        TButton(
+          text: 'Only 48 base characters',
+          icon: Icons.group,
+          onPressed: _pressOnlyBase48Characters,
+          usesMaxWidth: false,
+        ),
+        TButton(
+          text: 'All 56 characters',
+          icon: Icons.group_add,
+          onPressed: _pressAllCharacters,
+          usesMaxWidth: false,
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> characters = flags.map(drawCharacter).toList();
+    List<Widget> characters = _flags.map(_drawCharacter).toList();
     Wrap characterWrap = Wrap(
-      spacing: 5,
-      runSpacing: 5,
+      spacing: 10,
+      runSpacing: 7,
       children: characters,
     );
     List<Widget> columnChildren = <Widget>[
+      _toggleButtons,
       characterWrap,
-      const TButton(
-        text: 'Save changes',
-        icon: Icons.save,
-      ),
     ];
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit which characters are unlocked'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: buildSeparatedList(
-                columnChildren,
-                const SizedBox(height: 20),
-                separateEnds: true,
+    bool shouldSave = _hasChanges();
+    Widget? floatingActionButton;
+    if (shouldSave) {
+      floatingActionButton = FloatingActionButton(
+        onPressed: (){},
+        child: const Icon(Icons.save),
+      );
+    }
+    return WillPopScope(
+      onWillPop: _checkChangesAndConfirm,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Edit which characters are unlocked'),
+        ),
+        floatingActionButton: floatingActionButton,
+        body: ListView(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: buildSeparatedList(
+                  columnChildren,
+                  const SizedBox(height: 20),
+                  separateEnds: true,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
