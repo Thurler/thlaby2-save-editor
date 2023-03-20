@@ -3,7 +3,7 @@ name: Add Tag, Build Windows and Linux
 on:
   push:
     branches:
-      - 'test/workflows'
+      - 'main'
 
 jobs:
   make-tag:
