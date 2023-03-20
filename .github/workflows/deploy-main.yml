@@ -72,7 +72,7 @@ jobs:
       - name: Archive Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: save-editor-windows.zip
+          name: thlaby2-save-editor-windows
           path: build/windows/runner/Release/*
 
   build-linux:
@@ -110,5 +110,5 @@ jobs:
       - name: Archive Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: save-editor-linux.tar.gz
+          name: thlaby2-save-editor-linux
           path: build/linux/x64/release/bundle/*
