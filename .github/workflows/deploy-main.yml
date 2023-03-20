@@ -18,13 +18,14 @@ jobs:
           echo "RELEASE_TAG=$(cat pubspec.yaml | grep version | awk -F ' ' '{print $2}')" >> $GITHUB_ENV
 
       - name: Determine Tag Message
-        run: echo "TAG_MESSAGE=$(cat latest-notes.txt)" >> $GITHUB_ENV
+        id: tag_message
+        run: echo "TAG_MESSAGE=$(cat latest-notes.txt)" >> $GITHUB_OUTPUT
 
       - name: Create Tag
         uses: actions-ecosystem/action-push-tag@v1
         with:
           tag: ${{ env.RELEASE_TAG }}
-          message: ${{ env.TAG_MESSAGE }}
+          message: ${{ steps.tag_message.outputs.TAG_MESSAGE }}
 
       - name: Create Release
         uses: actions/github-script@v6
