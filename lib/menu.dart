@@ -5,6 +5,7 @@ import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
 class MenuWidget extends StatefulWidget {
   const MenuWidget({super.key});
@@ -14,6 +15,17 @@ class MenuWidget extends StatefulWidget {
 }
 
 class MenuState extends CommonState<MenuWidget> {
+  Future<bool> _alertUnexportedChanges() {
+    TBoolDialog dialog = const TBoolDialog(
+      title: 'Did you export your changes?',
+      body: 'Are you sure you want to go back and load a different save file? '
+            'Any changes that have not been exported will be discarded!',
+      confirmText: 'Yes, change files',
+      cancelText: 'No, keep me here',
+    );
+    return showBoolDialog(dialog);
+  }
+
   Future<void> _editCharacterUnlock() async {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -98,22 +110,25 @@ class MenuState extends CommonState<MenuWidget> {
         ],
       ),
     );
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Touhou Labyrinth 2 Save Editor'),
-      ),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: columnChildren.separateWith(
-                const SizedBox(height: 20),
-                separatorOnEnds: true,
+    return WillPopScope(
+      onWillPop: _alertUnexportedChanges,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Touhou Labyrinth 2 Save Editor'),
+        ),
+        body: ListView(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: columnChildren.separateWith(
+                  const SizedBox(height: 20),
+                  separatorOnEnds: true,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
