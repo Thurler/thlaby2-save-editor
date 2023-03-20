@@ -49,7 +49,7 @@ class MainState extends CommonState<MainWidget> {
       return;
     }
     try {
-      File rawFile = File(result.files.first.name);
+      File rawFile = File(result.files.first.path ?? '');
       List<int> bytes = await rawFile.readAsBytes();
       saveFileWrapper.saveFile = SteamSaveFile.fromBytes(bytes);
     } on FileSystemException {
