@@ -1,0 +1,26 @@
+name: thlaby2_save_editor
+description: A save editor for the game Touhou Labyrinth 2.
+
+publish_to: 'none'
+
+version: 1.0.0
+
+environment:
+  sdk: '>=2.18.6 <3.0.0'
+
+dependencies:
+  cupertino_icons: ^1.0.2
+  file_picker: 5.2.6
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - img/character/
+    - img/
