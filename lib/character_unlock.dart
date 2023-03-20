@@ -36,6 +36,13 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     return showUnsavedChangesDialog();
   }
 
+  void _saveChanges() {
+    setState(() {
+      _original = _flags.deepCopyElements(CharacterUnlockFlag.from);
+      saveFileWrapper.saveFile.characterUnlockFlags = _original;
+    });
+  }
+
   //
   // Functions to manipulate unlocked state - be that for individual characters
   // or for entire groups from the preset buttons
@@ -183,7 +190,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     Widget? floatingActionButton;
     if (shouldSave) {
       floatingActionButton = FloatingActionButton(
-        onPressed: (){},
+        onPressed: _saveChanges,
         child: const Icon(Icons.save),
       );
     }
