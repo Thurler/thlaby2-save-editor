@@ -1,0 +1,5 @@
+Release Notes for Version 0.1.0
+===============================
+
+- Fully edit which of the 56 characters are unlocked
+- Only supports the Steam save format for now
