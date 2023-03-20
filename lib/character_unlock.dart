@@ -82,11 +82,29 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   //
 
   Widget _drawCharacter(CharacterUnlockFlag flag) {
-    // Character name acts as a title for the box
+    // Character name acts as a title for the box, along with an explicit
+    // description of the state - "locked"/"unlocked" and an icon
     String name = flag.character.name;
-    Widget title = Text(
-      name.replaceRange(0, 1, name[0].toUpperCase()),
-      style: const TextStyle(fontWeight: FontWeight.bold),
+    Widget title = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          '${name.replaceRange(0, 1, name[0].toUpperCase())}:',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          (flag.isUnlocked) ? 'Unlocked' : 'Locked',
+          style: TextStyle(
+            color: Colors.grey.shade700,
+          ),
+        ),
+        Icon(
+          (flag.isUnlocked) ? Icons.lock_open : Icons.lock,
+          size: 14,
+          color: Colors.grey.shade700,
+        ),
+      ],
     );
     // Main image using SS variant
     String characterFilename = getCharacterFilename(flag.character);
@@ -115,24 +133,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
       ),
       child: image,
     );
-    // Add a footer to explicitly say if a character is locked or not
-    Widget footer = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Icon(
-          (flag.isUnlocked) ? Icons.lock_open : Icons.lock,
-          size: 14,
-          color: (flag.isUnlocked) ? Colors.grey.shade700 : Colors.grey,
-        ),
-        Text(
-          (flag.isUnlocked) ? 'Unlocked' : 'Locked',
-          style: TextStyle(
-            color: (flag.isUnlocked) ? Colors.grey.shade700 : Colors.grey,
-          ),
-        ),
-      ],
-    );
-    List<Widget> elements = <Widget>[title, image, footer];
+    List<Widget> elements = <Widget>[title, image];
     return GestureDetector(
       onTap: ()=>_toggleUnlockedData(flag),
       child: Column(
@@ -179,7 +180,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     List<Widget> characters = _flags.map(_drawCharacter).toList();
     Wrap characterWrap = Wrap(
       spacing: 10,
-      runSpacing: 7,
+      runSpacing: 10,
       children: characters,
     );
     List<Widget> columnChildren = <Widget>[
