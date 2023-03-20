@@ -69,14 +69,11 @@ jobs:
       - name: Flutter Build Windows Native
         run: flutter build windows --release
 
-      - name: Compress Build
-        run: Compress-Archive build/windows/runner/Release/* save-editor-windows.zip
-
       - name: Archive Artifact
         uses: actions/upload-artifact@v3
         with:
           name: save-editor-windows.zip
-          path: save-editor-windows.zip
+          path: build/windows/runner/Release/*
 
   build-linux:
     name: Linux Native Build
@@ -110,11 +107,8 @@ jobs:
       - name: Flutter Build Linux Native
         run: flutter build linux --release
 
-      - name: Compress Build
-        run: tar -zcvf save-editor-linux.tar.gz build/linux/x64/release/bundle
-
       - name: Archive Artifact
         uses: actions/upload-artifact@v3
         with:
           name: save-editor-linux.tar.gz
-          path: save-editor-linux.tar.gz
+          path: build/linux/x64/release/bundle/*
