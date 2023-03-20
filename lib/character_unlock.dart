@@ -36,7 +36,17 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     return showUnsavedChangesDialog();
   }
 
-  void _saveChanges() {
+  Future<void> _saveChanges() async {
+    // Display a warning if trying to lock one of the 4 starting characters
+    if (_flags.sublist(0, 4).any((CharacterUnlockFlag f)=>!f.isUnlocked)) {
+      bool doSave = await showSaveWarningDialog(
+        'Reimu, Marisa, Rinnosuke, and Keine are starting characters. They '
+        'cannot be recruited again if you lock them back',
+      );
+      if (!doSave) {
+        return;
+      }
+    }
     setState(() {
       _original = _flags.deepCopyElements(CharacterUnlockFlag.from);
       saveFileWrapper.saveFile.characterUnlockFlags = _original;
