@@ -24,12 +24,6 @@ jobs:
           cat latest-notes.txt >> $GITHUB_ENV
           echo "$EOF" >> $GITHUB_ENV
 
-      - name: Create Tag
-        uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: ${{ env.RELEASE_TAG }}
-          message: ${{ env.TAG_MESSAGE }}
-
       - name: Create Release
         uses: actions/github-script@v6
         with:
@@ -37,13 +31,14 @@ jobs:
           script: |
             try {
               const response = await github.rest.repos.createRelease({
-                draft: false,
-                generate_release_notes: true,
-                name: process.env.RELEASE_TAG,
-                owner: context.repo.owner,
-                prerelease: false,
-                repo: context.repo.repo,
                 tag_name: process.env.RELEASE_TAG,
+                name: process.env.RELEASE_TAG,
+                body: process.env.TAG_MESSAGE,
+                draft: false,
+                prerelease: false,
+                generate_release_notes: true,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
               });
             } catch (error) {
               core.setFailed(error.message);
