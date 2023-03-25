@@ -10,6 +10,7 @@ import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/settings.dart';
 import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
 void main() {
   // If settings file doesn't exist, create one from defaults
@@ -82,6 +83,7 @@ class MainState extends CommonState<MainWidget> {
       await logger.log(LogLevel.debug, 'No file selected');
       return;
     }
+    bool hasErrors = false;
     try {
       await logger.log(LogLevel.info, 'Loading save file in Steam format');
       String path = result.files.first.path ?? '';
@@ -95,6 +97,7 @@ class MainState extends CommonState<MainWidget> {
         await logger.log(LogLevel.debug, line);
       }
       for (String line in LineSplitter.split(logBuffer.error.toString())) {
+        hasErrors = true;
         await logger.log(LogLevel.error, line);
       }
       await logger.log(LogLevel.info, 'Steam save file loaded successfully');
@@ -114,6 +117,20 @@ class MainState extends CommonState<MainWidget> {
     } on Exception catch (e, s) {
       await handleUnexpectedException(e, s);
       return;
+    }
+    if (hasErrors) {
+      await showCommonDialog(
+        const TWarningDialog(
+          title: 'The loaded save file had errors',
+          body: 'Some of the data that was read seemed to contain invalid '
+            'values. Please check the "applicationlog.txt" file for more '
+            'information.\n\nIf you are sure the uploaded file was not '
+            'tampered with, please report this as an issue at the link below, '
+            'including your save file and the "applicationlog.txt" file:\n'
+            'https://github.com/Thurler/thlaby2-save-editor/issues',
+          confirmText: 'OK',
+        ),
+      );
     }
     if (!state.mounted) {
       return;
