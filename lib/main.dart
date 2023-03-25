@@ -108,7 +108,7 @@ class MainState extends CommonState<MainWidget> {
       for (String line in LineSplitter.split(logBuffer.toString())) {
         await logger.log(LogLevel.debug, line);
       }
-      await logger.log(LogLevel.debug, 'File loaded successfully');
+      await logger.log(LogLevel.info, 'Steam save file loaded successfully');
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);
       return;
@@ -134,18 +134,6 @@ class MainState extends CommonState<MainWidget> {
         builder: (BuildContext context) => const MenuWidget(),
       ),
     );
-  }
-
-  Future<void> _logApplicationStart() async {
-    await logger.log(LogLevel.info, Logger.delimiter);
-    await logger.log(LogLevel.info, 'Save Editor v0.1.0 opened');
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // ignore: discarded_futures
-    _logApplicationStart();
   }
 
   @override
