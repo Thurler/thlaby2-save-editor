@@ -55,9 +55,9 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
     );
   }
 
-  Future<void> handleUnexpectedException(String logMessage) {
+  Future<void> handleUnexpectedException(Exception e, StackTrace s) {
     return handleException(
-      logMessage: logMessage,
+      logMessage: 'Unknown exception: $e | $s',
       dialogTitle: 'An unexpected error occured!',
       dialogBody: 'Please report this as an issue at the link below. Please '
         'include the "applicationlog.txt" file that should be next to your '

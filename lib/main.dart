@@ -108,8 +108,8 @@ class MainState extends CommonState<MainWidget> {
         'File loaded does not have the correct header bytes',
       );
       return;
-    } catch (e, s) {
-      await handleUnexpectedException('Unknown exception: $e | $s');
+    } on Exception catch (e, s) {
+      await handleUnexpectedException(e, s);
       return;
     }
     if (!state.mounted) {

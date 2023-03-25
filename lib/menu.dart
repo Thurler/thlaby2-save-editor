@@ -46,6 +46,17 @@ class MenuState extends CommonState<MenuWidget> {
     );
   }
 
+  Future<void> _navigateToSettings() async {
+    NavigatorState state = Navigator.of(context);
+    await logger.log(LogLevel.info, 'Opening settings widget');
+    await state.push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const SettingsWidget(),
+      ),
+    );
+    await logger.log(LogLevel.info, 'Closed settings widget');
+  }
+
   Future<void> _editCharacterUnlock() async {
     NavigatorState state = Navigator.of(context);
     await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
@@ -82,8 +93,8 @@ class MenuState extends CommonState<MenuWidget> {
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);
       return;
-    } catch (e, s) {
-      await handleUnexpectedException('Unknown exception: $e | $s');
+    } on Exception catch (e, s) {
+      await handleUnexpectedException(e, s);
       return;
     }
     await logger.log(LogLevel.info, 'Steam save file exported successfully');
@@ -158,7 +169,7 @@ class MenuState extends CommonState<MenuWidget> {
             TAppBarButton(
               text: 'Settings',
               icon: Icons.settings,
-              onTap: (){},
+              onTap: _navigateToSettings,
             ),
           ],
         ),

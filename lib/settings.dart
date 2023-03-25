@@ -54,13 +54,35 @@ class SettingsState extends CommonState<SettingsWidget> {
     return _editable.logLevel != _original.logLevel;
   }
 
-  void _saveChanges() {
+  Future<bool> _checkChangesAndConfirm() async {
+    if (!_hasChanges()) {
+      return true;
+    }
+    bool canDiscard = await showUnsavedChangesDialog();
+    if (canDiscard) {
+      await logger.log(LogLevel.info, 'Discarding changes to settings');
+    }
+    return canDiscard;
+  }
+
+  Future<void> _handleFileSystemException(FileSystemException e) {
+    return handleException(
+      logMessage: 'FileSystem Exception when saving settings: ${e.message}',
+      dialogTitle: 'An error occured when saving the settings!',
+      dialogBody: 'Make sure your user has permission to write a file in '
+        'the folder this app is in.',
+    );
+  }
+
+  Future<void> _saveChanges() async {
     try {
       File settingsFile = File('./settings.json');
       settingsFile.writeAsStringSync('${_editable.toJson()}\n');
-    } on FileSystemException {
+    } on FileSystemException catch (e) {
+      await _handleFileSystemException(e);
       return;
-    } catch (e, s) {
+    } on Exception catch (e, s) {
+      await handleUnexpectedException(e, s);
       return;
     }
     setState(() {
@@ -112,7 +134,7 @@ class SettingsState extends CommonState<SettingsWidget> {
       );
     }
     return WillPopScope(
-      onWillPop: ()=>Future<bool>.value(true),
+      onWillPop: _checkChangesAndConfirm,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Touhou Labyrinth 2 Save Editor - Settings'),
