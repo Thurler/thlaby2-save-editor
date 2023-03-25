@@ -128,8 +128,12 @@ abstract class SaveFile {
     );
   }
 
-  void setCharacterUnlockFlagsFromBytes(List<int> bytes) {
+  void setCharacterUnlockFlagsFromBytes(
+    List<int> bytes,
+    StringBuffer logBuffer,
+  ) {
     characterUnlockFlags = <CharacterUnlockFlag>[];
+    logBuffer.writeln('Character bytes: $bytes');
     for (int i = 0; i < bytes.length; i++) {
       characterUnlockFlags.add(
         CharacterUnlockFlag(

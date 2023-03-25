@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -102,7 +103,11 @@ class MainState extends CommonState<MainWidget> {
       await logger.log(LogLevel.debug, 'File selected: $name');
       File rawFile = File(path);
       List<int> bytes = await rawFile.readAsBytes();
-      saveFileWrapper.saveFile = SteamSaveFile.fromBytes(bytes);
+      StringBuffer logBuffer = StringBuffer();
+      saveFileWrapper.saveFile = SteamSaveFile.fromBytes(bytes, logBuffer);
+      for (String line in LineSplitter.split(logBuffer.toString())) {
+        await logger.log(LogLevel.debug, line);
+      }
       await logger.log(LogLevel.debug, 'File loaded successfully');
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);

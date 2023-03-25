@@ -22,7 +22,7 @@ class SteamSaveFile extends SaveFile {
     ).values.toList();
   }
 
-  SteamSaveFile.fromBytes(List<int> bytes) {
+  SteamSaveFile.fromBytes(List<int> bytes, StringBuffer logBuffer) {
     if (bytes.length != fileSize) {
       throw const FileSizeException();
     }
@@ -34,7 +34,7 @@ class SteamSaveFile extends SaveFile {
     ) {
       throw const InvalidHeaderException();
     }
-    setCharacterUnlockFlagsFromBytes(decrypted.sublist(0x5, 0x3d));
+    setCharacterUnlockFlagsFromBytes(decrypted.sublist(0x5, 0x3d), logBuffer);
     setAchievementData(decrypted.sublist(0x68, 0xd0));
     setAchievementDataPlus(decrypted.sublist(0xd6, 0x10a));
     setAchievementNotificationData(decrypted.sublist(0x130, 0x198));
