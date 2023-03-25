@@ -116,12 +116,20 @@ class MenuState extends CommonState<MenuWidget> {
       ),
       const TButton(
         text: 'Character Data',
-        icon: Icons.groups,
+        icon: Icons.person,
       ),
       TButton(
         text: 'Character Unlock Data',
         icon: Icons.lock_person_outlined,
         onPressed: _editCharacterUnlock,
+      ),
+      const TButton(
+        text: 'Party Data',
+        icon: Icons.groups,
+      ),
+      const TButton(
+        text: 'Bestiary Data',
+        icon: Icons.school_outlined,
       ),
       const TButton(
         text: 'Inventory Data',
