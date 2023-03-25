@@ -59,6 +59,19 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
         return;
       }
     }
+    // Display a warning if trying to lock all characters
+    if (_flags.every((CharacterUnlockFlag f)=>!f.isUnlocked)) {
+      await logger.log(
+        LogLevel.warning,
+        'Attempting to lock all characters',
+      );
+      bool doSave = await showSaveWarningDialog(
+        'If you lock all characters, you will be unable to do anything in-game',
+      );
+      if (!doSave) {
+        return;
+      }
+    }
     await logger.log(LogLevel.info, 'Saved changes');
     setState(() {
       _original = _flags.deepCopyElements(CharacterUnlockFlag.from);
