@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:thlaby2_save_editor/settings.dart';
 
 enum LogLevel {
   debug,
@@ -11,6 +12,7 @@ enum LogLevel {
 class Logger {
   static final Logger _logger = Logger._internal();
   static const String filename = './applicationlog.txt';
+  LogLevel logLevel = LogLevel.info;
   bool _hasInitialized = false;
   late IOSink sink;
 
@@ -19,6 +21,14 @@ class Logger {
   }
 
   Future<void> _initializeLog() async {
+    try {
+      File settingsFile = File('./settings.json');
+      if (settingsFile.existsSync()) {
+        logLevel = Settings.fromJson(settingsFile.readAsStringSync()).logLevel;
+      }
+    } catch (e) {
+      // If we fail to load the settings file, keep going with default settings
+    }
     File logFile = File(filename);
     sink = logFile.openWrite();
     sink.writeln('${_currentTimestamp()} | Save Editor v0.1.0 opened');
@@ -33,6 +43,9 @@ class Logger {
 
   Future<void> log(LogLevel level, dynamic message) async {
     try {
+      if (level.index < logLevel.index) {
+        return;
+      }
       if (!_hasInitialized) {
         _hasInitialized = true;
         await _initializeLog();

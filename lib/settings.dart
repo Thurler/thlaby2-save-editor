@@ -46,6 +46,7 @@ class SettingsState extends CommonState<SettingsWidget> {
     'Error (only errors are logged)',
     'None (nothing is logged)',
   ];
+  final Logger logger = Logger();
 
   late Settings _original;
   late Settings _editable;
@@ -87,6 +88,7 @@ class SettingsState extends CommonState<SettingsWidget> {
     }
     setState(() {
       _original = Settings.from(_editable);
+      logger.logLevel = _editable.logLevel;
     });
   }
 
