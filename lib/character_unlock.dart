@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
@@ -33,12 +34,23 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     if (!_hasChanges()) {
       return true;
     }
-    return showUnsavedChangesDialog();
+    bool canDiscard = await showUnsavedChangesDialog();
+    if (canDiscard) {
+      await logger.log(
+        LogLevel.info,
+        'Discarding changes to character unlock flags',
+      );
+    }
+    return canDiscard;
   }
 
   Future<void> _saveChanges() async {
     // Display a warning if trying to lock one of the 4 starting characters
     if (_flags.sublist(0, 4).any((CharacterUnlockFlag f)=>!f.isUnlocked)) {
+      await logger.log(
+        LogLevel.warning,
+        'Attempting to lock one of the initial 4 characters',
+      );
       bool doSave = await showSaveWarningDialog(
         'Reimu, Marisa, Rinnosuke, and Keine are starting characters. They '
         'cannot be recruited again if you lock them back',
@@ -47,6 +59,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
         return;
       }
     }
+    await logger.log(LogLevel.info, 'Saved changes');
     setState(() {
       _original = _flags.deepCopyElements(CharacterUnlockFlag.from);
       saveFileWrapper.saveFile.characterUnlockFlags = _original;
@@ -58,7 +71,9 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   // or for entire groups from the preset buttons
   //
 
-  void _toggleUnlockedData(CharacterUnlockFlag flag) {
+  Future<void> _toggleUnlockedData(CharacterUnlockFlag flag) async {
+    String state = (flag.isUnlocked) ? 'locked' : 'unlocked';
+    await logger.log(LogLevel.debug, '${flag.character.name} is now $state');
     setState((){
       flag.isUnlocked = !flag.isUnlocked;
     });
@@ -75,15 +90,18 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     });
   }
 
-  void _pressOnlyStartingCharacters() {
+  Future<void> _pressOnlyStartingCharacters() async {
+    await logger.log(LogLevel.debug, 'Applying preset: starting 4 characters');
     _unlockCharactersUpToIndex(4);
   }
 
-  void _pressOnlyBase48Characters() {
+  Future<void> _pressOnlyBase48Characters() async {
+    await logger.log(LogLevel.debug, 'Applying preset: base 48 characters');
     _unlockCharactersUpToIndex(48);
   }
 
-  void _pressAllCharacters() {
+  Future<void> _pressAllCharacters() async {
+    await logger.log(LogLevel.debug, 'Applying preset: all 56 characters');
     _unlockCharactersUpToIndex(_flags.length);
   }
 
@@ -145,7 +163,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     );
     List<Widget> elements = <Widget>[title, image];
     return GestureDetector(
-      onTap: ()=>_toggleUnlockedData(flag),
+      onTap: () async =>_toggleUnlockedData(flag),
       child: Column(
         children: elements.separateWith(const SizedBox(height: 2)),
       ),
