@@ -17,7 +17,8 @@ class MenuWidget extends StatefulWidget {
 }
 
 class MenuState extends CommonState<MenuWidget> {
-  Future<bool> _alertUnexportedChanges() {
+  Future<bool> _alertUnexportedChanges() async {
+    await logger.log(LogLevel.debug, 'Trying to go back to save file select');
     TBoolDialog dialog = const TBoolDialog(
       title: 'Did you export your changes?',
       body: 'Are you sure you want to go back and load a different save file? '
@@ -25,7 +26,19 @@ class MenuState extends CommonState<MenuWidget> {
       confirmText: 'Yes, change files',
       cancelText: 'No, keep me here',
     );
-    return showBoolDialog(dialog);
+    bool canReturn = await showBoolDialog(dialog);
+    if (canReturn) {
+      await logger.log(
+        LogLevel.info,
+        'User confirmed going back to file select',
+      );
+    } else {
+      await logger.log(
+        LogLevel.debug,
+        'User gave up going back to file select',
+      );
+    }
+    return canReturn;
   }
 
   Future<void> _handleFileSystemException(FileSystemException e) {
