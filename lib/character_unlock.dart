@@ -16,6 +16,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   late List<CharacterUnlockFlag> _flags;
   late List<CharacterUnlockFlag> _original;
   late Widget _toggleButtons;
+  CharacterUnlockFlag? _hover;
 
   //
   // Properly check for and validate changes, save/commit them
@@ -123,6 +124,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   //
 
   Widget _drawCharacter(CharacterUnlockFlag flag) {
+    bool highlighted = _hover == flag;
     // Character name acts as a title for the box, along with an explicit
     // description of the state - "locked"/"unlocked" and an icon
     String name = flag.character.name;
@@ -131,19 +133,22 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
       children: <Widget>[
         Text(
           '${name.replaceRange(0, 1, name[0].toUpperCase())}:',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: highlighted ? Colors.green : null,
+          ),
         ),
         const SizedBox(width: 5),
         Text(
           (flag.isUnlocked) ? 'Unlocked' : 'Locked',
           style: TextStyle(
-            color: Colors.grey.shade700,
+            color: highlighted ? Colors.green : Colors.grey.shade700,
           ),
         ),
         Icon(
           (flag.isUnlocked) ? Icons.lock_open : Icons.lock,
           size: 14,
-          color: Colors.grey.shade700,
+          color: highlighted ? Colors.green : Colors.grey.shade700,
         ),
       ],
     );
@@ -170,15 +175,23 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     image = DecoratedBox(
       position: DecorationPosition.foreground,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade700),
+        border: Border.all(
+          width: highlighted ? 2 : 1,
+          color: highlighted ? Colors.green : Colors.grey.shade700,
+        ),
       ),
       child: image,
     );
     List<Widget> elements = <Widget>[title, image];
     return GestureDetector(
       onTap: () async =>_toggleUnlockedData(flag),
-      child: Column(
-        children: elements.separateWith(const SizedBox(height: 2)),
+      child: MouseRegion(
+        onEnter: (PointerEvent e)=>setState((){_hover = flag;}),
+        onExit: (PointerEvent e)=>setState((){_hover = null;}),
+        cursor: SystemMouseCursors.click,
+        child: Column(
+          children: elements.separateWith(const SizedBox(height: 2)),
+        ),
       ),
     );
   }
