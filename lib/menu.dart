@@ -6,6 +6,7 @@ import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/settings.dart';
 import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
@@ -84,11 +85,14 @@ class MenuState extends CommonState<MenuWidget> {
     await logger.log(LogLevel.debug, 'Exporting save file in Steam format');
     try {
       File rawFile = File(result);
-      StringBuffer logBuffer = StringBuffer();
+      LogBuffer logBuffer = LogBuffer();
       List<int> contents = saveFileWrapper.saveFile.exportSteam(logBuffer);
       await rawFile.writeAsBytes(contents);
-      for (String line in LineSplitter.split(logBuffer.toString())) {
+      for (String line in LineSplitter.split(logBuffer.debug.toString())) {
         await logger.log(LogLevel.debug, line);
+      }
+      for (String line in LineSplitter.split(logBuffer.error.toString())) {
+        await logger.log(LogLevel.error, line);
       }
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);

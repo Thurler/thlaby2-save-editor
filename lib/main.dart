@@ -89,10 +89,13 @@ class MainState extends CommonState<MainWidget> {
       await logger.log(LogLevel.debug, 'File selected: $name');
       File rawFile = File(path);
       List<int> bytes = await rawFile.readAsBytes();
-      StringBuffer logBuffer = StringBuffer();
+      LogBuffer logBuffer = LogBuffer();
       saveFileWrapper.saveFile = SaveFile.fromSteamBytes(bytes, logBuffer);
-      for (String line in LineSplitter.split(logBuffer.toString())) {
+      for (String line in LineSplitter.split(logBuffer.debug.toString())) {
         await logger.log(LogLevel.debug, line);
+      }
+      for (String line in LineSplitter.split(logBuffer.error.toString())) {
+        await logger.log(LogLevel.error, line);
       }
       await logger.log(LogLevel.info, 'Steam save file loaded successfully');
     } on FileSystemException catch (e) {
