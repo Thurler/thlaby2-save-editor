@@ -6,7 +6,7 @@ import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/menu.dart';
-import 'package:thlaby2_save_editor/steam.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
@@ -98,13 +98,14 @@ class MainState extends CommonState<MainWidget> {
       return;
     }
     try {
+      await logger.log(LogLevel.info, 'Loading save file in Steam format');
       String path = result.files.first.path ?? '';
       String name = path.split('/').last.split(r'\').last;
       await logger.log(LogLevel.debug, 'File selected: $name');
       File rawFile = File(path);
       List<int> bytes = await rawFile.readAsBytes();
       StringBuffer logBuffer = StringBuffer();
-      saveFileWrapper.saveFile = SteamSaveFile.fromBytes(bytes, logBuffer);
+      saveFileWrapper.saveFile = SaveFile.fromSteamBytes(bytes, logBuffer);
       for (String line in LineSplitter.split(logBuffer.toString())) {
         await logger.log(LogLevel.debug, line);
       }

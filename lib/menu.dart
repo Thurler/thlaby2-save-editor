@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -28,25 +29,39 @@ class MenuState extends CommonState<MenuWidget> {
   }
 
   Future<void> _editCharacterUnlock() async {
-    await Navigator.of(context).push(
+    NavigatorState state = Navigator.of(context);
+    await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
+    if (!state.mounted) {
+      return;
+    }
+    await state.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => const CharacterUnlockWidget(),
       ),
     );
+    await logger.log(LogLevel.debug, 'Closed character unlock edit widget');
   }
 
   Future<void> _saveSteamSaveFile() async {
+    await logger.log(LogLevel.debug, 'Export Steam Save File called');
     String? result = await FilePicker.platform.saveFile(
       dialogTitle: 'Please select where to save the file:',
       fileName: 'steam.dat',
     );
     if (result == null) {
+      await logger.log(LogLevel.debug, 'No file selected');
       return;
     }
+    await logger.log(LogLevel.debug, 'Exporting save file in Steam format');
     try {
       File rawFile = File(result);
-      List<int> contents = saveFileWrapper.saveFile.export();
+      StringBuffer logBuffer = StringBuffer();
+      List<int> contents = saveFileWrapper.saveFile.exportSteam(logBuffer);
       await rawFile.writeAsBytes(contents);
+      for (String line in LineSplitter.split(logBuffer.toString())) {
+        await logger.log(LogLevel.debug, line);
+      }
+      await logger.log(LogLevel.info, 'Steam save file exported successfully');
     } on FileSystemException {
       // Do nothing for now
     } catch (e) {
