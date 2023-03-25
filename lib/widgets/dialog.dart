@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 @immutable
-class TBoolDialog extends StatelessWidget {
+class TDialog extends StatelessWidget {
   final String title;
   final String body;
   final String confirmText;
+  final bool hasCancelButton;
   final String cancelText;
 
-  const TBoolDialog({
+  const TDialog({
     required this.title,
     required this.body,
     required this.confirmText,
-    required this.cancelText,
+    this.hasCancelButton = false,
+    this.cancelText = '',
     super.key,
   }) : super();
 
@@ -34,7 +36,7 @@ class TBoolDialog extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     Widget bodyWidget = SizedBox(
       width: width * 2/3,
-      child: Text(body),
+      child: SelectableText(body, textAlign: TextAlign.center),
     );
     List<Widget> actions = <Widget>[
       TButton(
@@ -46,16 +48,20 @@ class TBoolDialog extends StatelessWidget {
           Navigator.of(context).pop(true);
         },
       ),
-      TButton(
-        text: cancelText,
-        icon: Icons.cancel_outlined,
-        usesMaxWidth: false,
-        fontSize: 16,
-        onPressed: () {
-          Navigator.of(context).pop(false);
-        },
-      ),
     ];
+    if (hasCancelButton) {
+      actions.add(
+        TButton(
+          text: cancelText,
+          icon: Icons.cancel_outlined,
+          usesMaxWidth: false,
+          fontSize: 16,
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+        ),
+      );
+    }
     return AlertDialog(
       title: titleWidget,
       content: bodyWidget,
@@ -70,4 +76,16 @@ class TBoolDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+@immutable
+class TBoolDialog extends TDialog {
+  const TBoolDialog({
+    required super.title,
+    required super.body,
+    required super.confirmText,
+    required super.cancelText,
+    super.hasCancelButton = true,
+    super.key,
+  }) : super();
 }

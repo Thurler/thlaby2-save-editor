@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
@@ -49,7 +50,7 @@ class MenuState extends CommonState<MenuWidget> {
     } on FileSystemException {
       // Do nothing for now
     } catch (e) {
-      await logger.log(e);
+      await logger.log(LogLevel.error, e);
     }
   }
 

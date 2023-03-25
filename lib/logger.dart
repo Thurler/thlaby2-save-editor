@@ -1,16 +1,16 @@
 import 'dart:io';
 
 enum LogLevel {
-  none,
   debug,
   info,
-  notice,
   warning,
   error,
+  none,
 }
 
 class Logger {
   static final Logger _logger = Logger._internal();
+  static final String delimiter = List<String>.filled(20, '-').join();
   static const String filename = './applicationlog.txt';
 
   factory Logger() {

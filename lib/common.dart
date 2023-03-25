@@ -40,6 +40,15 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
     );
   }
 
+  Future<void> showErrorDialog(TDialog dialog) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return dialog;
+      },
+    );
+  }
+
   Future<bool> showBoolDialog(TBoolDialog dialog) async {
     bool? canDiscard = await showDialog<bool>(
       context: context,
