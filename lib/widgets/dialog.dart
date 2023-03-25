@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 @immutable
-class TDialog extends StatelessWidget {
+abstract class TDialog extends StatelessWidget {
   final String title;
   final String body;
   final String confirmText;
-  final bool hasCancelButton;
   final String cancelText;
+  final IconData titleIcon;
+  final Color titleIconColor;
 
   const TDialog({
     required this.title,
-    required this.body,
-    required this.confirmText,
-    this.hasCancelButton = false,
+    required this.titleIcon,
+    required this.titleIconColor,
+    this.confirmText = '',
     this.cancelText = '',
+    this.body = '',
     super.key,
   }) : super();
 
@@ -23,7 +25,12 @@ class TDialog extends StatelessWidget {
     Widget titleWidget = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        const Icon(Icons.warning, color: Colors.red, size: 30),
+        Icon(
+          titleIcon,
+          color: titleIconColor,
+          size: 30,
+        ),
+        // const Icon(Icons.warning, color: Colors.red, size: 30),
         const SizedBox(width: 10),
         Flexible(
           child: Text(
@@ -34,22 +41,28 @@ class TDialog extends StatelessWidget {
       ],
     );
     double width = MediaQuery.of(context).size.width;
-    Widget bodyWidget = SizedBox(
-      width: width * 2/3,
-      child: SelectableText(body, textAlign: TextAlign.center),
-    );
-    List<Widget> actions = <Widget>[
-      TButton(
-        text: confirmText,
-        icon: Icons.check_circle_outline,
-        usesMaxWidth: false,
-        fontSize: 16,
-        onPressed: () {
-          Navigator.of(context).pop(true);
-        },
-      ),
-    ];
-    if (hasCancelButton) {
+    Widget? bodyWidget;
+    if (body != '') {
+      bodyWidget = SizedBox(
+        width: width * 2/3,
+        child: SelectableText(body, textAlign: TextAlign.center),
+      );
+    }
+    List<Widget> actions = <Widget>[];
+    if (confirmText != '') {
+      actions.add(
+        TButton(
+          text: confirmText,
+          icon: Icons.check_circle_outline,
+          usesMaxWidth: false,
+          fontSize: 16,
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+        ),
+      );
+    }
+    if (cancelText != '') {
       actions.add(
         TButton(
           text: cancelText,
@@ -62,11 +75,15 @@ class TDialog extends StatelessWidget {
         ),
       );
     }
+    EdgeInsets padding = const EdgeInsets.fromLTRB(20, 0, 20, 5);
+    if (actions.isNotEmpty) {
+      padding = padding.copyWith(bottom: 18);
+    }
     return AlertDialog(
       title: titleWidget,
       content: bodyWidget,
       actionsAlignment: MainAxisAlignment.center,
-      actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+      actionsPadding: padding,
       actions: <Widget>[
         Wrap(
           runSpacing: 10,
@@ -79,13 +96,37 @@ class TDialog extends StatelessWidget {
 }
 
 @immutable
-class TBoolDialog extends TDialog {
+class TSuccessDialog extends TDialog {
+  const TSuccessDialog({
+    required super.title,
+    super.key,
+  }) : super(
+    titleIcon: Icons.check_circle_outline,
+    titleIconColor: Colors.green,
+  );
+}
+
+@immutable
+class TWarningDialog extends TDialog {
+  const TWarningDialog({
+    required super.title,
+    required super.body,
+    required super.confirmText,
+    super.cancelText,
+    super.key,
+  }) : super(
+    titleIcon: Icons.warning,
+    titleIconColor: Colors.red,
+  );
+}
+
+@immutable
+class TBoolDialog extends TWarningDialog {
   const TBoolDialog({
     required super.title,
     required super.body,
     required super.confirmText,
     required super.cancelText,
-    super.hasCancelButton = true,
     super.key,
   }) : super();
 }

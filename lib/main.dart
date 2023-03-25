@@ -42,23 +42,8 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainState extends CommonState<MainWidget> {
-  Future<void> _handleException({
-    required String logMessage,
-    required String dialogTitle,
-    required String dialogBody,
-  }) async {
-    await logger.log(LogLevel.error, logMessage);
-    await showErrorDialog(
-      TDialog(
-        title: dialogTitle,
-        body: dialogBody,
-        confirmText: 'OK',
-      ),
-    );
-  }
-
   Future<void> _handleFileSystemException(FileSystemException e) {
-    return _handleException(
+    return handleException(
       logMessage: 'FileSystem Exception when loading file: ${e.message}',
       dialogTitle: 'An error occured when reading the file!',
       dialogBody: 'Make sure your user has permission to read the file you '
@@ -67,22 +52,11 @@ class MainState extends CommonState<MainWidget> {
   }
 
   Future<void> _handleSteamException(String logMessage) {
-    return _handleException(
+    return handleException(
       logMessage: logMessage,
       dialogTitle: 'The selected file is invalid!',
       dialogBody: 'Make sure you chose a Steam save file. It should be a file '
         'like "save1.dat" inside the %APPDATA%/CUBETYPE/tohoLaby folder.',
-    );
-  }
-
-  Future<void> _handleUnexpectedException(String logMessage) {
-    return _handleException(
-      logMessage: logMessage,
-      dialogTitle: 'An unexpected error occured!',
-      dialogBody: 'Please report this as an issue at the link below. Please '
-        'include the "applicationlog.txt" file that should be next to your '
-        '.exe file when submitting the issue, as well as your save file:\n '
-        'https://github.com/Thurler/thlaby2-save-editor/issues',
     );
   }
 
@@ -124,7 +98,7 @@ class MainState extends CommonState<MainWidget> {
       );
       return;
     } catch (e, s) {
-      await _handleUnexpectedException('Unknown exception: $e | $s');
+      await handleUnexpectedException('Unknown exception: $e | $s');
       return;
     }
     if (!state.mounted) {

@@ -40,7 +40,33 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
     );
   }
 
-  Future<void> showErrorDialog(TDialog dialog) {
+  Future<void> handleException({
+    required String logMessage,
+    required String dialogTitle,
+    required String dialogBody,
+  }) async {
+    await logger.log(LogLevel.error, logMessage);
+    await showCommonDialog(
+      TWarningDialog(
+        title: dialogTitle,
+        body: dialogBody,
+        confirmText: 'OK',
+      ),
+    );
+  }
+
+  Future<void> handleUnexpectedException(String logMessage) {
+    return handleException(
+      logMessage: logMessage,
+      dialogTitle: 'An unexpected error occured!',
+      dialogBody: 'Please report this as an issue at the link below. Please '
+        'include the "applicationlog.txt" file that should be next to your '
+        '.exe file when submitting the issue, as well as your save file:\n '
+        'https://github.com/Thurler/thlaby2-save-editor/issues',
+    );
+  }
+
+  Future<void> showCommonDialog(TDialog dialog) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {

@@ -28,6 +28,15 @@ class MenuState extends CommonState<MenuWidget> {
     return showBoolDialog(dialog);
   }
 
+  Future<void> _handleFileSystemException(FileSystemException e) {
+    return handleException(
+      logMessage: 'FileSystem Exception when exporting file: ${e.message}',
+      dialogTitle: 'An error occured when exporting the file!',
+      dialogBody: 'Make sure your user has permission to write the file in '
+        'the folder you chose.',
+    );
+  }
+
   Future<void> _editCharacterUnlock() async {
     NavigatorState state = Navigator.of(context);
     await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
@@ -61,12 +70,17 @@ class MenuState extends CommonState<MenuWidget> {
       for (String line in LineSplitter.split(logBuffer.toString())) {
         await logger.log(LogLevel.debug, line);
       }
-      await logger.log(LogLevel.info, 'Steam save file exported successfully');
-    } on FileSystemException {
-      // Do nothing for now
-    } catch (e) {
-      await logger.log(LogLevel.error, e);
+    } on FileSystemException catch (e) {
+      await _handleFileSystemException(e);
+      return;
+    } catch (e, s) {
+      await handleUnexpectedException('Unknown exception: $e | $s');
+      return;
     }
+    await logger.log(LogLevel.info, 'Steam save file exported successfully');
+    await showCommonDialog(
+      const TSuccessDialog(title: 'Save file exported successfully'),
+    );
   }
 
   @override
