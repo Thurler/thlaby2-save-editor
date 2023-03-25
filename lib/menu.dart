@@ -6,6 +6,8 @@ import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/settings.dart';
+import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
@@ -151,7 +153,14 @@ class MenuState extends CommonState<MenuWidget> {
       onWillPop: _alertUnexportedChanges,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Touhou Labyrinth 2 Save Editor'),
+          title: const Text('Touhou Labyrinth 2 Save Editor - Menu'),
+          actions: <Widget>[
+            TAppBarButton(
+              text: 'Settings',
+              icon: Icons.settings,
+              onTap: (){},
+            ),
+          ],
         ),
         body: ListView(
           children: <Widget>[
