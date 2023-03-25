@@ -8,7 +8,6 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/menu.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
-import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
 void main() {
   runApp(const MyApp());
