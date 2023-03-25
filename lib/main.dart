@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/menu.dart';
-import 'package:thlaby2_save_editor/steam.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 void main() {
@@ -39,27 +41,63 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainState extends CommonState<MainWidget> {
+  Future<void> _handleFileSystemException(FileSystemException e) {
+    return handleException(
+      logMessage: 'FileSystem Exception when loading file: ${e.message}',
+      dialogTitle: 'An error occured when reading the file!',
+      dialogBody: 'Make sure your user has permission to read the file you '
+        'chose.',
+    );
+  }
+
+  Future<void> _handleSteamException(String logMessage) {
+    return handleException(
+      logMessage: logMessage,
+      dialogTitle: 'The selected file is invalid!',
+      dialogBody: 'Make sure you chose a Steam save file. It should be a file '
+        'like "save1.dat" inside the %APPDATA%/CUBETYPE/tohoLaby folder.',
+    );
+  }
+
   Future<void> _loadSteamSaveFile() async {
     NavigatorState state = Navigator.of(context);
+    await logger.log(LogLevel.debug, 'Load Steam Save File called');
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: <String>['dat'],
     );
     if (result == null) {
+      await logger.log(LogLevel.debug, 'No file selected');
       return;
     }
     try {
-      File rawFile = File(result.files.first.path ?? '');
+      await logger.log(LogLevel.info, 'Loading save file in Steam format');
+      String path = result.files.first.path ?? '';
+      String name = path.split('/').last.split(r'\').last;
+      await logger.log(LogLevel.debug, 'File selected: $name');
+      File rawFile = File(path);
       List<int> bytes = await rawFile.readAsBytes();
-      saveFileWrapper.saveFile = SteamSaveFile.fromBytes(bytes);
-    } on FileSystemException {
-      // Do nothing for now
+      StringBuffer logBuffer = StringBuffer();
+      saveFileWrapper.saveFile = SaveFile.fromSteamBytes(bytes, logBuffer);
+      for (String line in LineSplitter.split(logBuffer.toString())) {
+        await logger.log(LogLevel.debug, line);
+      }
+      await logger.log(LogLevel.info, 'Steam save file loaded successfully');
+    } on FileSystemException catch (e) {
+      await _handleFileSystemException(e);
+      return;
     } on FileSizeException {
-      // Do nothing for now
+      await _handleSteamException(
+        'File loaded does not have correct number of bytes',
+      );
+      return;
     } on InvalidHeaderException {
-      // Do nothing for now
-    } catch (e) {
-      await logger.log(e);
+      await _handleSteamException(
+        'File loaded does not have the correct header bytes',
+      );
+      return;
+    } catch (e, s) {
+      await handleUnexpectedException('Unknown exception: $e | $s');
       return;
     }
     if (!state.mounted) {

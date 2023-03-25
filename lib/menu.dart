@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
@@ -15,7 +17,7 @@ class MenuWidget extends StatefulWidget {
 }
 
 class MenuState extends CommonState<MenuWidget> {
-  Future<bool> _alertUnexportedChanges() {
+  Future<bool> _alertUnexportedChanges() async {
     TBoolDialog dialog = const TBoolDialog(
       title: 'Did you export your changes?',
       body: 'Are you sure you want to go back and load a different save file? '
@@ -23,34 +25,69 @@ class MenuState extends CommonState<MenuWidget> {
       confirmText: 'Yes, change files',
       cancelText: 'No, keep me here',
     );
-    return showBoolDialog(dialog);
+    bool canReturn = await showBoolDialog(dialog);
+    if (canReturn) {
+      await logger.log(
+        LogLevel.info,
+        'User confirmed going back to file select without exporting',
+      );
+    }
+    return canReturn;
+  }
+
+  Future<void> _handleFileSystemException(FileSystemException e) {
+    return handleException(
+      logMessage: 'FileSystem Exception when exporting file: ${e.message}',
+      dialogTitle: 'An error occured when exporting the file!',
+      dialogBody: 'Make sure your user has permission to write the file in '
+        'the folder you chose.',
+    );
   }
 
   Future<void> _editCharacterUnlock() async {
-    await Navigator.of(context).push(
+    NavigatorState state = Navigator.of(context);
+    await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
+    if (!state.mounted) {
+      return;
+    }
+    await state.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => const CharacterUnlockWidget(),
       ),
     );
+    await logger.log(LogLevel.debug, 'Closed character unlock edit widget');
   }
 
   Future<void> _saveSteamSaveFile() async {
+    await logger.log(LogLevel.debug, 'Export Steam Save File called');
     String? result = await FilePicker.platform.saveFile(
       dialogTitle: 'Please select where to save the file:',
       fileName: 'steam.dat',
     );
     if (result == null) {
+      await logger.log(LogLevel.debug, 'No file selected');
       return;
     }
+    await logger.log(LogLevel.debug, 'Exporting save file in Steam format');
     try {
       File rawFile = File(result);
-      List<int> contents = saveFileWrapper.saveFile.export();
+      StringBuffer logBuffer = StringBuffer();
+      List<int> contents = saveFileWrapper.saveFile.exportSteam(logBuffer);
       await rawFile.writeAsBytes(contents);
-    } on FileSystemException {
-      // Do nothing for now
-    } catch (e) {
-      await logger.log(e);
+      for (String line in LineSplitter.split(logBuffer.toString())) {
+        await logger.log(LogLevel.debug, line);
+      }
+    } on FileSystemException catch (e) {
+      await _handleFileSystemException(e);
+      return;
+    } catch (e, s) {
+      await handleUnexpectedException('Unknown exception: $e | $s');
+      return;
     }
+    await logger.log(LogLevel.info, 'Steam save file exported successfully');
+    await showCommonDialog(
+      const TSuccessDialog(title: 'Save file exported successfully'),
+    );
   }
 
   @override
