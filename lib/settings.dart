@@ -46,7 +46,6 @@ class SettingsState extends CommonState<SettingsWidget> {
     'Error (only errors are logged)',
     'None (nothing is logged)',
   ];
-  final Logger logger = Logger();
 
   late Settings _original;
   late Settings _editable;
@@ -86,18 +85,28 @@ class SettingsState extends CommonState<SettingsWidget> {
       await handleUnexpectedException(e, s);
       return;
     }
+    await logger.log(
+      LogLevel.info,
+      'Applying log level ${_editable.logLevel.name}',
+    );
+    await logger.log(LogLevel.info, 'Saved changes');
     setState(() {
       _original = Settings.from(_editable);
       logger.logLevel = _editable.logLevel;
     });
   }
 
-  void _changeLogLevel(String? chosen) {
+  Future<void> _changeLogLevel(String? chosen) async {
     if (chosen == null) {
       return;
     }
+    LogLevel chosenLevel = LogLevel.values[_options.indexOf(chosen)];
+    await logger.log(
+      LogLevel.debug,
+      'Log level changed to ${chosenLevel.name}',
+    );
     setState(() {
-      _editable.logLevel = LogLevel.values[_options.indexOf(chosen)];
+      _editable.logLevel = chosenLevel;
     });
   }
 
