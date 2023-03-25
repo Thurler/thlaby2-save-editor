@@ -1,8 +1,17 @@
 import 'dart:io';
 
+enum LogLevel {
+  none,
+  debug,
+  info,
+  notice,
+  warning,
+  error,
+}
+
 class Logger {
   static final Logger _logger = Logger._internal();
-  static const String filename = 'applicationlog.txt';
+  static const String filename = './applicationlog.txt';
 
   factory Logger() {
     return _logger;
@@ -10,15 +19,21 @@ class Logger {
 
   Logger._internal();
 
-  Future<void> log(dynamic message) async {
+  Future<void> log(LogLevel level, dynamic message) async {
     try {
       File logFile = File(filename);
       IOSink sink = logFile.openWrite(mode: FileMode.append);
+      sink.write('${DateTime.now().toLocal().toIso8601String()} | ');
+      sink.write('${level.name.toUpperCase()} | ');
       sink.writeln(message.toString());
       await sink.flush();
       await sink.close();
-    } on FileSystemException {
+    } on Exception catch(e, s) {
       // Can't do much - if I can't open the log file, I can't log the error
+      // ignore: avoid_print
+      print('Exception: $e');
+      // ignore: avoid_print
+      print('Stack Trace: $s');
     }
   }
 }
