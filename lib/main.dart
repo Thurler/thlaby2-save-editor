@@ -7,9 +7,21 @@ import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/menu.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/settings.dart';
+import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 void main() {
+  // If settings file doesn't exist, create one from defaults
+  File settingsFile = File('./settings.json');
+  try {
+    if (!settingsFile.existsSync()) {
+      Settings settings = Settings.fromDefault();
+      settingsFile.writeAsStringSync('${settings.toJson()}\n');
+    }
+  } catch (e) {
+    // Failed to create a default settings file, keep going as is
+  }
   runApp(const MyApp());
 }
 
@@ -96,8 +108,8 @@ class MainState extends CommonState<MainWidget> {
         'File loaded does not have the correct header bytes',
       );
       return;
-    } catch (e, s) {
-      await handleUnexpectedException('Unknown exception: $e | $s');
+    } on Exception catch (e, s) {
+      await handleUnexpectedException(e, s);
       return;
     }
     if (!state.mounted) {
@@ -108,6 +120,17 @@ class MainState extends CommonState<MainWidget> {
         builder: (BuildContext context) => const MenuWidget(),
       ),
     );
+  }
+
+  Future<void> _navigateToSettings() async {
+    NavigatorState state = Navigator.of(context);
+    await logger.log(LogLevel.info, 'Opening settings widget');
+    await state.push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const SettingsWidget(),
+      ),
+    );
+    await logger.log(LogLevel.info, 'Closed settings widget');
   }
 
   @override
@@ -130,6 +153,13 @@ class MainState extends CommonState<MainWidget> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Touhou Labyrinth 2 Save Editor'),
+        actions: <Widget>[
+          TAppBarButton(
+            text: 'Settings',
+            icon: Icons.settings,
+            onTap: _navigateToSettings,
+          ),
+        ],
       ),
       body: ListView(
         children: <Widget>[
