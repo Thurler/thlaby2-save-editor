@@ -1,0 +1,38 @@
+name: Test Build Windows
+
+on:
+  push:
+    branches:
+      - 'test/**'
+
+jobs:
+  build-windows:
+    name: Windows Native Build
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Flutter Environment
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.10'
+          cache: true
+          cache-key: 'flutter-3-3-10-windows'
+          cache-path: ${{ runner.tool_cache }}/flutter/windows-3-3-10
+
+      - name: Flutter Config
+        run: flutter config --enable-windows-desktop --no-analytics
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      - name: Flutter Build Windows Native
+        run: flutter build windows --release
+
+      - name: Archive Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: thlaby2-save-editor-windows
+          path: build/windows/runner/Release/*
