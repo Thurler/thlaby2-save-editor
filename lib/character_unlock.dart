@@ -3,6 +3,7 @@ import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/string_extension.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 class CharacterUnlockWidget extends StatefulWidget {
@@ -132,7 +133,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          '${name.replaceRange(0, 1, name[0].toUpperCase())}:',
+          '${name.upperCaseFirstChar()}:',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: highlighted ? Colors.green : null,
@@ -206,6 +207,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     _toggleButtons = Wrap(
       spacing: 20,
       runSpacing: 10,
+      alignment: WrapAlignment.center,
       children: <Widget>[
         TButton(
           text: 'Only starting characters',

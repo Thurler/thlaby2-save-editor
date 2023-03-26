@@ -6,6 +6,8 @@ import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/party_data.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/settings.dart';
 import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
@@ -71,6 +73,20 @@ class MenuState extends CommonState<MenuWidget> {
     await logger.log(LogLevel.debug, 'Closed character unlock edit widget');
   }
 
+  Future<void> _editPartyData() async {
+    NavigatorState state = Navigator.of(context);
+    await logger.log(LogLevel.debug, 'Opening party data edit widget');
+    if (!state.mounted) {
+      return;
+    }
+    await state.push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const PartyDataWidget(),
+      ),
+    );
+    await logger.log(LogLevel.debug, 'Closed party data edit widget');
+  }
+
   Future<void> _saveSteamSaveFile() async {
     await logger.log(LogLevel.debug, 'Export Steam Save File called');
     String? result = await FilePicker.platform.saveFile(
@@ -84,11 +100,14 @@ class MenuState extends CommonState<MenuWidget> {
     await logger.log(LogLevel.debug, 'Exporting save file in Steam format');
     try {
       File rawFile = File(result);
-      StringBuffer logBuffer = StringBuffer();
+      LogBuffer logBuffer = LogBuffer();
       List<int> contents = saveFileWrapper.saveFile.exportSteam(logBuffer);
       await rawFile.writeAsBytes(contents);
-      for (String line in LineSplitter.split(logBuffer.toString())) {
+      for (String line in LineSplitter.split(logBuffer.debug.toString())) {
         await logger.log(LogLevel.debug, line);
+      }
+      for (String line in LineSplitter.split(logBuffer.error.toString())) {
+        await logger.log(LogLevel.error, line);
       }
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);
@@ -123,9 +142,10 @@ class MenuState extends CommonState<MenuWidget> {
         icon: Icons.lock_person_outlined,
         onPressed: _editCharacterUnlock,
       ),
-      const TButton(
+      TButton(
         text: 'Party Data',
         icon: Icons.groups,
+        onPressed: _editPartyData,
       ),
       const TButton(
         text: 'Bestiary Data',

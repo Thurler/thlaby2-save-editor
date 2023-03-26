@@ -10,8 +10,11 @@ import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/settings.dart';
 import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/widgets/dialog.dart';
+import 'package:window_size/window_size.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   // If settings file doesn't exist, create one from defaults
   File settingsFile = File('./settings.json');
   try {
@@ -21,6 +24,11 @@ void main() {
     }
   } catch (e) {
     // Failed to create a default settings file, keep going as is
+  }
+  // Set minimum width and height to stop my responsive nightmares
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowTitle('Touhou Labyrinth 2 Save Editor');
+    setWindowMinSize(const Size(640, 360));
   }
   runApp(const MyApp());
 }
@@ -82,6 +90,7 @@ class MainState extends CommonState<MainWidget> {
       await logger.log(LogLevel.debug, 'No file selected');
       return;
     }
+    bool hasErrors = false;
     try {
       await logger.log(LogLevel.info, 'Loading save file in Steam format');
       String path = result.files.first.path ?? '';
@@ -89,10 +98,14 @@ class MainState extends CommonState<MainWidget> {
       await logger.log(LogLevel.debug, 'File selected: $name');
       File rawFile = File(path);
       List<int> bytes = await rawFile.readAsBytes();
-      StringBuffer logBuffer = StringBuffer();
+      LogBuffer logBuffer = LogBuffer();
       saveFileWrapper.saveFile = SaveFile.fromSteamBytes(bytes, logBuffer);
-      for (String line in LineSplitter.split(logBuffer.toString())) {
+      for (String line in LineSplitter.split(logBuffer.debug.toString())) {
         await logger.log(LogLevel.debug, line);
+      }
+      for (String line in LineSplitter.split(logBuffer.error.toString())) {
+        hasErrors = true;
+        await logger.log(LogLevel.error, line);
       }
       await logger.log(LogLevel.info, 'Steam save file loaded successfully');
     } on FileSystemException catch (e) {
@@ -111,6 +124,20 @@ class MainState extends CommonState<MainWidget> {
     } on Exception catch (e, s) {
       await handleUnexpectedException(e, s);
       return;
+    }
+    if (hasErrors) {
+      await showCommonDialog(
+        const TWarningDialog(
+          title: 'The loaded save file had errors',
+          body: 'Some of the data that was read seemed to contain invalid '
+            'values. Please check the "applicationlog.txt" file for more '
+            'information.\n\nIf you are sure the uploaded file was not '
+            'tampered with, please report this as an issue at the link below, '
+            'including your save file and the "applicationlog.txt" file:\n'
+            'https://github.com/Thurler/thlaby2-save-editor/issues',
+          confirmText: 'OK',
+        ),
+      );
     }
     if (!state.mounted) {
       return;
