@@ -207,6 +207,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     _toggleButtons = Wrap(
       spacing: 20,
       runSpacing: 10,
+      alignment: WrapAlignment.center,
       children: <Widget>[
         TButton(
           text: 'Only starting characters',
