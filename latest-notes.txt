@@ -1,5 +1,8 @@
-Release Notes for Version 0.1.0
-===============================
+Release Notes
+=============
 
-- Fully edit which of the 56 characters are unlocked
-- Only supports the Steam save format for now
+- Fully edit which characters are in your party
+- Added missing validations when importing and exporting a save file
+- Added proper logging with a configurable log level setting
+- Set minimum window width and height to prevent UI issues
+- Several visual improvements

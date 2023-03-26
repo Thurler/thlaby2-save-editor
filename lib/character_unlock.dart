@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/string_extension.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 
 class CharacterUnlockWidget extends StatefulWidget {
@@ -15,6 +17,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   late List<CharacterUnlockFlag> _flags;
   late List<CharacterUnlockFlag> _original;
   late Widget _toggleButtons;
+  CharacterUnlockFlag? _hover;
 
   //
   // Properly check for and validate changes, save/commit them
@@ -33,12 +36,23 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     if (!_hasChanges()) {
       return true;
     }
-    return showUnsavedChangesDialog();
+    bool canDiscard = await showUnsavedChangesDialog();
+    if (canDiscard) {
+      await logger.log(
+        LogLevel.info,
+        'Discarding changes to character unlock flags',
+      );
+    }
+    return canDiscard;
   }
 
   Future<void> _saveChanges() async {
     // Display a warning if trying to lock one of the 4 starting characters
     if (_flags.sublist(0, 4).any((CharacterUnlockFlag f)=>!f.isUnlocked)) {
+      await logger.log(
+        LogLevel.warning,
+        'Attempting to lock one of the initial 4 characters',
+      );
       bool doSave = await showSaveWarningDialog(
         'Reimu, Marisa, Rinnosuke, and Keine are starting characters. They '
         'cannot be recruited again if you lock them back',
@@ -47,6 +61,20 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
         return;
       }
     }
+    // Display a warning if trying to lock all characters
+    if (_flags.every((CharacterUnlockFlag f)=>!f.isUnlocked)) {
+      await logger.log(
+        LogLevel.warning,
+        'Attempting to lock all characters',
+      );
+      bool doSave = await showSaveWarningDialog(
+        'If you lock all characters, you will be unable to do anything in-game',
+      );
+      if (!doSave) {
+        return;
+      }
+    }
+    await logger.log(LogLevel.info, 'Saved changes');
     setState(() {
       _original = _flags.deepCopyElements(CharacterUnlockFlag.from);
       saveFileWrapper.saveFile.characterUnlockFlags = _original;
@@ -58,7 +86,9 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   // or for entire groups from the preset buttons
   //
 
-  void _toggleUnlockedData(CharacterUnlockFlag flag) {
+  Future<void> _toggleUnlockedData(CharacterUnlockFlag flag) async {
+    String state = (flag.isUnlocked) ? 'locked' : 'unlocked';
+    await logger.log(LogLevel.debug, '${flag.character.name} is now $state');
     setState((){
       flag.isUnlocked = !flag.isUnlocked;
     });
@@ -75,15 +105,18 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     });
   }
 
-  void _pressOnlyStartingCharacters() {
+  Future<void> _pressOnlyStartingCharacters() async {
+    await logger.log(LogLevel.debug, 'Applying preset: starting 4 characters');
     _unlockCharactersUpToIndex(4);
   }
 
-  void _pressOnlyBase48Characters() {
+  Future<void> _pressOnlyBase48Characters() async {
+    await logger.log(LogLevel.debug, 'Applying preset: base 48 characters');
     _unlockCharactersUpToIndex(48);
   }
 
-  void _pressAllCharacters() {
+  Future<void> _pressAllCharacters() async {
+    await logger.log(LogLevel.debug, 'Applying preset: all 56 characters');
     _unlockCharactersUpToIndex(_flags.length);
   }
 
@@ -92,6 +125,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   //
 
   Widget _drawCharacter(CharacterUnlockFlag flag) {
+    bool highlighted = _hover == flag;
     // Character name acts as a title for the box, along with an explicit
     // description of the state - "locked"/"unlocked" and an icon
     String name = flag.character.name;
@@ -99,20 +133,23 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          '${name.replaceRange(0, 1, name[0].toUpperCase())}:',
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          '${name.upperCaseFirstChar()}:',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: highlighted ? Colors.green : null,
+          ),
         ),
         const SizedBox(width: 5),
         Text(
           (flag.isUnlocked) ? 'Unlocked' : 'Locked',
           style: TextStyle(
-            color: Colors.grey.shade700,
+            color: highlighted ? Colors.green : Colors.grey.shade700,
           ),
         ),
         Icon(
           (flag.isUnlocked) ? Icons.lock_open : Icons.lock,
           size: 14,
-          color: Colors.grey.shade700,
+          color: highlighted ? Colors.green : Colors.grey.shade700,
         ),
       ],
     );
@@ -139,15 +176,23 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     image = DecoratedBox(
       position: DecorationPosition.foreground,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade700),
+        border: Border.all(
+          width: highlighted ? 2 : 1,
+          color: highlighted ? Colors.green : Colors.grey.shade700,
+        ),
       ),
       child: image,
     );
     List<Widget> elements = <Widget>[title, image];
     return GestureDetector(
-      onTap: ()=>_toggleUnlockedData(flag),
-      child: Column(
-        children: elements.separateWith(const SizedBox(height: 2)),
+      onTap: () async =>_toggleUnlockedData(flag),
+      child: MouseRegion(
+        onEnter: (PointerEvent e)=>setState((){_hover = flag;}),
+        onExit: (PointerEvent e)=>setState((){_hover = null;}),
+        cursor: SystemMouseCursors.click,
+        child: Column(
+          children: elements.separateWith(const SizedBox(height: 2)),
+        ),
       ),
     );
   }
@@ -162,6 +207,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     _toggleButtons = Wrap(
       spacing: 20,
       runSpacing: 10,
+      alignment: WrapAlignment.center,
       children: <Widget>[
         TButton(
           text: 'Only starting characters',
