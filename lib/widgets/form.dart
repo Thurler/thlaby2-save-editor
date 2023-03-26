@@ -68,7 +68,7 @@ class TDropdownForm extends TForm {
           return DropdownMenuItem<String>(
             value: option,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 15, 0, 15),
+              padding: const EdgeInsets.only(left: 20),
               child: Text(option),
             ),
           );
