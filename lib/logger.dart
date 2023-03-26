@@ -12,6 +12,7 @@ enum LogLevel {
 class Logger {
   static final Logger _logger = Logger._internal();
   static const String filename = './applicationlog.txt';
+  static const String version = '0.2.0';
   LogLevel logLevel = LogLevel.info;
   bool _hasInitialized = false;
   late IOSink sink;
@@ -31,7 +32,7 @@ class Logger {
     }
     File logFile = File(filename);
     sink = logFile.openWrite();
-    sink.writeln('${_currentTimestamp()} | Save Editor v0.1.0 opened');
+    sink.writeln('${_currentTimestamp()} | Save Editor v$version opened');
     await sink.flush();
   }
 
