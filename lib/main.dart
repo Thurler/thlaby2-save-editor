@@ -11,8 +11,10 @@ import 'package:thlaby2_save_editor/settings.dart';
 import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
+import 'package:window_size/window_size.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   // If settings file doesn't exist, create one from defaults
   File settingsFile = File('./settings.json');
   try {
@@ -22,6 +24,11 @@ void main() {
     }
   } catch (e) {
     // Failed to create a default settings file, keep going as is
+  }
+  // Set minimum width and height to stop my responsive nightmares
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowTitle('Touhou Labyrinth 2 Save Editor');
+    setWindowMinSize(const Size(640, 360));
   }
   runApp(const MyApp());
 }

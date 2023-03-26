@@ -87,8 +87,15 @@ class PartySlot {
     isUsed = true;
   }
 
+  PartySlot.from(PartySlot other) {
+    isUsed = other.isUsed;
+    if (isUsed) {
+      character = other.character;
+    }
+  }
+
   int toByte() {
-    return CharacterName.values.indexOf(character) + 1;
+    return isUsed ? CharacterName.values.indexOf(character) + 1 : 0;
   }
 
   @override
