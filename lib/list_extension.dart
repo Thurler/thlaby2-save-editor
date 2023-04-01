@@ -36,6 +36,14 @@ extension ListExtension<T> on List<T> {
     return result;
   }
 
+  int getI16(Endian endianness, {int offset = 0}) {
+    int result = getU16(endianness, offset: offset);
+    if (result > pow(2, 15)) {
+      result -= pow(2, 16) as int;
+    }
+    return result;
+  }
+
   int getU32(Endian endianness, {int offset = 0}) {
     int result = 0;
     List<int> operands = sublist(offset, offset + 4).map(
@@ -47,6 +55,14 @@ extension ListExtension<T> on List<T> {
         operand = operands[3 - i];
       }
       result += operand * (pow(256, i) as int);
+    }
+    return result;
+  }
+
+  int getI32(Endian endianness, {int offset = 0}) {
+    int result = getU32(endianness, offset: offset);
+    if (result > pow(2, 31)) {
+      result -= pow(2, 32) as int;
     }
     return result;
   }

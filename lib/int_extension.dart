@@ -24,6 +24,22 @@ extension IntExtension on int {
       return bytes.reversed;
     }
   }
+
+  Iterable<int> toI16(Endian endianness) {
+    int operand = this;
+    if (operand < 0) {
+      operand += pow(2, 16) as int;
+    }
+    return operand.toU16(endianness);
+  }
+
+  Iterable<int> toI32(Endian endianness) {
+    int operand = this;
+    if (operand < 0) {
+      operand += pow(2, 32) as int;
+    }
+    return operand.toU32(endianness);
+  }
 }
 
 extension BigIntExtension on BigInt {

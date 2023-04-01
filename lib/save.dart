@@ -461,8 +461,8 @@ class CharacterData {
     );
     skills = SkillData.fromBytes(bytes, 0x60);
     tomes = TomeData.fromBytes(bytes, 0xd8);
-    unusedSkillPoints = bytes.getU16(endianness, offset: 0xec);
-    unusedBonusPoints = bytes.getU32(endianness, offset: 0xee);
+    unusedSkillPoints = bytes.getI16(endianness, offset: 0xec);
+    unusedBonusPoints = bytes.getI32(endianness, offset: 0xee);
     gems = GemData.fromBytes(bytes, 0xf2);
     usedManuals = bytes[0x102];
     bp = bytes.getU32(endianness, offset: 0x103);
@@ -503,8 +503,8 @@ class CharacterData {
     bytes = bytes.followedBy(subclassIndex.toU32(endianness));
     bytes = bytes.followedBy(skills.toBytes(endianness));
     bytes = bytes.followedBy(tomes.toBytes(endianness));
-    bytes = bytes.followedBy(unusedSkillPoints.toU16(endianness));
-    bytes = bytes.followedBy(unusedBonusPoints.toU32(endianness));
+    bytes = bytes.followedBy(unusedSkillPoints.toI16(endianness));
+    bytes = bytes.followedBy(unusedBonusPoints.toI32(endianness));
     bytes = bytes.followedBy(gems.toBytes(endianness));
     bytes = bytes.followedBy(<int>[usedManuals]);
     bytes = bytes.followedBy(bp.toU32(endianness));
