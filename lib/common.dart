@@ -95,9 +95,13 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
     return showBoolDialog(dialog);
   }
 
-  Future<bool> showSaveWarningDialog(String warning) {
+  Future<bool> showSaveWarningDialog(String warning, {bool breaking = true}) {
+    String title = 'Your changes will have side effects!';
+    if (breaking) {
+      title = 'Your changes might break the game!';
+    }
     TBoolDialog dialog = TBoolDialog(
-      title: 'Your changes might break the game!',
+      title: title,
       body: '$warning. Are you sure you want to save these changes?',
       confirmText: 'Yes, save them',
       cancelText: 'No, take me back',

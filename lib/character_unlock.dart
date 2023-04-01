@@ -47,6 +47,36 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   }
 
   Future<void> _saveChanges() async {
+    // Display a warning if trying to lock characters that are in the party
+    List<PartySlot> party = saveFileWrapper.saveFile.partyData;
+    List<CharacterUnlockFlag> lockedPartyCharacters = _flags.where(
+      (CharacterUnlockFlag f) => !f.isUnlocked && party.any(
+        (PartySlot s) => s.isUsed && s.character == f.character,
+      ),
+    ).toList();
+    if (lockedPartyCharacters.isNotEmpty) {
+      await logger.log(
+        LogLevel.warning,
+        'Attempting to lock a character that is in the party',
+      );
+      String affectedCharacters = lockedPartyCharacters.map(
+        (CharacterUnlockFlag f)=>f.character.name.upperCaseFirstChar(),
+      ).join(', ');
+      bool doSave = await showSaveWarningDialog(
+        '$affectedCharacters are being locked, but they are in your party. '
+        'Saving will remove them from your party',
+        breaking: false,
+      );
+      if (!doSave) {
+        return;
+      }
+      for (CharacterUnlockFlag flag in lockedPartyCharacters) {
+        PartySlot slot = party.firstWhere(
+          (PartySlot s) => s.isUsed && s.character == flag.character,
+        );
+        slot.isUsed = false;
+      }
+    }
     // Display a warning if trying to lock one of the 4 starting characters
     if (_flags.sublist(0, 4).any((CharacterUnlockFlag f)=>!f.isUnlocked)) {
       await logger.log(
