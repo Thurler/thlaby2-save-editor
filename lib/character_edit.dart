@@ -29,7 +29,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   Widget build(BuildContext context) {
     String characterName = widget.character.name.upperCaseFirstChar();
     Widget backgroundPortrait = Align(
-      alignment: Alignment.centerRight,
+      alignment: Alignment.bottomRight,
       child: Image.asset(
         'img/character/${getCharacterFilename(widget.character)}.png',
       ),
@@ -43,7 +43,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         },
         children: headers.asMap().entries.map((MapEntry<int, String> header) {
           return ExpansionPanel(
-            backgroundColor: Colors.green.shade200.withOpacity(0.7),
+            backgroundColor: Colors.white,
             canTapOnHeader: true,
             isExpanded: expanded[header.key],
             headerBuilder: (BuildContext context, bool isExpanded) => ListTile(
@@ -73,11 +73,11 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
             appBar: AppBar(
               title: Text("Editing $characterName's data"),
             ),
-            backgroundColor: Colors.white.withOpacity(0.25),
+            backgroundColor: Colors.white.withOpacity(0.2),
             body: ListView(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 200, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 250, 0),
                   child: Column(
                     children: columnChildren.separateWith(
                       const SizedBox(height: 20),

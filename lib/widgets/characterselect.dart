@@ -80,12 +80,10 @@ class TCharacterSelectState extends CommonState<TCharacterSelect> {
     }
     // Main image using SS variant
     String characterFilename = getCharacterFilename(character);
-    String filename = 'img/character/${characterFilename}_SS.png';
+    String filename = 'img/character/${characterFilename}_S.png';
     Widget image = Image.asset(
       filename,
       fit: BoxFit.contain,
-      width: 200,
-      height: 29,
     );
     // Add a grayscale filter if the character is locked
     if (!isUnlocked) {
