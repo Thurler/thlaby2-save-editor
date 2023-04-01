@@ -19,7 +19,7 @@ class CharacterSelectState extends CommonState<CharacterSelectWidget> {
   //
 
   Widget _drawCharacter(CharacterName character) {
-    int index = CharacterName.values.indexOf(character);
+    int index = character.index;
     SaveFile saveFile = saveFileWrapper.saveFile;
     bool isUnlocked = saveFile.characterUnlockFlags[index].isUnlocked;
     bool highlighted = _hover == character && isUnlocked;
