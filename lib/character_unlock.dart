@@ -5,6 +5,7 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/string_extension.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/widgets/characterselect.dart';
 
 class CharacterUnlockWidget extends StatefulWidget {
   const CharacterUnlockWidget({super.key});
@@ -17,7 +18,6 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   late List<CharacterUnlockFlag> _flags;
   late List<CharacterUnlockFlag> _original;
   late Widget _toggleButtons;
-  CharacterUnlockFlag? _hover;
 
   //
   // Properly check for and validate changes, save/commit them
@@ -116,6 +116,14 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   // or for entire groups from the preset buttons
   //
 
+  void _characterTap(CharacterName character) {
+    CharacterUnlockFlag flag = _flags.firstWhere(
+      (CharacterUnlockFlag f) => f.character == character,
+    );
+    // ignore: discarded_futures
+    _toggleUnlockedData(flag);
+  }
+
   Future<void> _toggleUnlockedData(CharacterUnlockFlag flag) async {
     String state = (flag.isUnlocked) ? 'locked' : 'unlocked';
     await logger.log(LogLevel.debug, '${flag.character.name} is now $state');
@@ -151,79 +159,25 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   }
 
   //
-  // Helper functions to draw stuff on screen, helps declutter the build method
+  // Function to draw specific widget on screen, helps declutter build()
   //
 
-  Widget _drawCharacter(CharacterUnlockFlag flag) {
-    bool highlighted = _hover == flag;
-    // Character name acts as a title for the box, along with an explicit
-    // description of the state - "locked"/"unlocked" and an icon
-    String name = flag.character.name;
-    Widget title = Row(
+  Widget _drawLockedHeader(bool isUnlocked, bool isHighlighted) {
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          '${name.upperCaseFirstChar()}:',
+          isUnlocked ? 'Unlocked' : 'Locked',
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: highlighted ? Colors.green : null,
-          ),
-        ),
-        const SizedBox(width: 5),
-        Text(
-          (flag.isUnlocked) ? 'Unlocked' : 'Locked',
-          style: TextStyle(
-            color: highlighted ? Colors.green : Colors.grey.shade700,
+            color: isHighlighted ? Colors.green : Colors.grey.shade700,
           ),
         ),
         Icon(
-          (flag.isUnlocked) ? Icons.lock_open : Icons.lock,
+          isUnlocked ? Icons.lock_open : Icons.lock,
           size: 14,
-          color: highlighted ? Colors.green : Colors.grey.shade700,
+          color: isHighlighted ? Colors.green : Colors.grey.shade700,
         ),
       ],
-    );
-    // Main image using SS variant
-    String characterFilename = getCharacterFilename(flag.character);
-    String filename = 'img/character/${characterFilename}_SS.png';
-    Widget image = Image.asset(
-      filename,
-      fit: BoxFit.contain,
-      width: 200,
-      height: 29,
-    );
-    // Add a grayscale filter if the character is locked
-    if (!flag.isUnlocked) {
-      image = ColorFiltered(
-        colorFilter: const ColorFilter.mode(
-          Colors.white,
-          BlendMode.saturation,
-        ),
-        child: image,
-      );
-    }
-    // Put it in a DecoratedBox to give it a border - hides the portrait cutoffs
-    image = DecoratedBox(
-      position: DecorationPosition.foreground,
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: highlighted ? 2 : 1,
-          color: highlighted ? Colors.green : Colors.grey.shade700,
-        ),
-      ),
-      child: image,
-    );
-    List<Widget> elements = <Widget>[title, image];
-    return GestureDetector(
-      onTap: () async =>_toggleUnlockedData(flag),
-      child: MouseRegion(
-        onEnter: (PointerEvent e)=>setState((){_hover = flag;}),
-        onExit: (PointerEvent e)=>setState((){_hover = null;}),
-        cursor: SystemMouseCursors.click,
-        child: Column(
-          children: elements.separateWith(const SizedBox(height: 2)),
-        ),
-      ),
     );
   }
 
@@ -263,15 +217,14 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> characters = _flags.map(_drawCharacter).toList();
-    Wrap characterWrap = Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: characters,
-    );
     List<Widget> columnChildren = <Widget>[
       _toggleButtons,
-      characterWrap,
+      TCharacterSelect(
+        characterTapFunction: _characterTap,
+        highlightIfLocked: true,
+        unlockFlags: _flags,
+        titleAppend: _drawLockedHeader,
+      ),
     ];
     bool shouldSave = _hasChanges();
     Widget? floatingActionButton;
