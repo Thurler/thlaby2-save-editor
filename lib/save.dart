@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+import 'package:thlaby2_save_editor/int_extension.dart';
+import 'package:thlaby2_save_editor/list_extension.dart';
+
 enum CharacterName {
   reimu,
   marisa,
@@ -95,7 +99,7 @@ class PartySlot {
   }
 
   int toByte() {
-    return isUsed ? CharacterName.values.indexOf(character) + 1 : 0;
+    return isUsed ? character.index + 1 : 0;
   }
 
   @override
@@ -131,6 +135,7 @@ class LogBuffer {
 
 class SaveFile {
   static const int steamFileSize = 257678;
+  static const int characterDataLength = 271;
 
   late List<CharacterUnlockFlag> characterUnlockFlags;
   List<int> achievementData = <int>[];
