@@ -28,7 +28,7 @@ void main() {
   // Set minimum width and height to stop my responsive nightmares
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle('Touhou Labyrinth 2 Save Editor');
-    setWindowMinSize(const Size(853, 480));
+    setWindowMinSize(const Size(800, 400));
   }
   runApp(const MyApp());
 }
