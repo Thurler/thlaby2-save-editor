@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thlaby2_save_editor/character_edit.dart';
 import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
@@ -34,7 +35,24 @@ class CharacterUnlockState extends CommonState<CharacterDataWidget> {
   }
 
   void _characterTap(CharacterName character) {
-    print(character.name);
+    // ignore: discarded_futures
+    _navigateToCharacterData(character);
+  }
+
+  Future<void> _navigateToCharacterData(CharacterName character) async {
+    NavigatorState state = Navigator.of(context);
+    await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
+    if (!state.mounted) {
+      return;
+    }
+    await state.push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => CharacterEditWidget(
+          character: character,
+        ),
+      ),
+    );
+    await logger.log(LogLevel.debug, 'Closed character unlock edit widget');
   }
 
   @override
