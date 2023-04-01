@@ -133,13 +133,9 @@ class MenuState extends CommonState<MenuWidget> {
         text: 'Event Data',
         icon: Icons.warning_amber,
       ),
-      const TButton(
+      TButton(
         text: 'Character Data',
         icon: Icons.person,
-      ),
-      TButton(
-        text: 'Character Unlock Data',
-        icon: Icons.lock_person_outlined,
         onPressed: _editCharacterUnlock,
       ),
       TButton(
@@ -148,20 +144,16 @@ class MenuState extends CommonState<MenuWidget> {
         onPressed: _editPartyData,
       ),
       const TButton(
+        text: 'Achievement Data',
+        icon: Icons.star_border_purple500,
+      ),
+      const TButton(
         text: 'Bestiary Data',
         icon: Icons.school_outlined,
       ),
       const TButton(
         text: 'Inventory Data',
         icon: Icons.inventory_2_outlined,
-      ),
-      const TButton(
-        text: 'Inventory Unlock Data',
-        icon: Icons.inventory_outlined,
-      ),
-      const TButton(
-        text: 'Achievement Data',
-        icon: Icons.star_border_purple500,
       ),
       const TButton(
         text: 'Map Data',
