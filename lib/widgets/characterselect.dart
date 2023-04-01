@@ -26,14 +26,24 @@ class TCharacterSelectState extends CommonState<TCharacterSelect> {
   CharacterName? _hover;
   late List<CharacterUnlockFlag> flags;
 
-  @override
-  void initState() {
-    super.initState();
+  void callUpdateFlags() {
+    setState(() {
+      _updateFlags();
+    });
+  }
+
+  void _updateFlags() {
     SaveFile saveFile = saveFileWrapper.saveFile;
     flags = saveFile.characterUnlockFlags;
     if (widget.unlockFlags != null) {
       flags = widget.unlockFlags!;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _updateFlags();
   }
 
   //

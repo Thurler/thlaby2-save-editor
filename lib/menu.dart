@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/character_unlock.dart';
+import 'package:thlaby2_save_editor/character_data.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
@@ -59,18 +59,18 @@ class MenuState extends CommonState<MenuWidget> {
     await logger.log(LogLevel.info, 'Closed settings widget');
   }
 
-  Future<void> _editCharacterUnlock() async {
+  Future<void> _editCharacterData() async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
+    await logger.log(LogLevel.debug, 'Opening character data edit widget');
     if (!state.mounted) {
       return;
     }
     await state.push(
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => const CharacterUnlockWidget(),
+        builder: (BuildContext context) => const CharacterDataWidget(),
       ),
     );
-    await logger.log(LogLevel.debug, 'Closed character unlock edit widget');
+    await logger.log(LogLevel.debug, 'Closed character data edit widget');
   }
 
   Future<void> _editPartyData() async {
@@ -136,7 +136,7 @@ class MenuState extends CommonState<MenuWidget> {
       TButton(
         text: 'Character Data',
         icon: Icons.person,
-        onPressed: _editCharacterUnlock,
+        onPressed: _editCharacterData,
       ),
       TButton(
         text: 'Party Data',
