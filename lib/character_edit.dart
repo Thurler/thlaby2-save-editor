@@ -28,12 +28,15 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   @override
   Widget build(BuildContext context) {
     String characterName = widget.character.name.upperCaseFirstChar();
-    Widget backgroundPortrait = Image.asset(
-      'img/character/${getCharacterFilename(widget.character)}.png',
-      alignment: Alignment.bottomRight,
-      fit: BoxFit.fitHeight,
-      width: double.infinity,
-      height: double.infinity,
+    Widget backgroundPortrait = Opacity(
+      opacity: 0.8,
+      child: Image.asset(
+        'img/character/${getCharacterFilename(widget.character)}.png',
+        alignment: Alignment.bottomRight,
+        fit: BoxFit.fitHeight,
+        width: double.infinity,
+        height: double.infinity,
+      ),
     );
     List<Widget> columnChildren = <Widget>[
       ExpansionPanelList(
@@ -69,7 +72,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       onWillPop: ()=>Future<bool>.value(true),
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Editing $characterName's data"),
+          title: Text("Edit $characterName's data"),
         ),
         backgroundColor: Colors.white.withOpacity(0.2),
         body: Stack(
