@@ -90,6 +90,10 @@ abstract class ExpansionForm {
     return controller.text;
   }
 
+  String saveValue() {
+    return initialValue = getValue();
+  }
+
   void initForm(SetStateFunction setStateFunc, String value) {
     setStateCallback = setStateFunc;
     initialValue = value;
@@ -111,7 +115,7 @@ class NumberExpansionForm extends ExpansionForm {
     required this.maxValue,
   });
 
-  void validate(String raw) {
+  void validate(String raw, {bool callSetState = true}) {
     BigInt value = BigInt.parse(raw);
     if (value < minValue) {
       error = 'Value must be at least ${minValue.toCommaSeparatedNotation()}';
@@ -120,7 +124,20 @@ class NumberExpansionForm extends ExpansionForm {
     } else {
       error = '';
     }
-    setStateCallback((){});
+    if (callSetState) {
+      setStateCallback((){});
+    }
+  }
+
+  @override
+  void initForm(SetStateFunction setStateFunc, String value) {
+    validate(value.replaceAll(',', ''), callSetState: false);
+    super.initForm(setStateFunc, value);
+  }
+
+  @override
+  String saveValue() {
+    return super.saveValue().replaceAll(',', '');
   }
 
   @override
@@ -147,11 +164,13 @@ class DropdownExpansionForm extends ExpansionForm {
     required this.options,
   });
 
-  void onChanged(String? chosen) {
+  void onChanged(String? chosen, {bool callSetState = true}) {
     if (chosen != null) {
       error = validateFunction(chosen);
       controller.text = chosen;
-      setStateCallback((){});
+      if (callSetState) {
+        setStateCallback((){});
+      }
     }
   }
 
@@ -161,6 +180,7 @@ class DropdownExpansionForm extends ExpansionForm {
     String Function(String) validation,
   ) {
     validateFunction = validation;
+    onChanged(value, callSetState: false);
     super.initForm(setStateFunc, value);
   }
 
@@ -208,9 +228,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   final NumberExpansionForm bpForm = NumberExpansionForm(
     controller: TextEditingController(),
     title: 'Battle Points',
-    subtitle: 'Must be between 0 and 4,294,967,295',
+    subtitle: 'Must be between 0 and 2,147,483,647',
     minValue: BigInt.from(0),
-    maxValue: BigInt.from(4294967295),
+    maxValue: BigInt.from(2147483647),
   );
 
   final DropdownExpansionForm subclassForm = DropdownExpansionForm(
@@ -276,6 +296,21 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   }
 
   Future<void> _saveChanges() async {
+    // Get save file reference and commit changes to forms
+    int characterIndex = widget.character.index;
+    CharacterData data = saveFileWrapper.saveFile.characterData[characterIndex];
+
+    // Basic info - level, exp, bp, subclass
+    data.level = int.parse(levelForm.saveValue());
+    data.experience = BigInt.parse(expForm.saveValue());
+    data.bp = int.parse(bpForm.saveValue());
+    Subclass chosen = Subclass.values.firstWhere(
+      (Subclass s) => s.prettyName == subclassForm.saveValue(),
+    );
+    data.subclass = chosen;
+
+    // Refresh widget to get rid of the save symbol
+    setState((){});
   }
 
   @override
@@ -295,10 +330,11 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       ExpansionGroup(title: 'Equipment', forms: <ExpansionForm>[]),
     ];
 
+    // Initialize form data based on save data
     int characterIndex = widget.character.index;
     CharacterData data = saveFileWrapper.saveFile.characterData[characterIndex];
 
-    // Initialize form data based on save data
+    // Basic info - level, exp, bp, subclass
     levelForm.initForm(setState, data.level.toCommaSeparatedNotation());
     expForm.initForm(setState, data.experience.toCommaSeparatedNotation());
     bpForm.initForm(setState, data.bp.toCommaSeparatedNotation());
