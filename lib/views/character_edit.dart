@@ -134,6 +134,16 @@ class NumberExpansionForm extends ExpansionForm {
     maxValue = BigInt.from(CharacterEditState.libraryElementCap);
   }
 
+  NumberExpansionForm.levelBonus({
+    required super.title,
+  }) : super(
+    subtitle: 'Must be between 0 and '
+      '${CharacterEditState.levelBonusCap.toCommaSeparatedNotation()}',
+  ) {
+    minValue = BigInt.from(0);
+    maxValue = BigInt.from(CharacterEditState.levelBonusCap);
+  }
+
   String validate(String raw, {bool callSetState = true}) {
     String ret = raw;
     BigInt value = BigInt.parse(raw);
@@ -236,6 +246,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   ];
   static const String expCap = '999999999999999999'; // Can go higher, but why
   static const int levelCap = 9999999; // Save load sets it to this if higher
+  static const int levelBonusCap = levelCap - 1;
   static const int bpCap = 2147483647; // Goes negative past this
   static const int libraryCap = 99999999; // Hard cap at library
   static const int libraryElementCap = 100; // Hard cap at library
@@ -277,6 +288,17 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     (String element) => NumberExpansionForm.libraryElement(
       title: '$element Level',
     ),
+  ).toList();
+
+  final NumberExpansionForm unusedLevelForm = NumberExpansionForm(
+    title: 'Unused points',
+    subtitle: 'Must be between -${levelBonusCap.toCommaSeparatedNotation()} to ${levelBonusCap.toCommaSeparatedNotation()}',
+    minValue: BigInt.from(-levelBonusCap),
+    maxValue: BigInt.from(levelBonusCap),
+  );
+
+  final List<NumberExpansionForm> levelBonusForms = stats.map(
+    (String stat) => NumberExpansionForm.levelBonus(title: 'Points in $stat'),
   ).toList();
 
   //
@@ -380,13 +402,13 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     );
     data.subclass = chosen;
 
-    // Library data
-    LibraryData libraryData = data.libraryLevels;
-    for (int i = 0; i < libraryForms.length; i++) {
-      libraryData.setStatData(i, libraryForms[i].saveValue());
+    // Library data + Level bonus data
+    for (int i = 0; i < stats.length; i++) {
+      data.libraryLevels.setStatData(i, libraryForms[i].saveValue());
+      data.levelBonus.setStatData(i, levelBonusForms[i].saveValue());
     }
-    for (int i = 0; i < libraryElementForms.length; i++) {
-      libraryData.setElementData(i, libraryElementForms[i].saveValue());
+    for (int i = 0; i < elements.length; i++) {
+      data.libraryLevels.setElementData(i, libraryElementForms[i].saveValue());
     }
 
     // Refresh widget to get rid of the save symbol
@@ -406,7 +428,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         title: 'Library points',
         forms: libraryForms + libraryElementForms,
       ),
-      ExpansionGroup(title: 'Level up bonuses', forms: <ExpansionForm>[]),
+      ExpansionGroup(
+        title: 'Level up bonuses',
+        forms: <ExpansionForm>[unusedLevelForm] + levelBonusForms,
+      ),
       ExpansionGroup(title: 'Skill points', forms: <ExpansionForm>[]),
       ExpansionGroup(title: 'Tomes', forms: <ExpansionForm>[]),
       ExpansionGroup(title: 'Gems', forms: <ExpansionForm>[]),
@@ -427,20 +452,27 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       _checkForDuplicateUniqueSubclasses,
     );
 
-    // Library info
-    LibraryData libraryData = data.libraryLevels;
-    for (int i = 0; i < libraryForms.length; i++) {
+    // Library info + Level up info
+    for (int i = 0; i < stats.length; i++) {
       libraryForms[i].initNumberForm(
         setState,
-        BigInt.from(libraryData.getStatData(i)),
+        BigInt.from(data.libraryLevels.getStatData(i)),
+      );
+      levelBonusForms[i].initNumberForm(
+        setState,
+        BigInt.from(data.levelBonus.getStatData(i)),
       );
     }
-    for (int i = 0; i < libraryElementForms.length; i++) {
+    for (int i = 0; i < elements.length; i++) {
       libraryElementForms[i].initNumberForm(
         setState,
-        BigInt.from(libraryData.getElementData(i)),
+        BigInt.from(data.libraryLevels.getElementData(i)),
       );
     }
+    unusedLevelForm.initNumberForm(
+      setState,
+      BigInt.from(data.unusedBonusPoints),
+    );
   }
 
   @override
