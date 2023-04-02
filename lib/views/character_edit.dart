@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
-import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/string_extension.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 
 class ExpansionGroup {

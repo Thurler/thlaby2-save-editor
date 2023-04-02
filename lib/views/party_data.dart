@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/character_select.dart';
 import 'package:thlaby2_save_editor/common.dart';
-import 'package:thlaby2_save_editor/iterable_extension.dart';
-import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/iterable_extension.dart';
+import 'package:thlaby2_save_editor/extensions/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/string_extension.dart';
+import 'package:thlaby2_save_editor/views/character_select.dart';
 
 class PartyDataWidget extends StatefulWidget {
   const PartyDataWidget({super.key});

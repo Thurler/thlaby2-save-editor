@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:thlaby2_save_editor/settings.dart';
+import 'package:thlaby2_save_editor/views/settings.dart';
 
 enum LogLevel {
   debug,

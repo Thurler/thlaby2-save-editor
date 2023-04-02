@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/character_edit.dart';
-import 'package:thlaby2_save_editor/character_unlock.dart';
 import 'package:thlaby2_save_editor/common.dart';
-import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/views/character_edit.dart';
+import 'package:thlaby2_save_editor/views/character_unlock.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/characterselect.dart';
 

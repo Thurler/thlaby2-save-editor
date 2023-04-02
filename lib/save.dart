@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-import 'package:thlaby2_save_editor/int_extension.dart';
-import 'package:thlaby2_save_editor/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/int_extension.dart';
+import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 
 enum CharacterName {
   reimu,
