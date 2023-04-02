@@ -28,11 +28,12 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   @override
   Widget build(BuildContext context) {
     String characterName = widget.character.name.upperCaseFirstChar();
-    Widget backgroundPortrait = Align(
+    Widget backgroundPortrait = Image.asset(
+      'img/character/${getCharacterFilename(widget.character)}.png',
       alignment: Alignment.bottomRight,
-      child: Image.asset(
-        'img/character/${getCharacterFilename(widget.character)}.png',
-      ),
+      fit: BoxFit.fitHeight,
+      width: double.infinity,
+      height: double.infinity,
     );
     List<Widget> columnChildren = <Widget>[
       ExpansionPanelList(
@@ -43,7 +44,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         },
         children: headers.asMap().entries.map((MapEntry<int, String> header) {
           return ExpansionPanel(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.white.withOpacity(0.9),
             canTapOnHeader: true,
             isExpanded: expanded[header.key],
             headerBuilder: (BuildContext context, bool isExpanded) => ListTile(
@@ -66,29 +67,31 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ];
     return WillPopScope(
       onWillPop: ()=>Future<bool>.value(true),
-      child: Stack(
-        children: <Widget>[
-          backgroundPortrait,
-          Scaffold(
-            appBar: AppBar(
-              title: Text("Editing $characterName's data"),
-            ),
-            backgroundColor: Colors.white.withOpacity(0.2),
-            body: ListView(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 250, 0),
-                  child: Column(
-                    children: columnChildren.separateWith(
-                      const SizedBox(height: 20),
-                      separatorOnEnds: true,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Editing $characterName's data"),
+        ),
+        backgroundColor: Colors.white.withOpacity(0.2),
+        body: Stack(
+          children: <Widget>[
+            backgroundPortrait,
+            Positioned.fill(
+              child: ListView(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 250, 0),
+                    child: Column(
+                      children: columnChildren.separateWith(
+                        const SizedBox(height: 20),
+                        separatorOnEnds: true,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
