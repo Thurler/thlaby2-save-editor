@@ -34,7 +34,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
         scrollbarTheme: ScrollbarThemeData(
+          trackColor: MaterialStateProperty.all(Colors.white.withOpacity(0.5)),
           thumbColor: MaterialStateProperty.all(Colors.green),
+          trackVisibility: MaterialStateProperty.all(true),
           thumbVisibility: MaterialStateProperty.all(true),
         ),
       ),
