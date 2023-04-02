@@ -18,6 +18,40 @@ class LibraryData {
   late int drk;
   late int phy;
 
+  int getStatData(int index) {
+    return <int>[hp, atk, def, mag, mnd, spd][index];
+  }
+
+  int getElementData(int index) {
+    return <int>[fir, cld, wnd, ntr, mys, spi, drk, phy][index];
+  }
+
+  void setStatData(int index, String raw) {
+    int value = int.parse(raw);
+    switch (index) {
+      case 0: hp = value; break;
+      case 1: atk = value; break;
+      case 2: def = value; break;
+      case 3: mag = value; break;
+      case 4: mnd = value; break;
+      case 5: spd = value; break;
+    }
+  }
+
+  void setElementData(int index, String raw) {
+    int value = int.parse(raw);
+    switch (index) {
+      case 0: fir = value; break;
+      case 1: cld = value; break;
+      case 2: wnd = value; break;
+      case 3: ntr = value; break;
+      case 4: mys = value; break;
+      case 5: spi = value; break;
+      case 6: drk = value; break;
+      case 7: phy = value; break;
+    }
+  }
+
   LibraryData.fromBytes(Endian endianness, List<int> bytes, int offset) {
     hp = bytes.getU32(endianness, offset: offset);
     atk = bytes.getU32(endianness, offset: offset + 4);

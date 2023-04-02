@@ -5,6 +5,7 @@ import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
+import 'package:thlaby2_save_editor/save/library.dart';
 import 'package:thlaby2_save_editor/widgets/badge.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 
@@ -74,14 +75,13 @@ class ExpansionGroup {
 
 abstract class ExpansionForm {
   late SetStateFunction setStateCallback;
-  final TextEditingController controller;
+  final TextEditingController controller = TextEditingController();
   final String title;
   final String subtitle;
   String initialValue = '';
   String error = '';
 
   ExpansionForm({
-    required this.controller,
     required this.title,
     required this.subtitle,
   });
@@ -104,16 +104,35 @@ abstract class ExpansionForm {
 }
 
 class NumberExpansionForm extends ExpansionForm {
-  final BigInt minValue;
-  final BigInt maxValue;
+  late BigInt minValue;
+  late BigInt maxValue;
 
   NumberExpansionForm({
-    required super.controller,
     required super.title,
     required super.subtitle,
     required this.minValue,
     required this.maxValue,
   });
+
+  NumberExpansionForm.library({
+    required super.title,
+  }) : super(
+    subtitle: 'Must be between 0 and '
+      '${CharacterEditState.libraryCap.toCommaSeparatedNotation()}',
+  ) {
+    minValue = BigInt.from(0);
+    maxValue = BigInt.from(CharacterEditState.libraryCap);
+  }
+
+  NumberExpansionForm.libraryElement({
+    required super.title,
+  }) : super(
+    subtitle: 'Must be between 0 and '
+      '${CharacterEditState.libraryElementCap.toCommaSeparatedNotation()}',
+  ) {
+    minValue = BigInt.from(0);
+    maxValue = BigInt.from(CharacterEditState.libraryElementCap);
+  }
 
   String validate(String raw, {bool callSetState = true}) {
     String ret = raw;
@@ -129,10 +148,9 @@ class NumberExpansionForm extends ExpansionForm {
     return ret;
   }
 
-  @override
-  void initForm(SetStateFunction setStateFunc, String value) {
-    validate(value.replaceAll(',', ''), callSetState: false);
-    super.initForm(setStateFunc, value);
+  void initNumberForm(SetStateFunction setStateFunc, BigInt value) {
+    validate(value.toString(), callSetState: false);
+    super.initForm(setStateFunc, value.toCommaSeparatedNotation());
   }
 
   BigInt getIntValue() {
@@ -162,7 +180,6 @@ class DropdownExpansionForm extends ExpansionForm {
   late String Function(String) validateFunction;
 
   DropdownExpansionForm({
-    required super.controller,
     required super.title,
     required super.subtitle,
     required this.options,
@@ -178,7 +195,7 @@ class DropdownExpansionForm extends ExpansionForm {
     }
   }
 
-  void initDropdown(
+  void initDropdownForm(
     SetStateFunction setStateFunc,
     String value,
     String Function(String) validation,
@@ -211,14 +228,21 @@ class CharacterEditWidget extends StatefulWidget {
 }
 
 class CharacterEditState extends CommonState<CharacterEditWidget> {
-  static const String expCap = '9000000000000000000';
-  static const int levelCap = 9999999;
-  static const int bpCap = 2147483647;
+  static const List<String> stats = <String>[
+    'HP', 'ATK', 'DEF', 'MAG', 'MND', 'SPD',
+  ];
+  static const List<String> elements = <String>[
+    'FIR', 'CLD', 'WND', 'NTR', 'MYS', 'SPI', 'DRK', 'PHY',
+  ];
+  static const String expCap = '999999999999999999'; // Can go higher, but why
+  static const int levelCap = 9999999; // Save load sets it to this if higher
+  static const int bpCap = 2147483647; // Goes negative past this
+  static const int libraryCap = 99999999; // Hard cap at library
+  static const int libraryElementCap = 100; // Hard cap at library
 
   late List<ExpansionGroup> expansionGroups;
 
   final NumberExpansionForm levelForm = NumberExpansionForm(
-    controller: TextEditingController(),
     title: 'Level',
     subtitle: 'Must be between 1 and ${levelCap.toCommaSeparatedNotation()}',
     minValue: BigInt.from(1),
@@ -226,27 +250,34 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   );
 
   final NumberExpansionForm expForm = NumberExpansionForm(
-    controller: TextEditingController(),
     title: 'Experience',
-    subtitle: 'Must be between 0 and 9 quintillion',
+    subtitle: 'Must be below 1 quintillion',
     minValue: BigInt.from(0),
     maxValue: BigInt.parse(expCap),
   );
 
   final NumberExpansionForm bpForm = NumberExpansionForm(
-    controller: TextEditingController(),
     title: 'Battle Points',
-    subtitle: 'Must be between 0 and 2,147,483,647',
+    subtitle: 'Must be below ${bpCap.toCommaSeparatedNotation()}',
     minValue: BigInt.from(0),
     maxValue: BigInt.from(bpCap),
   );
 
   final DropdownExpansionForm subclassForm = DropdownExpansionForm(
-    controller: TextEditingController(),
     title: 'Subclass',
     subtitle: 'Changing this will affect skills data',
     options: Subclass.values.map((Subclass s)=>s.prettyName).toList(),
   );
+
+  final List<NumberExpansionForm> libraryForms = stats.map(
+    (String stat) => NumberExpansionForm.library(title: '$stat Level'),
+  ).toList();
+
+  final List<NumberExpansionForm> libraryElementForms = elements.map(
+    (String element) => NumberExpansionForm.libraryElement(
+      title: '$element Level',
+    ),
+  ).toList();
 
   //
   // Properly check for and validate changes, save/commit them
@@ -349,6 +380,15 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     );
     data.subclass = chosen;
 
+    // Library data
+    LibraryData libraryData = data.libraryLevels;
+    for (int i = 0; i < libraryForms.length; i++) {
+      libraryData.setStatData(i, libraryForms[i].saveValue());
+    }
+    for (int i = 0; i < libraryElementForms.length; i++) {
+      libraryData.setElementData(i, libraryElementForms[i].saveValue());
+    }
+
     // Refresh widget to get rid of the save symbol
     setState((){});
   }
@@ -362,7 +402,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         title: 'Level, EXP, BP, Subclass',
         forms: <ExpansionForm>[levelForm, expForm, bpForm, subclassForm],
       ),
-      ExpansionGroup(title: 'Library points', forms: <ExpansionForm>[]),
+      ExpansionGroup(
+        title: 'Library points',
+        forms: libraryForms + libraryElementForms,
+      ),
       ExpansionGroup(title: 'Level up bonuses', forms: <ExpansionForm>[]),
       ExpansionGroup(title: 'Skill points', forms: <ExpansionForm>[]),
       ExpansionGroup(title: 'Tomes', forms: <ExpansionForm>[]),
@@ -375,14 +418,29 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     CharacterData data = saveFileWrapper.saveFile.characterData[characterIndex];
 
     // Basic info - level, exp, bp, subclass
-    levelForm.initForm(setState, data.level.toCommaSeparatedNotation());
-    expForm.initForm(setState, data.experience.toCommaSeparatedNotation());
-    bpForm.initForm(setState, data.bp.toCommaSeparatedNotation());
-    subclassForm.initDropdown(
+    levelForm.initNumberForm(setState, BigInt.from(data.level));
+    expForm.initNumberForm(setState, data.experience);
+    bpForm.initNumberForm(setState, BigInt.from(data.bp));
+    subclassForm.initDropdownForm(
       setState,
       data.subclass.prettyName,
       _checkForDuplicateUniqueSubclasses,
     );
+
+    // Library info
+    LibraryData libraryData = data.libraryLevels;
+    for (int i = 0; i < libraryForms.length; i++) {
+      libraryForms[i].initNumberForm(
+        setState,
+        BigInt.from(libraryData.getStatData(i)),
+      );
+    }
+    for (int i = 0; i < libraryElementForms.length; i++) {
+      libraryElementForms[i].initNumberForm(
+        setState,
+        BigInt.from(libraryData.getElementData(i)),
+      );
+    }
   }
 
   @override
