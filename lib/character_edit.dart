@@ -5,6 +5,17 @@ import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/string_extension.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 
+class ExpansionGroup {
+  final String title;
+  bool expanded;
+
+  void toggleExpanded() {
+    expanded = !expanded;
+  }
+
+  ExpansionGroup({required this.title, this.expanded = false});
+}
+
 class CharacterEditWidget extends StatefulWidget {
   final CharacterName character;
   const CharacterEditWidget({required this.character, super.key});
@@ -14,16 +25,21 @@ class CharacterEditWidget extends StatefulWidget {
 }
 
 class CharacterEditState extends CommonState<CharacterEditWidget> {
-  List<bool> expanded = List<bool>.filled(7, false);
-  List<String> headers = <String>[
-    'Edit level, exp, subclass, BP',
-    'Edit library points',
-    'Edit level up bonuses',
-    'Edit skill points',
-    'Edit tomes',
-    'Edit gems',
-    'Edit equipment',
-  ];
+  late List<ExpansionGroup> expansionGroups;
+
+  @override
+  void initState() {
+    super.initState();
+    expansionGroups = <ExpansionGroup>[
+      ExpansionGroup(title: 'Edit level, exp, subclass, BP'),
+      ExpansionGroup(title: 'Edit library points'),
+      ExpansionGroup(title: 'Edit level up bonuses'),
+      ExpansionGroup(title: 'Edit skill points'),
+      ExpansionGroup(title: 'Edit tomes'),
+      ExpansionGroup(title: 'Edit gems'),
+      ExpansionGroup(title: 'Edit equipment'),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,25 +58,32 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       ExpansionPanelList(
         expansionCallback: (int index, bool isExpanded) {
           setState(() {
-            expanded[index] = !expanded[index];
+            expansionGroups[index].toggleExpanded();
           });
         },
-        children: headers.asMap().entries.map((MapEntry<int, String> header) {
+        children: expansionGroups.map((ExpansionGroup group) {
           return ExpansionPanel(
             backgroundColor: Colors.white.withOpacity(0.9),
             canTapOnHeader: true,
-            isExpanded: expanded[header.key],
+            isExpanded: group.expanded,
             headerBuilder: (BuildContext context, bool isExpanded) => ListTile(
               title: Text(
-                header.value,
+                group.title,
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
             body: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 20, 20),
               child: Column(
-                children: const <Widget>[
-                  SizedBox(height: 200),
+                children: <Widget>[
+                  TNumberForm(
+                    title: 'Level',
+                    subtitle: "$characterName's current level",
+                    controller: TextEditingController(),
+                    minValue: 1,
+                    maxValue: 9999999,
+                    validationCallback: (String value){},
+                  ),
                 ],
               ),
             ),

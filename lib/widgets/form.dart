@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:thlaby2_save_editor/text_formatter.dart';
 
 @immutable
 abstract class TForm extends StatelessWidget {
@@ -17,6 +19,70 @@ abstract class TForm extends StatelessWidget {
     this.errorMessage = '',
     super.key,
   }) : super();
+}
+
+@immutable
+class TNumberForm extends TForm {
+  final TextEditingController controller;
+  final String hintText;
+  final int minValue;
+  final int maxValue;
+  final void Function(String value) validationCallback;
+
+  const TNumberForm({
+    required super.title,
+    required super.subtitle,
+    required this.controller,
+    required this.minValue,
+    required this.maxValue,
+    required this.validationCallback,
+    this.hintText = '',
+    super.errorMessage,
+    super.enabled,
+    super.key,
+  }) : super();
+
+  @override
+  Widget build(BuildContext context) {
+    String errorText = (errorMessage != '') ? '\n$errorMessage' : '';
+    return Row(
+      children: <Widget>[
+        Flexible(
+          child: ListTile(
+            title: Text(title),
+            subtitle: RichText(
+              text: TextSpan(
+                style: subtitleStyle,
+                children: <TextSpan>[
+                  TextSpan(text: subtitle),
+                  TextSpan(text: errorText, style: errorStyle),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Flexible(
+          child: TextFormField(
+            enabled: enabled,
+            controller: controller,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+              NumberInputFormatter(
+                minValue: minValue,
+                maxValue: maxValue,
+                validationCallback: validationCallback,
+              ),
+            ],
+            style: const TextStyle(fontSize: 18),
+            decoration: InputDecoration(
+              hintText: hintText,
+              contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 @immutable
