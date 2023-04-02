@@ -3,6 +3,8 @@ import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/save/character.dart';
+import 'package:thlaby2_save_editor/save/character_unlock.dart';
 
 class TCharacterSelect extends StatefulWidget {
   final void Function(CharacterName c) characterTapFunction;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
 abstract class CommonState<T extends StatefulWidget> extends State<T> {
