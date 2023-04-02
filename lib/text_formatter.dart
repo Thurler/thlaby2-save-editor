@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 
 @immutable
 class NumberInputFormatter extends TextInputFormatter {
-  final int minValue;
-  final int maxValue;
+  final int maxLength;
   final void Function(String value) validationCallback;
 
   NumberInputFormatter({
-    required this.minValue,
-    required this.maxValue,
+    required this.maxLength,
     required this.validationCallback,
   }) : super();
 
@@ -27,21 +26,16 @@ class NumberInputFormatter extends TextInputFormatter {
     while (baseText.length > 1 && baseText[0] == '0') {
       baseText = baseText.substring(1);
     }
+    // Prevent adding digits beyond max length
+    if (baseText.length > maxLength) {
+      return oldValue;
+    }
     // Pass the new value to the validation callback
     validationCallback(baseText);
     // Get the cursor shift from our updates
     int cursorShift = baseText.length - oldValue.text.length;
     // Compute and place the commas to separate digits
-    int startingDigits = baseText.length % 3;
-    if (startingDigits == 0) {
-      startingDigits = 3;
-    }
-    StringBuffer copy = StringBuffer();
-    copy.write(baseText.substring(0, startingDigits));
-    for (int i = startingDigits; i < baseText.length; i += 3) {
-      copy.write(',${baseText.substring(i, i+3)}');
-    }
-    String finalText = copy.toString();
+    String finalText = BigInt.parse(baseText).toCommaSeparatedNotation();
     // Compute the final cursor position
     int textDiff = finalText.length - baseText.length;
     int finalOffset = oldValue.selection.baseOffset + cursorShift + textDiff;
@@ -52,7 +46,7 @@ class NumberInputFormatter extends TextInputFormatter {
     }
     // Finally, return with the new values
     return newValue.copyWith(
-      text: copy.toString(),
+      text: finalText,
       selection: newValue.selection.copyWith(
         baseOffset: finalOffset,
         extentOffset: finalOffset,

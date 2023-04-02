@@ -25,16 +25,14 @@ abstract class TForm extends StatelessWidget {
 class TNumberForm extends TForm {
   final TextEditingController controller;
   final String hintText;
-  final int minValue;
-  final int maxValue;
+  final int maxLength;
   final void Function(String value) validationCallback;
 
   const TNumberForm({
     required super.title,
     required super.subtitle,
     required this.controller,
-    required this.minValue,
-    required this.maxValue,
+    required this.maxLength,
     required this.validationCallback,
     this.hintText = '',
     super.errorMessage,
@@ -68,8 +66,7 @@ class TNumberForm extends TForm {
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp('[0-9]')),
               NumberInputFormatter(
-                minValue: minValue,
-                maxValue: maxValue,
+                maxLength: maxLength,
                 validationCallback: validationCallback,
               ),
             ],

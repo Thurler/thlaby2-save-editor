@@ -2,6 +2,20 @@ import 'dart:math';
 import 'dart:typed_data';
 
 extension IntExtension on int {
+  String toCommaSeparatedNotation() {
+    String raw = toString();
+    int startingDigits = raw.length % 3;
+    if (startingDigits == 0) {
+      startingDigits = 3;
+    }
+    StringBuffer copy = StringBuffer();
+    copy.write(raw.substring(0, startingDigits));
+    for (int i = startingDigits; i < raw.length; i += 3) {
+      copy.write(',${raw.substring(i, i+3)}');
+    }
+    return copy.toString();
+  }
+
   Iterable<int> toU16(Endian endianness) {
     List<int> bytes = List<int>.filled(2, 0);
     bytes[0] = this % 256;
@@ -43,6 +57,20 @@ extension IntExtension on int {
 }
 
 extension BigIntExtension on BigInt {
+  String toCommaSeparatedNotation() {
+    String raw = toString();
+    int startingDigits = raw.length % 3;
+    if (startingDigits == 0) {
+      startingDigits = 3;
+    }
+    StringBuffer copy = StringBuffer();
+    copy.write(raw.substring(0, startingDigits));
+    for (int i = startingDigits; i < raw.length; i += 3) {
+      copy.write(',${raw.substring(i, i+3)}');
+    }
+    return copy.toString();
+  }
+
   Iterable<int> toU64(Endian endianness) {
     List<int> bytes = List<int>.filled(8, 0);
     for (int i = 0; i < 8; i++) {
