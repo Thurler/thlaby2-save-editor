@@ -88,6 +88,7 @@ class TDropdownForm extends TForm {
   final List<String> options;
   final String hintText;
   final String value;
+  final bool hasBorder;
 
   const TDropdownForm({
     required super.title,
@@ -96,6 +97,7 @@ class TDropdownForm extends TForm {
     required this.hintText,
     required this.options,
     required this.onChanged,
+    this.hasBorder = false,
     super.errorMessage,
     super.enabled,
     super.key,
@@ -138,20 +140,24 @@ class TDropdownForm extends TForm {
         }).toList(),
       ),
     );
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: TForm.subtitleColor),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(right: 15),
-        child: Row(
-          children: <Widget>[
-            queryWidget,
-            dropdownWidget,
-          ],
-        ),
-      ),
+    Widget result = Row(
+      children: <Widget>[
+        queryWidget,
+        dropdownWidget,
+      ],
     );
+    if (hasBorder) {
+      result = Padding(
+        padding: const EdgeInsets.only(right: 15),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: TForm.subtitleColor),
+          ),
+          child: result,
+        ),
+      );
+    }
+    return result;
   }
 }
