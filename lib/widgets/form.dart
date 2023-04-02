@@ -26,7 +26,7 @@ class TNumberForm extends TForm {
   final TextEditingController controller;
   final String hintText;
   final int maxLength;
-  final void Function(String value) validationCallback;
+  final String Function(String value) validationCallback;
 
   const TNumberForm({
     required super.title,

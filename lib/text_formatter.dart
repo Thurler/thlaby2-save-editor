@@ -5,7 +5,7 @@ import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 @immutable
 class NumberInputFormatter extends TextInputFormatter {
   final int maxLength;
-  final void Function(String value) validationCallback;
+  final String Function(String value) validationCallback;
 
   NumberInputFormatter({
     required this.maxLength,
@@ -31,7 +31,7 @@ class NumberInputFormatter extends TextInputFormatter {
       return oldValue;
     }
     // Pass the new value to the validation callback
-    validationCallback(baseText);
+    baseText = validationCallback(baseText);
     // Get the cursor shift from our updates
     int cursorShift = baseText.length - oldValue.text.length;
     // Compute and place the commas to separate digits

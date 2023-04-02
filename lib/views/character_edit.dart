@@ -115,24 +115,28 @@ class NumberExpansionForm extends ExpansionForm {
     required this.maxValue,
   });
 
-  void validate(String raw, {bool callSetState = true}) {
+  String validate(String raw, {bool callSetState = true}) {
+    String ret = raw;
     BigInt value = BigInt.parse(raw);
     if (value < minValue) {
-      error = 'Value must be at least ${minValue.toCommaSeparatedNotation()}';
+      ret = minValue.toString();
     } else if (value > maxValue) {
-      error = 'Value must be at most ${maxValue.toCommaSeparatedNotation()}';
-    } else {
-      error = '';
+      ret = maxValue.toString();
     }
     if (callSetState) {
       setStateCallback((){});
     }
+    return ret;
   }
 
   @override
   void initForm(SetStateFunction setStateFunc, String value) {
     validate(value.replaceAll(',', ''), callSetState: false);
     super.initForm(setStateFunc, value);
+  }
+
+  BigInt getIntValue() {
+    return BigInt.parse(super.getValue().replaceAll(',', ''));
   }
 
   @override
@@ -207,14 +211,18 @@ class CharacterEditWidget extends StatefulWidget {
 }
 
 class CharacterEditState extends CommonState<CharacterEditWidget> {
+  static const String expCap = '9000000000000000000';
+  static const int levelCap = 9999999;
+  static const int bpCap = 2147483647;
+
   late List<ExpansionGroup> expansionGroups;
 
   final NumberExpansionForm levelForm = NumberExpansionForm(
     controller: TextEditingController(),
     title: 'Level',
-    subtitle: 'Must be between 1 and 9,999,999',
+    subtitle: 'Must be between 1 and ${levelCap.toCommaSeparatedNotation()}',
     minValue: BigInt.from(1),
-    maxValue: BigInt.from(9999999),
+    maxValue: BigInt.from(levelCap),
   );
 
   final NumberExpansionForm expForm = NumberExpansionForm(
@@ -222,7 +230,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     title: 'Experience',
     subtitle: 'Must be between 0 and 9 quintillion',
     minValue: BigInt.from(0),
-    maxValue: BigInt.parse('9000000000000000000'),
+    maxValue: BigInt.parse(expCap),
   );
 
   final NumberExpansionForm bpForm = NumberExpansionForm(
@@ -230,7 +238,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     title: 'Battle Points',
     subtitle: 'Must be between 0 and 2,147,483,647',
     minValue: BigInt.from(0),
-    maxValue: BigInt.from(2147483647),
+    maxValue: BigInt.from(bpCap),
   );
 
   final DropdownExpansionForm subclassForm = DropdownExpansionForm(
@@ -278,8 +286,19 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     for (ExpansionGroup group in expansionGroups) {
       ret |= group.checkErrors();
     }
-    return ret;
+    return !ret;
   }
+
+  List<String> _validateMessages() {
+    List<String> messages = <String>[];
+    // Subclass validation - do nothing, simply warn
+    if (subclassForm.error != '') {
+      messages.add('${subclassForm.error} - no action will be taken');
+    }
+    return messages;
+  }
+
+  void _fixValidationErrors() {}
 
   Future<bool> _checkChangesAndConfirm() async {
     if (!_hasChanges()) {
@@ -296,6 +315,27 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   }
 
   Future<void> _saveChanges() async {
+    // Check if there are invalid fields, properly show them to user
+    if (!_validateFields()) {
+      await logger.log(
+        LogLevel.warning,
+        'Attempting to save invalid data',
+      );
+      List<String> messages = _validateMessages();
+      bool doSave = await showSaveWarningDialog(
+        'Some validation errors were detected, and some of them might require '
+        'an action to be taken in order to save:\n\n${messages.join('\n')}\n\n '
+        'Please make sure you are fine with the actions above',
+        breaking: false,
+      );
+      if (!doSave) {
+        return;
+      }
+      // If user wants to save anyway, we must convert the invalid values that
+      // will cause errors back into valid values that closely match the input
+      _fixValidationErrors();
+    }
+
     // Get save file reference and commit changes to forms
     int characterIndex = widget.character.index;
     CharacterData data = saveFileWrapper.saveFile.characterData[characterIndex];
