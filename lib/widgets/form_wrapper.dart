@@ -86,7 +86,7 @@ class TFormGroup {
 }
 
 abstract class TFormWrapper {
-  late SetStateFunction setStateCallback;
+  final SetStateFunction setStateCallback;
   final TextEditingController controller = TextEditingController();
   final String title;
   final String subtitle;
@@ -97,6 +97,7 @@ abstract class TFormWrapper {
   TFormWrapper({
     required this.title,
     required this.subtitle,
+    required this.setStateCallback,
     this.readOnly = false,
   });
 
@@ -108,8 +109,7 @@ abstract class TFormWrapper {
     return initialValue = getValue();
   }
 
-  void initForm(SetStateFunction setStateFunc, String value) {
-    setStateCallback = setStateFunc;
+  void initForm(String value) {
     initialValue = value;
     controller.text = initialValue;
   }
@@ -120,12 +120,15 @@ abstract class TFormWrapper {
 class TNumberFormWrapper extends TFormWrapper {
   late BigInt minValue;
   late BigInt maxValue;
+  void Function()? onValueUpdate;
 
   TNumberFormWrapper({
     required super.title,
     required super.subtitle,
+    required super.setStateCallback,
     required this.minValue,
     required this.maxValue,
+    this.onValueUpdate,
     super.readOnly,
   });
 
@@ -143,9 +146,17 @@ class TNumberFormWrapper extends TFormWrapper {
     return ret;
   }
 
-  void initNumberForm(SetStateFunction setStateFunc, BigInt value) {
+  void initNumberForm(BigInt value) {
     validate(value.toString(), callSetState: false);
-    super.initForm(setStateFunc, value.toCommaSeparatedNotation());
+    super.initForm(value.toCommaSeparatedNotation());
+  }
+
+  void updateMaxValue(BigInt newMaxValue) {
+    maxValue = newMaxValue;
+    if (getIntValue() > maxValue) {
+      controller.text = maxValue.toString();
+      setStateCallback((){});
+    }
   }
 
   BigInt getIntValue() {
@@ -166,6 +177,7 @@ class TNumberFormWrapper extends TFormWrapper {
       controller: controller,
       maxLength: maxValue.toString().length,
       validationCallback: validate,
+      onValueUpdate: onValueUpdate,
       enabled: !readOnly,
     );
   }
@@ -178,6 +190,7 @@ class TDropdownFormWrapper extends TFormWrapper {
   TDropdownFormWrapper({
     required super.title,
     required super.subtitle,
+    required super.setStateCallback,
     required this.options,
   });
 
@@ -191,14 +204,10 @@ class TDropdownFormWrapper extends TFormWrapper {
     }
   }
 
-  void initDropdownForm(
-    SetStateFunction setStateFunc,
-    String value,
-    String Function(String) validation,
-  ) {
+  void initDropdownForm(String value, String Function(String) validation) {
     validateFunction = validation;
     onChanged(value, callSetState: false);
-    super.initForm(setStateFunc, value);
+    super.initForm(value);
   }
 
   @override

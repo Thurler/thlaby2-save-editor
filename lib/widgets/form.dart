@@ -27,6 +27,7 @@ class TNumberForm extends TForm {
   final String hintText;
   final int maxLength;
   final String Function(String value) validationCallback;
+  final void Function()? onValueUpdate;
 
   const TNumberForm({
     required super.title,
@@ -35,6 +36,7 @@ class TNumberForm extends TForm {
     required this.maxLength,
     required this.validationCallback,
     this.hintText = '',
+    this.onValueUpdate,
     super.errorMessage,
     super.enabled,
     super.key,
@@ -68,6 +70,7 @@ class TNumberForm extends TForm {
               NumberInputFormatter(
                 maxLength: maxLength,
                 validationCallback: validationCallback,
+                onValueUpdate: onValueUpdate,
               ),
             ],
             style: const TextStyle(fontSize: 18),

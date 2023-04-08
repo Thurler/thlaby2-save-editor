@@ -10,6 +10,7 @@ import 'package:thlaby2_save_editor/widgets/form_wrapper.dart';
 class TCharacterNumberForm extends TNumberFormWrapper {
   TCharacterNumberForm.library({
     required super.title,
+    required super.setStateCallback,
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.libraryCap),
@@ -19,6 +20,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
 
   TCharacterNumberForm.libraryElement({
     required super.title,
+    required super.setStateCallback,
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.libraryElementCap),
@@ -28,6 +30,8 @@ class TCharacterNumberForm extends TNumberFormWrapper {
 
   TCharacterNumberForm.levelBonus({
     required super.title,
+    required super.onValueUpdate,
+    required super.setStateCallback,
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.levelBonusCap),
@@ -60,58 +64,85 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
   late List<TFormGroup> expansionGroups;
 
-  final TNumberFormWrapper levelForm = TNumberFormWrapper(
+  late final TNumberFormWrapper levelForm = TNumberFormWrapper(
     title: 'Level',
     subtitle: 'Must be between 1 and ${levelCap.toCommaSeparatedNotation()}',
     minValue: BigInt.from(1),
     maxValue: BigInt.from(levelCap),
+    setStateCallback: setState,
   );
 
-  final TNumberFormWrapper expForm = TNumberFormWrapper(
+  late final TNumberFormWrapper expForm = TNumberFormWrapper(
     title: 'Experience',
     subtitle: 'Must be below 1 quintillion',
     minValue: BigInt.from(0),
     maxValue: BigInt.parse(expCap),
+    setStateCallback: setState,
   );
 
-  final TNumberFormWrapper bpForm = TNumberFormWrapper(
+  late final TNumberFormWrapper bpForm = TNumberFormWrapper(
     title: 'Battle Points',
     subtitle: 'Must be below ${bpCap.toCommaSeparatedNotation()}',
     minValue: BigInt.from(0),
     maxValue: BigInt.from(bpCap),
+    setStateCallback: setState,
   );
 
-  final TDropdownFormWrapper subclassForm = TDropdownFormWrapper(
+  late final TDropdownFormWrapper subclassForm = TDropdownFormWrapper(
     title: 'Subclass',
     subtitle: 'Changing this will affect skills data',
+    setStateCallback: setState,
     options: Subclass.values.map((Subclass s)=>s.prettyName).toList(),
   );
 
-  final List<TNumberFormWrapper> libraryForms = stats.map(
-    (String stat) => TCharacterNumberForm.library(title: '$stat Level'),
-  ).toList();
-
-  final List<TNumberFormWrapper> libraryElementForms = elements.map(
-    (String element) => TCharacterNumberForm.libraryElement(
-      title: '$element Level',
+  late final List<TNumberFormWrapper> libraryForms = stats.map(
+    (String stat) => TCharacterNumberForm.library(
+      title: '$stat Level',
+      setStateCallback: setState,
     ),
   ).toList();
 
-  final TNumberFormWrapper unusedLevelForm = TNumberFormWrapper(
+  late final List<TNumberFormWrapper> libraryElementForms = elements.map(
+    (String element) => TCharacterNumberForm.libraryElement(
+      title: '$element Level',
+      setStateCallback: setState,
+    ),
+  ).toList();
+
+  late final TNumberFormWrapper unusedLevelForm = TNumberFormWrapper(
     title: 'Unused points',
     subtitle: 'Updated automatically with level and used points',
     minValue: BigInt.from(-levelBonusCap),
     maxValue: BigInt.from(levelBonusCap),
+    setStateCallback: setState,
     readOnly: true,
   );
 
-  final List<TNumberFormWrapper> levelBonusForms = stats.map(
-    (String stat) => TCharacterNumberForm.levelBonus(title: 'Points in $stat'),
+  late final List<TNumberFormWrapper> levelBonusForms = stats.map(
+    (String stat) => TCharacterNumberForm.levelBonus(
+      title: 'Points in $stat',
+      setStateCallback: setState,
+      onValueUpdate: _updateLevelPoints,
+    ),
   ).toList();
 
   //
   // Properly check for and validate changes, save/commit them
   //
+
+  void _updateLevelPoints() {
+    int cap = levelBonusCap;
+    int points = levelForm.getIntValue().toInt() - 1;
+    for (TNumberFormWrapper form in levelBonusForms) {
+      int value = form.getIntValue().toInt();
+      points -= value;
+      cap -= value;
+    }
+    for (TNumberFormWrapper form in levelBonusForms) {
+      form.updateMaxValue(BigInt.from(cap));
+    }
+    unusedLevelForm.controller.text = points.toCommaSeparatedNotation();
+  }
 
   String _checkForDuplicateUniqueSubclasses(String value) {
     Subclass chosen = Subclass.values.firstWhere(
@@ -251,11 +282,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     CharacterData data = saveFileWrapper.saveFile.characterData[characterIndex];
 
     // Basic info - level, exp, bp, subclass
-    levelForm.initNumberForm(setState, BigInt.from(data.level));
-    expForm.initNumberForm(setState, data.experience);
-    bpForm.initNumberForm(setState, BigInt.from(data.bp));
+    levelForm.initNumberForm(BigInt.from(data.level));
+    expForm.initNumberForm(data.experience);
+    bpForm.initNumberForm(BigInt.from(data.bp));
     subclassForm.initDropdownForm(
-      setState,
       data.subclass.prettyName,
       _checkForDuplicateUniqueSubclasses,
     );
@@ -263,24 +293,21 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     // Library info + Level up info
     for (int i = 0; i < stats.length; i++) {
       libraryForms[i].initNumberForm(
-        setState,
         BigInt.from(data.libraryLevels.getStatData(i)),
       );
       levelBonusForms[i].initNumberForm(
-        setState,
         BigInt.from(data.levelBonus.getStatData(i)),
       );
     }
     for (int i = 0; i < elements.length; i++) {
       libraryElementForms[i].initNumberForm(
-        setState,
         BigInt.from(data.libraryLevels.getElementData(i)),
       );
     }
     unusedLevelForm.initNumberForm(
-      setState,
       BigInt.from(data.unusedBonusPoints),
     );
+    _updateLevelPoints();
   }
 
   @override
