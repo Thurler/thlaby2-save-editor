@@ -154,7 +154,7 @@ class TNumberFormWrapper extends TFormWrapper {
   void updateMaxValue(BigInt newMaxValue) {
     maxValue = newMaxValue;
     if (getIntValue() > maxValue) {
-      controller.text = maxValue.toString();
+      controller.text = maxValue.toCommaSeparatedNotation();
       setStateCallback((){});
     }
   }

@@ -141,7 +141,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
     setState((){
       for (TNumberFormWrapper form in levelBonusForms) {
-        form.updateMaxValue(BigInt.from(cap));
+        form.updateMaxValue(BigInt.from(cap) + form.getIntValue());
       }
       unusedLevelForm.controller.text = points.toCommaSeparatedNotation();
     });
