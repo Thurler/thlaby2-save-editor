@@ -69,6 +69,7 @@ class TStringForm extends TForm {
   final TextEditingController controller;
   final String hintText;
   final void Function()? onValueUpdate;
+  final Widget? suffixIcon;
 
   TStringForm({
     required super.title,
@@ -76,6 +77,7 @@ class TStringForm extends TForm {
     required this.controller,
     this.hintText = '',
     this.onValueUpdate,
+    this.suffixIcon,
     super.errorMessage,
     super.hasBorder,
     super.enabled,
@@ -97,6 +99,7 @@ class TStringForm extends TForm {
       inputFormatters: getFormatters(),
       decoration: InputDecoration(
         hintText: hintText,
+        suffixIcon: suffixIcon,
         contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
       ),
     );

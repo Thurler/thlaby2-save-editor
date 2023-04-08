@@ -7,6 +7,7 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 import 'package:thlaby2_save_editor/views/character_select.dart';
+import 'package:thlaby2_save_editor/widgets/clickable.dart';
 
 class PartyDataWidget extends StatefulWidget {
   const PartyDataWidget({super.key});
@@ -171,15 +172,12 @@ class PartyDataState extends CommonState<PartyDataWidget> {
     );
     List<Widget> elements = <Widget>[title, image];
     // Wrap it in a GestureDetector and a MouseRegion for interaction
-    Widget slotPortrait = GestureDetector(
+    Widget slotPortrait = TClickable(
       onTap: () async => _changePartyMember(slot),
-      child: MouseRegion(
-        onEnter: (PointerEvent e)=>setState((){_hover = slot;}),
-        onExit: (PointerEvent e)=>setState((){_hover = null;}),
-        cursor: SystemMouseCursors.click,
-        child: Column(
-          children: elements,
-        ),
+      onEnter: (PointerEvent e) => setState((){_hover = slot;}),
+      onExit: (PointerEvent e) => setState((){_hover = null;}),
+      child: Column(
+        children: elements,
       ),
     );
     // A remove button is added, greyed out if the slot is already empty
@@ -225,14 +223,11 @@ class PartyDataState extends CommonState<PartyDataWidget> {
     );
     // Only interactable if slot isn't already empty
     if (isUsed) {
-      removeButton = GestureDetector(
+      removeButton = TClickable(
         onTap: () async => _removePartyMember(slot),
-        child: MouseRegion(
-          onEnter: (PointerEvent e)=>setState((){_hoverRemove = slot;}),
-          onExit: (PointerEvent e)=>setState((){_hoverRemove = null;}),
-          cursor: SystemMouseCursors.click,
-          child: removeButton,
-        ),
+        onEnter: (PointerEvent e) => setState((){_hoverRemove = slot;}),
+        onExit: (PointerEvent e) => setState((){_hoverRemove = null;}),
+        child: removeButton,
       );
     }
     return Column(

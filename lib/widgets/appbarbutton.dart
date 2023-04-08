@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:thlaby2_save_editor/widgets/clickable.dart';
 
 @immutable
 class TAppBarButton extends StatelessWidget {
@@ -27,15 +28,12 @@ class TAppBarButton extends StatelessWidget {
         ),
       ),
     ];
-    return GestureDetector(
+    return TClickable(
       onTap: onTap,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Row(
-            children: children,
-          ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Row(
+          children: children,
         ),
       ),
     );

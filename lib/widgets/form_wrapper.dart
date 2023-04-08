@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/widgets/badge.dart';
+import 'package:thlaby2_save_editor/widgets/clickable.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 
 typedef SetStateFunction = void Function(void Function());
@@ -128,6 +129,8 @@ class TStringFormWrapper extends TFormWrapper {
     super.readOnly,
   });
 
+  Widget? formSuffix() => null;
+
   @override
   Widget toForm() {
     return TStringForm(
@@ -136,7 +139,54 @@ class TStringFormWrapper extends TFormWrapper {
       errorMessage: error,
       controller: controller,
       onValueUpdate: onValueUpdate,
+      suffixIcon: formSuffix(),
       enabled: !readOnly,
+    );
+  }
+}
+
+class TFixedStringFormWrapper extends TStringFormWrapper {
+  final String emptyValue;
+  final void Function() addCallback;
+  final void Function() editCallback;
+  final void Function() removeCallback;
+
+  TFixedStringFormWrapper({
+    required super.title,
+    required super.subtitle,
+    required super.setStateCallback,
+    required this.addCallback,
+    required this.editCallback,
+    required this.removeCallback,
+    required this.emptyValue,
+    super.onValueUpdate,
+  }) : super(readOnly: true);
+
+  @override
+  Widget? formSuffix() {
+    List<Widget> icons;
+    if (controller.text == emptyValue) {
+      icons = <Widget>[
+        TClickable(
+          onTap: addCallback,
+          child: const Icon(Icons.add_circle),
+        ),
+      ];
+    } else {
+      icons = <Widget>[
+        TClickable(
+          onTap: editCallback,
+          child: const Icon(Icons.edit),
+        ),
+        TClickable(
+          onTap: removeCallback,
+          child: const Icon(Icons.cancel),
+        ),
+      ];
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: icons.separateWith(const SizedBox(width: 2)),
     );
   }
 }

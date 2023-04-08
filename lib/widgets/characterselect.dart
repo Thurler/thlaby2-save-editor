@@ -5,6 +5,7 @@ import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
+import 'package:thlaby2_save_editor/widgets/clickable.dart';
 
 class TCharacterSelect extends StatefulWidget {
   final void Function(CharacterName c) characterTapFunction;
@@ -115,14 +116,11 @@ class TCharacterSelectState extends CommonState<TCharacterSelect> {
     // Wrap result in a GestureDetector and a MouseRegion only if it can be
     // selected - only if the character is not locked
     if (isUnlocked || widget.highlightIfLocked) {
-      result = GestureDetector(
-        onTap: ()=>widget.characterTapFunction(character),
-        child: MouseRegion(
-          onEnter: (PointerEvent e)=>setState((){_hover = character;}),
-          onExit: (PointerEvent e)=>setState((){_hover = null;}),
-          cursor: SystemMouseCursors.click,
-          child: result,
-        ),
+      result = TClickable(
+        onTap: () => widget.characterTapFunction(character),
+        onEnter: (PointerEvent e) => setState((){_hover = character;}),
+        onExit: (PointerEvent e) => setState((){_hover = null;}),
+        child: result,
       );
     }
     return result;

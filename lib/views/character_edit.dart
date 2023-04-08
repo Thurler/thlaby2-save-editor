@@ -148,19 +148,25 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
   ).toList();
 
-  late final TStringFormWrapper mainEquipmentForm = TStringFormWrapper(
+  late final TFixedStringFormWrapper mainEquipForm = TFixedStringFormWrapper(
     title: 'Main equipment',
     subtitle: 'Item occupying main slot',
-    readOnly: true,
     setStateCallback: setState,
+    addCallback: (){print('add');},
+    editCallback: (){print('edit');},
+    removeCallback: (){print('remove');},
+    emptyValue: '0',
   );
 
-  late final List<TStringFormWrapper> subEquipmentForms = <int>[1, 2, 3].map(
-    (int i) => TStringFormWrapper(
+  late final List<TFixedStringFormWrapper> subEquipForms = <int>[1, 2, 3].map(
+    (int i) => TFixedStringFormWrapper(
       title: 'Sub equipment $i',
       subtitle: 'Item occupying sub slot $i',
-      readOnly: true,
       setStateCallback: setState,
+      addCallback: (){print('add');},
+      editCallback: (){print('edit');},
+      removeCallback: (){print('remove');},
+      emptyValue: '0',
     ),
   ).toList();
 
@@ -325,7 +331,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       ),
       TFormGroup(
         title: 'Equipment',
-        forms: <TFormWrapper>[mainEquipmentForm] + subEquipmentForms,
+        forms: <TFormWrapper>[mainEquipForm] + subEquipForms,
       ),
     ];
 
@@ -365,9 +371,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
 
     // Equipment info
-    mainEquipmentForm.initForm(data.mainEquip.id.toString());
+    mainEquipForm.initForm(data.mainEquip.id.toString());
     for (int i = 0; i < 3; i++) {
-      subEquipmentForms[i].initForm(data.subEquips[i].id.toString());
+      subEquipForms[i].initForm(data.subEquips[i].id.toString());
     }
 
     // Set and update unused level up bonus info
