@@ -5,228 +5,35 @@ import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
-import 'package:thlaby2_save_editor/save/library.dart';
-import 'package:thlaby2_save_editor/widgets/badge.dart';
-import 'package:thlaby2_save_editor/widgets/form.dart';
+import 'package:thlaby2_save_editor/widgets/form_wrapper.dart';
 
-typedef SetStateFunction = void Function(void Function());
-
-class ExpansionGroup {
-  final String title;
-  bool expanded;
-  List<ExpansionForm> forms;
-  bool hasChanges = false;
-  bool hasErrors = false;
-
-  void toggleExpanded() {
-    expanded = !expanded;
-  }
-
-  ExpansionGroup({
-    required this.title,
-    required this.forms,
-    this.expanded = false,
-  });
-
-  bool checkChanges() {
-    return hasChanges = forms.any(
-      (ExpansionForm form) => form.initialValue != form.getValue(),
-    );
-  }
-
-  bool checkErrors() {
-    return hasErrors = forms.any((ExpansionForm form) => form.error != '');
-  }
-
-  // ignore: avoid_positional_boolean_parameters
-  Widget buildHeader(BuildContext context, bool isExpanded) {
-    Widget titleWidget = Text(
-      title,
-      style: const TextStyle(fontWeight: FontWeight.w700),
-    );
-    List<Widget> badges = <Widget>[];
-    if (hasChanges) {
-      badges.add(
-        const TBadge(
-          text: 'Has Changes',
-          color: Colors.green,
-        ),
-      );
-    }
-    if (hasErrors) {
-      badges.add(
-        const TBadge(
-          text: 'Has Issues',
-          color: Colors.red,
-        ),
-      );
-    }
-    if (badges.isNotEmpty) {
-      titleWidget = Row(
-        children: <Widget>[
-          Expanded(child: titleWidget),
-          ...badges.separateWith(const SizedBox(width: 5)),
-        ],
-      );
-    }
-    return ListTile(title: titleWidget);
-  }
-}
-
-abstract class ExpansionForm {
-  late SetStateFunction setStateCallback;
-  final TextEditingController controller = TextEditingController();
-  final String title;
-  final String subtitle;
-  String initialValue = '';
-  String error = '';
-
-  ExpansionForm({
-    required this.title,
-    required this.subtitle,
-  });
-
-  String getValue() {
-    return controller.text;
-  }
-
-  String saveValue() {
-    return initialValue = getValue();
-  }
-
-  void initForm(SetStateFunction setStateFunc, String value) {
-    setStateCallback = setStateFunc;
-    initialValue = value;
-    controller.text = initialValue;
-  }
-
-  Widget toForm();
-}
-
-class NumberExpansionForm extends ExpansionForm {
-  late BigInt minValue;
-  late BigInt maxValue;
-
-  NumberExpansionForm({
-    required super.title,
-    required super.subtitle,
-    required this.minValue,
-    required this.maxValue,
-  });
-
-  NumberExpansionForm.library({
+class TCharacterNumberForm extends TNumberFormWrapper {
+  TCharacterNumberForm.library({
     required super.title,
   }) : super(
+    minValue: BigInt.from(0),
+    maxValue: BigInt.from(CharacterEditState.libraryCap),
     subtitle: 'Must be between 0 and '
       '${CharacterEditState.libraryCap.toCommaSeparatedNotation()}',
-  ) {
-    minValue = BigInt.from(0);
-    maxValue = BigInt.from(CharacterEditState.libraryCap);
-  }
+  );
 
-  NumberExpansionForm.libraryElement({
+  TCharacterNumberForm.libraryElement({
     required super.title,
   }) : super(
+    minValue: BigInt.from(0),
+    maxValue: BigInt.from(CharacterEditState.libraryElementCap),
     subtitle: 'Must be between 0 and '
       '${CharacterEditState.libraryElementCap.toCommaSeparatedNotation()}',
-  ) {
-    minValue = BigInt.from(0);
-    maxValue = BigInt.from(CharacterEditState.libraryElementCap);
-  }
+  );
 
-  NumberExpansionForm.levelBonus({
+  TCharacterNumberForm.levelBonus({
     required super.title,
   }) : super(
-    subtitle: 'Must be between 0 and '
-      '${CharacterEditState.levelBonusCap.toCommaSeparatedNotation()}',
-  ) {
-    minValue = BigInt.from(0);
-    maxValue = BigInt.from(CharacterEditState.levelBonusCap);
-  }
-
-  String validate(String raw, {bool callSetState = true}) {
-    String ret = raw;
-    BigInt value = BigInt.parse(raw);
-    if (value < minValue) {
-      ret = minValue.toString();
-    } else if (value > maxValue) {
-      ret = maxValue.toString();
-    }
-    if (callSetState) {
-      setStateCallback((){});
-    }
-    return ret;
-  }
-
-  void initNumberForm(SetStateFunction setStateFunc, BigInt value) {
-    validate(value.toString(), callSetState: false);
-    super.initForm(setStateFunc, value.toCommaSeparatedNotation());
-  }
-
-  BigInt getIntValue() {
-    return BigInt.parse(super.getValue().replaceAll(',', ''));
-  }
-
-  @override
-  String saveValue() {
-    return super.saveValue().replaceAll(',', '');
-  }
-
-  @override
-  Widget toForm() {
-    return TNumberForm(
-      title: title,
-      subtitle: subtitle,
-      errorMessage: error,
-      controller: controller,
-      maxLength: maxValue.toString().length,
-      validationCallback: validate,
-    );
-  }
-}
-
-class DropdownExpansionForm extends ExpansionForm {
-  final List<String> options;
-  late String Function(String) validateFunction;
-
-  DropdownExpansionForm({
-    required super.title,
-    required super.subtitle,
-    required this.options,
-  });
-
-  void onChanged(String? chosen, {bool callSetState = true}) {
-    if (chosen != null) {
-      error = validateFunction(chosen);
-      controller.text = chosen;
-      if (callSetState) {
-        setStateCallback((){});
-      }
-    }
-  }
-
-  void initDropdownForm(
-    SetStateFunction setStateFunc,
-    String value,
-    String Function(String) validation,
-  ) {
-    validateFunction = validation;
-    onChanged(value, callSetState: false);
-    super.initForm(setStateFunc, value);
-  }
-
-  @override
-  Widget toForm() {
-    return TDropdownForm(
-      title: title,
-      subtitle: subtitle,
-      errorMessage: error,
-      value: controller.text,
-      options: options,
-      onChanged: onChanged,
-      hintText: '',
-    );
-  }
+    minValue: BigInt.from(0),
+    maxValue: BigInt.from(CharacterEditState.levelBonusCap),
+    subtitle: 'Sum of all points must be below '
+      '${CharacterEditState.levelBonusCap.toCommaSeparatedNotation()}\n',
+  );
 }
 
 class CharacterEditWidget extends StatefulWidget {
@@ -251,54 +58,55 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const int libraryCap = 99999999; // Hard cap at library
   static const int libraryElementCap = 100; // Hard cap at library
 
-  late List<ExpansionGroup> expansionGroups;
+  late List<TFormGroup> expansionGroups;
 
-  final NumberExpansionForm levelForm = NumberExpansionForm(
+  final TNumberFormWrapper levelForm = TNumberFormWrapper(
     title: 'Level',
     subtitle: 'Must be between 1 and ${levelCap.toCommaSeparatedNotation()}',
     minValue: BigInt.from(1),
     maxValue: BigInt.from(levelCap),
   );
 
-  final NumberExpansionForm expForm = NumberExpansionForm(
+  final TNumberFormWrapper expForm = TNumberFormWrapper(
     title: 'Experience',
     subtitle: 'Must be below 1 quintillion',
     minValue: BigInt.from(0),
     maxValue: BigInt.parse(expCap),
   );
 
-  final NumberExpansionForm bpForm = NumberExpansionForm(
+  final TNumberFormWrapper bpForm = TNumberFormWrapper(
     title: 'Battle Points',
     subtitle: 'Must be below ${bpCap.toCommaSeparatedNotation()}',
     minValue: BigInt.from(0),
     maxValue: BigInt.from(bpCap),
   );
 
-  final DropdownExpansionForm subclassForm = DropdownExpansionForm(
+  final TDropdownFormWrapper subclassForm = TDropdownFormWrapper(
     title: 'Subclass',
     subtitle: 'Changing this will affect skills data',
     options: Subclass.values.map((Subclass s)=>s.prettyName).toList(),
   );
 
-  final List<NumberExpansionForm> libraryForms = stats.map(
-    (String stat) => NumberExpansionForm.library(title: '$stat Level'),
+  final List<TNumberFormWrapper> libraryForms = stats.map(
+    (String stat) => TCharacterNumberForm.library(title: '$stat Level'),
   ).toList();
 
-  final List<NumberExpansionForm> libraryElementForms = elements.map(
-    (String element) => NumberExpansionForm.libraryElement(
+  final List<TNumberFormWrapper> libraryElementForms = elements.map(
+    (String element) => TCharacterNumberForm.libraryElement(
       title: '$element Level',
     ),
   ).toList();
 
-  final NumberExpansionForm unusedLevelForm = NumberExpansionForm(
+  final TNumberFormWrapper unusedLevelForm = TNumberFormWrapper(
     title: 'Unused points',
-    subtitle: 'Must be between -${levelBonusCap.toCommaSeparatedNotation()} to ${levelBonusCap.toCommaSeparatedNotation()}',
+    subtitle: 'Updated automatically with level and used points',
     minValue: BigInt.from(-levelBonusCap),
     maxValue: BigInt.from(levelBonusCap),
+    readOnly: true,
   );
 
-  final List<NumberExpansionForm> levelBonusForms = stats.map(
-    (String stat) => NumberExpansionForm.levelBonus(title: 'Points in $stat'),
+  final List<TNumberFormWrapper> levelBonusForms = stats.map(
+    (String stat) => TCharacterNumberForm.levelBonus(title: 'Points in $stat'),
   ).toList();
 
   //
@@ -328,7 +136,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
   bool _hasChanges() {
     bool ret = false;
-    for (ExpansionGroup group in expansionGroups) {
+    for (TFormGroup group in expansionGroups) {
       ret |= group.checkChanges();
     }
     return ret;
@@ -336,7 +144,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
   bool _validateFields() {
     bool ret = false;
-    for (ExpansionGroup group in expansionGroups) {
+    for (TFormGroup group in expansionGroups) {
       ret |= group.checkErrors();
     }
     return !ret;
@@ -419,23 +227,23 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   void initState() {
     super.initState();
     // Set the expansion group titles and form structure
-    expansionGroups = <ExpansionGroup>[
-      ExpansionGroup(
+    expansionGroups = <TFormGroup>[
+      TFormGroup(
         title: 'Level, EXP, BP, Subclass',
-        forms: <ExpansionForm>[levelForm, expForm, bpForm, subclassForm],
+        forms: <TFormWrapper>[levelForm, expForm, bpForm, subclassForm],
       ),
-      ExpansionGroup(
+      TFormGroup(
         title: 'Library points',
         forms: libraryForms + libraryElementForms,
       ),
-      ExpansionGroup(
+      TFormGroup(
         title: 'Level up bonuses',
-        forms: <ExpansionForm>[unusedLevelForm] + levelBonusForms,
+        forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
       ),
-      ExpansionGroup(title: 'Skill points', forms: <ExpansionForm>[]),
-      ExpansionGroup(title: 'Tomes', forms: <ExpansionForm>[]),
-      ExpansionGroup(title: 'Gems', forms: <ExpansionForm>[]),
-      ExpansionGroup(title: 'Equipment', forms: <ExpansionForm>[]),
+      TFormGroup(title: 'Skill points', forms: <TFormWrapper>[]),
+      TFormGroup(title: 'Tomes', forms: <TFormWrapper>[]),
+      TFormGroup(title: 'Gems', forms: <TFormWrapper>[]),
+      TFormGroup(title: 'Equipment', forms: <TFormWrapper>[]),
     ];
 
     // Initialize form data based on save data
@@ -495,22 +303,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
             expansionGroups[index].toggleExpanded();
           });
         },
-        children: expansionGroups.map((ExpansionGroup group) {
-          return ExpansionPanel(
-            backgroundColor: Colors.white.withOpacity(0.9),
-            canTapOnHeader: true,
-            isExpanded: group.expanded,
-            headerBuilder: group.buildHeader,
-            body: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 20, 20),
-              child: Column(
-                children: group.forms.map(
-                  (ExpansionForm f)=>f.toForm(),
-                ).toList(),
-              ),
-            ),
-          );
-        }).toList(),
+        children: expansionGroups.map(
+          (TFormGroup group) => group.build(),
+        ).toList(),
       ),
     ];
     _validateFields();
