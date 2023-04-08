@@ -11,14 +11,57 @@ abstract class TForm extends StatelessWidget {
   final String subtitle;
   final String title;
   final bool enabled;
+  final bool hasBorder;
 
   const TForm({
     required this.title,
     required this.subtitle,
     this.enabled = true,
+    this.hasBorder = false,
     this.errorMessage = '',
     super.key,
   }) : super();
+
+  Widget buildTitleTile(String errorText) {
+    return ListTile(
+      title: Text(title),
+      subtitle: RichText(
+        text: TextSpan(
+          style: subtitleStyle,
+          children: <TextSpan>[
+            TextSpan(text: subtitle),
+            TextSpan(text: errorText, style: errorStyle),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildFormField();
+
+  @override
+  Widget build(BuildContext context) {
+    String errorText = (errorMessage != '') ? '\n$errorMessage' : '';
+    Widget result = Row(
+      children: <Widget>[
+        Expanded(child: buildTitleTile(errorText)),
+        Expanded(child: buildFormField()),
+      ],
+    );
+    if (hasBorder) {
+      result = DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: TForm.subtitleColor),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(right: 15),
+          child: result,
+        ),
+      );
+    }
+    return result;
+  }
 }
 
 @immutable
@@ -34,6 +77,7 @@ class TStringForm extends TForm {
     this.hintText = '',
     this.onValueUpdate,
     super.errorMessage,
+    super.hasBorder,
     super.enabled,
     super.key,
   }) : super() {
@@ -42,57 +86,36 @@ class TStringForm extends TForm {
     }
   }
 
+  List<TextInputFormatter> getFormatters() => <TextInputFormatter>[];
+
   @override
-  Widget build(BuildContext context) {
-    String errorText = (errorMessage != '') ? '\n$errorMessage' : '';
-    return Row(
-      children: <Widget>[
-        Flexible(
-          child: ListTile(
-            title: Text(title),
-            subtitle: RichText(
-              text: TextSpan(
-                style: subtitleStyle,
-                children: <TextSpan>[
-                  TextSpan(text: subtitle),
-                  TextSpan(text: errorText, style: errorStyle),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Flexible(
-          child: TextFormField(
-            enabled: enabled,
-            controller: controller,
-            style: const TextStyle(fontSize: 18),
-            decoration: InputDecoration(
-              hintText: hintText,
-              contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-            ),
-          ),
-        ),
-      ],
+  Widget buildFormField() {
+    return TextFormField(
+      enabled: enabled,
+      controller: controller,
+      style: const TextStyle(fontSize: 18),
+      inputFormatters: getFormatters(),
+      decoration: InputDecoration(
+        hintText: hintText,
+        contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+      ),
     );
   }
 }
 
 @immutable
-class TNumberForm extends TForm {
-  final TextEditingController controller;
-  final String hintText;
+class TNumberForm extends TStringForm {
   final int maxLength;
   final String Function(String value) validationCallback;
-  final void Function()? onValueUpdate;
 
   TNumberForm({
     required super.title,
     required super.subtitle,
-    required this.controller,
+    required super.controller,
     required this.maxLength,
     required this.validationCallback,
-    this.hintText = '',
-    this.onValueUpdate,
+    super.hintText,
+    super.onValueUpdate,
     super.errorMessage,
     super.enabled,
     super.key,
@@ -103,45 +126,13 @@ class TNumberForm extends TForm {
   }
 
   @override
-  Widget build(BuildContext context) {
-    String errorText = (errorMessage != '') ? '\n$errorMessage' : '';
-    return Row(
-      children: <Widget>[
-        Flexible(
-          child: ListTile(
-            title: Text(title),
-            subtitle: RichText(
-              text: TextSpan(
-                style: subtitleStyle,
-                children: <TextSpan>[
-                  TextSpan(text: subtitle),
-                  TextSpan(text: errorText, style: errorStyle),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Flexible(
-          child: TextFormField(
-            enabled: enabled,
-            controller: controller,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp('[0-9]')),
-              NumberInputFormatter(
-                maxLength: maxLength,
-                validationCallback: validationCallback,
-              ),
-            ],
-            style: const TextStyle(fontSize: 18),
-            decoration: InputDecoration(
-              hintText: hintText,
-              contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  List<TextInputFormatter> getFormatters() => <TextInputFormatter>[
+    FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+    NumberInputFormatter(
+      maxLength: maxLength,
+      validationCallback: validationCallback,
+    ),
+  ];
 }
 
 @immutable
@@ -150,7 +141,6 @@ class TDropdownForm extends TForm {
   final List<String> options;
   final String hintText;
   final String value;
-  final bool hasBorder;
 
   const TDropdownForm({
     required super.title,
@@ -159,67 +149,31 @@ class TDropdownForm extends TForm {
     required this.hintText,
     required this.options,
     required this.onChanged,
-    this.hasBorder = false,
     super.errorMessage,
+    super.hasBorder,
     super.enabled,
     super.key,
   }) : super();
 
   @override
-  Widget build(BuildContext context) {
-    String errorText = (errorMessage != '') ? '\n$errorMessage' : '';
-    Widget queryWidget = Expanded(
-      child: ListTile(
-        title: Text(title),
-        subtitle: RichText(
-          text: TextSpan(
-            style: subtitleStyle,
-            children: <TextSpan>[
-              TextSpan(text: subtitle),
-              TextSpan(text: errorText, style: errorStyle),
-            ],
-          ),
-        ),
+  Widget buildFormField() {
+    return DropdownButton<String>(
+      isExpanded: true,
+      hint: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 0, 15),
+        child: Text(hintText),
       ),
-    );
-    Widget dropdownWidget = Expanded(
-      child: DropdownButton<String>(
-        isExpanded: true,
-        hint: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 0, 15),
-          child: Text(hintText),
-        ),
-        value: (value != '') ? value : null,
-        onChanged: onChanged,
-        items: options.map((String option) {
-          return DropdownMenuItem<String>(
-            value: option,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Text(option),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-    Widget result = Row(
-      children: <Widget>[
-        queryWidget,
-        dropdownWidget,
-      ],
-    );
-    if (hasBorder) {
-      result = Padding(
-        padding: const EdgeInsets.only(right: 15),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: TForm.subtitleColor),
+      value: (value != '') ? value : null,
+      onChanged: onChanged,
+      items: options.map((String option) {
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Text(option),
           ),
-          child: result,
-        ),
-      );
-    }
-    return result;
+        );
+      }).toList(),
+    );
   }
 }
