@@ -3,7 +3,11 @@ import 'dart:typed_data';
 
 extension IntExtension on int {
   String toCommaSeparatedNotation() {
+    bool negative = this < 0;
     String raw = toString();
+    if (negative) {
+      raw = raw.substring(1);
+    }
     int startingDigits = raw.length % 3;
     if (startingDigits == 0) {
       startingDigits = 3;
@@ -13,7 +17,8 @@ extension IntExtension on int {
     for (int i = startingDigits; i < raw.length; i += 3) {
       copy.write(',${raw.substring(i, i+3)}');
     }
-    return copy.toString();
+    String sign = negative ? '-' : '';
+    return '$sign${copy.toString()}';
   }
 
   Iterable<int> toU16(Endian endianness) {
@@ -58,7 +63,11 @@ extension IntExtension on int {
 
 extension BigIntExtension on BigInt {
   String toCommaSeparatedNotation() {
+    bool negative = this < BigInt.from(0);
     String raw = toString();
+    if (negative) {
+      raw = raw.substring(1);
+    }
     int startingDigits = raw.length % 3;
     if (startingDigits == 0) {
       startingDigits = 3;
@@ -68,7 +77,8 @@ extension BigIntExtension on BigInt {
     for (int i = startingDigits; i < raw.length; i += 3) {
       copy.write(',${raw.substring(i, i+3)}');
     }
-    return copy.toString();
+    String sign = negative ? '-' : '';
+    return '$sign${copy.toString()}';
   }
 
   Iterable<int> toU64(Endian endianness) {

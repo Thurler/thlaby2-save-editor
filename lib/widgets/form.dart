@@ -29,7 +29,7 @@ class TNumberForm extends TForm {
   final String Function(String value) validationCallback;
   final void Function()? onValueUpdate;
 
-  const TNumberForm({
+  TNumberForm({
     required super.title,
     required super.subtitle,
     required this.controller,
@@ -40,7 +40,11 @@ class TNumberForm extends TForm {
     super.errorMessage,
     super.enabled,
     super.key,
-  }) : super();
+  }) : super() {
+    if (onValueUpdate != null) {
+      controller.addListener(onValueUpdate!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

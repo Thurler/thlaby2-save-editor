@@ -70,6 +70,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     minValue: BigInt.from(1),
     maxValue: BigInt.from(levelCap),
     setStateCallback: setState,
+    onValueUpdate: _updateLevelPoints,
   );
 
   late final TNumberFormWrapper expForm = TNumberFormWrapper(
@@ -138,10 +139,12 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       points -= value;
       cap -= value;
     }
-    for (TNumberFormWrapper form in levelBonusForms) {
-      form.updateMaxValue(BigInt.from(cap));
-    }
-    unusedLevelForm.controller.text = points.toCommaSeparatedNotation();
+    setState((){
+      for (TNumberFormWrapper form in levelBonusForms) {
+        form.updateMaxValue(BigInt.from(cap));
+      }
+      unusedLevelForm.controller.text = points.toCommaSeparatedNotation();
+    });
   }
 
   String _checkForDuplicateUniqueSubclasses(String value) {
