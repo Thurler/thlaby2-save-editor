@@ -148,6 +148,22 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
   ).toList();
 
+  late final TStringFormWrapper mainEquipmentForm = TStringFormWrapper(
+    title: 'Main equipment',
+    subtitle: 'Item occupying main slot',
+    readOnly: true,
+    setStateCallback: setState,
+  );
+
+  late final List<TStringFormWrapper> subEquipmentForms = <int>[1, 2, 3].map(
+    (int i) => TStringFormWrapper(
+      title: 'Sub equipment $i',
+      subtitle: 'Item occupying sub slot $i',
+      readOnly: true,
+      setStateCallback: setState,
+    ),
+  ).toList();
+
   //
   // Properly check for and validate changes, save/commit them
   //
@@ -307,7 +323,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         title: 'Gems',
         forms: gemForms,
       ),
-      TFormGroup(title: 'Equipment', forms: <TFormWrapper>[]),
+      TFormGroup(
+        title: 'Equipment',
+        forms: <TFormWrapper>[mainEquipmentForm] + subEquipmentForms,
+      ),
     ];
 
     // Initialize form data based on save data
@@ -343,6 +362,12 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       gemForms[i].initNumberForm(
         BigInt.from(data.gems.getStatData(i)),
       );
+    }
+
+    // Equipment info
+    mainEquipmentForm.initForm(data.mainEquip.id.toString());
+    for (int i = 0; i < 3; i++) {
+      subEquipmentForms[i].initForm(data.subEquips[i].id.toString());
     }
 
     // Set and update unused level up bonus info

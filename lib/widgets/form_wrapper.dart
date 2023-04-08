@@ -117,6 +117,30 @@ abstract class TFormWrapper {
   Widget toForm();
 }
 
+class TStringFormWrapper extends TFormWrapper {
+  void Function()? onValueUpdate;
+
+  TStringFormWrapper({
+    required super.title,
+    required super.subtitle,
+    required super.setStateCallback,
+    this.onValueUpdate,
+    super.readOnly,
+  });
+
+  @override
+  Widget toForm() {
+    return TStringForm(
+      title: title,
+      subtitle: subtitle,
+      errorMessage: error,
+      controller: controller,
+      onValueUpdate: onValueUpdate,
+      enabled: !readOnly,
+    );
+  }
+}
+
 class TNumberFormWrapper extends TFormWrapper {
   late BigInt minValue;
   late BigInt maxValue;

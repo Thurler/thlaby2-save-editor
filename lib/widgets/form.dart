@@ -22,6 +22,62 @@ abstract class TForm extends StatelessWidget {
 }
 
 @immutable
+class TStringForm extends TForm {
+  final TextEditingController controller;
+  final String hintText;
+  final void Function()? onValueUpdate;
+
+  TStringForm({
+    required super.title,
+    required super.subtitle,
+    required this.controller,
+    this.hintText = '',
+    this.onValueUpdate,
+    super.errorMessage,
+    super.enabled,
+    super.key,
+  }) : super() {
+    if (onValueUpdate != null) {
+      controller.addListener(onValueUpdate!);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String errorText = (errorMessage != '') ? '\n$errorMessage' : '';
+    return Row(
+      children: <Widget>[
+        Flexible(
+          child: ListTile(
+            title: Text(title),
+            subtitle: RichText(
+              text: TextSpan(
+                style: subtitleStyle,
+                children: <TextSpan>[
+                  TextSpan(text: subtitle),
+                  TextSpan(text: errorText, style: errorStyle),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Flexible(
+          child: TextFormField(
+            enabled: enabled,
+            controller: controller,
+            style: const TextStyle(fontSize: 18),
+            decoration: InputDecoration(
+              hintText: hintText,
+              contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+@immutable
 class TNumberForm extends TForm {
   final TextEditingController controller;
   final String hintText;
