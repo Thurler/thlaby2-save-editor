@@ -147,20 +147,17 @@ class PartyDataState extends CommonState<PartyDataWidget> {
       ),
     );
     // Main image using S variant
-    late Widget image;
+    String filename;
     if (isUsed) {
       String characterFilename = getCharacterFilename(slot.character);
-      String filename = 'img/character/${characterFilename}_S.png';
-      image = Image.asset(
-        filename,
-        fit: BoxFit.contain,
-      );
+      filename = 'img/character/${characterFilename}_S.png';
     } else {
-      image = const SizedBox(
-        width: 200,
-        height: 100,
-      );
+      filename = 'img/character/Empty_S.png';
     }
+    Widget image = Image.asset(
+      filename,
+      fit: BoxFit.contain,
+    );
     // Put it in a DecoratedBox to give it a border - hides the portrait cutoffs
     image = DecoratedBox(
       position: DecorationPosition.foreground,
