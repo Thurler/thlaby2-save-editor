@@ -6,12 +6,10 @@ import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 class NumberInputFormatter extends TextInputFormatter {
   final int maxLength;
   final String Function(String value) validationCallback;
-  final void Function()? onValueUpdate;
 
   NumberInputFormatter({
     required this.maxLength,
     required this.validationCallback,
-    this.onValueUpdate,
   }) : super();
 
   @override
@@ -46,8 +44,6 @@ class NumberInputFormatter extends TextInputFormatter {
     if (finalOffset < 0 || finalOffset > finalText.length) {
       finalOffset = finalText.length;
     }
-    // If set, call the value update callback
-    onValueUpdate?.call();
     // Finally, return with the new values
     return newValue.copyWith(
       text: finalText,

@@ -74,7 +74,6 @@ class TNumberForm extends TForm {
               NumberInputFormatter(
                 maxLength: maxLength,
                 validationCallback: validationCallback,
-                onValueUpdate: onValueUpdate,
               ),
             ],
             style: const TextStyle(fontSize: 18),
