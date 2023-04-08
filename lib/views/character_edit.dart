@@ -38,6 +38,16 @@ class TCharacterNumberForm extends TNumberFormWrapper {
     subtitle: 'Sum of all points must be below '
       '${CharacterEditState.levelBonusCap.toCommaSeparatedNotation()}\n',
   );
+
+  TCharacterNumberForm.gem({
+    required super.title,
+    required super.setStateCallback,
+  }) : super(
+    minValue: BigInt.from(0),
+    maxValue: BigInt.from(CharacterEditState.gemCap),
+    subtitle: 'Must be below '
+      '${CharacterEditState.gemCap.toCommaSeparatedNotation()}',
+  );
 }
 
 class CharacterEditWidget extends StatefulWidget {
@@ -52,6 +62,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const List<String> stats = <String>[
     'HP', 'ATK', 'DEF', 'MAG', 'MND', 'SPD',
   ];
+  static const List<String> gemStats = <String>[
+    'HP', 'MP', 'TP', 'ATK', 'DEF', 'MAG', 'MND', 'SPD',
+  ];
   static const List<String> elements = <String>[
     'FIR', 'CLD', 'WND', 'NTR', 'MYS', 'SPI', 'DRK', 'PHY',
   ];
@@ -61,6 +74,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const int bpCap = 2147483647; // Goes negative past this
   static const int libraryCap = 99999999; // Hard cap at library
   static const int libraryElementCap = 100; // Hard cap at library
+  static const int gemCap = 20; // Hard cap at shrine
 
   late List<TFormGroup> expansionGroups;
 
@@ -124,6 +138,13 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       title: 'Points in $stat',
       setStateCallback: setState,
       onValueUpdate: _updateLevelPoints,
+    ),
+  ).toList();
+
+  late final List<TNumberFormWrapper> gemForms = gemStats.map(
+    (String stat) => TCharacterNumberForm.gem(
+      title: 'Gems used in $stat',
+      setStateCallback: setState,
     ),
   ).toList();
 
@@ -252,6 +273,12 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     for (int i = 0; i < elements.length; i++) {
       data.libraryLevels.setElementData(i, libraryElementForms[i].saveValue());
     }
+    data.unusedBonusPoints = int.parse(unusedLevelForm.saveValue());
+
+    // Gem data
+    for (int i = 0; i < gemStats.length; i++) {
+      data.gems.setStatData(i, gemForms[i].saveValue());
+    }
 
     // Refresh widget to get rid of the save symbol
     setState((){});
@@ -276,7 +303,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       ),
       TFormGroup(title: 'Skill points', forms: <TFormWrapper>[]),
       TFormGroup(title: 'Tomes', forms: <TFormWrapper>[]),
-      TFormGroup(title: 'Gems', forms: <TFormWrapper>[]),
+      TFormGroup(
+        title: 'Gems',
+        forms: gemForms,
+      ),
       TFormGroup(title: 'Equipment', forms: <TFormWrapper>[]),
     ];
 
@@ -307,6 +337,15 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         BigInt.from(data.libraryLevels.getElementData(i)),
       );
     }
+
+    // Gems info
+    for (int i = 0; i < gemStats.length; i++) {
+      gemForms[i].initNumberForm(
+        BigInt.from(data.gems.getStatData(i)),
+      );
+    }
+
+    // Set and update unused level up bonus info
     unusedLevelForm.initNumberForm(
       BigInt.from(data.unusedBonusPoints),
     );

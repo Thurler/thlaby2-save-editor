@@ -11,6 +11,24 @@ class GemData {
   late int mnd;
   late int spd;
 
+  int getStatData(int index) {
+    return <int>[hp, mp, tp, atk, def, mag, mnd, spd][index];
+  }
+
+  void setStatData(int index, String raw) {
+    int value = int.parse(raw);
+    switch (index) {
+      case 0: hp = value; break;
+      case 1: mp = value; break;
+      case 2: tp = value; break;
+      case 3: atk = value; break;
+      case 4: def = value; break;
+      case 5: mag = value; break;
+      case 6: mnd = value; break;
+      case 7: spd = value; break;
+    }
+  }
+
   GemData.fromBytes(List<int> bytes, int offset) {
     hp = bytes[offset];
     mp = bytes[offset + 2];
