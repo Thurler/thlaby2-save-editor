@@ -5,6 +5,7 @@ import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
+import 'package:thlaby2_save_editor/save/equip.dart';
 import 'package:thlaby2_save_editor/widgets/form_wrapper.dart';
 
 class TCharacterNumberForm extends TNumberFormWrapper {
@@ -14,7 +15,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.libraryCap),
-    subtitle: 'Must be below '
+    subtitle: 'Must be at most '
       '${CharacterEditState.libraryCap.toCommaSeparatedNotation()}',
   );
 
@@ -24,7 +25,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.libraryElementCap),
-    subtitle: 'Must be below '
+    subtitle: 'Must be at most '
       '${CharacterEditState.libraryElementCap.toCommaSeparatedNotation()}',
   );
 
@@ -35,7 +36,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.levelBonusCap),
-    subtitle: 'Sum of all points must be below '
+    subtitle: 'Sum of all points must be at most '
       '${CharacterEditState.levelBonusCap.toCommaSeparatedNotation()}\n',
   );
 
@@ -45,7 +46,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.gemCap),
-    subtitle: 'Must be below '
+    subtitle: 'Must be at most '
       '${CharacterEditState.gemCap.toCommaSeparatedNotation()}',
   );
 }
@@ -97,7 +98,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
   late final TNumberFormWrapper bpForm = TNumberFormWrapper(
     title: 'Battle Points',
-    subtitle: 'Must be below ${bpCap.toCommaSeparatedNotation()}',
+    subtitle: 'Must be at most ${bpCap.toCommaSeparatedNotation()}',
     minValue: BigInt.from(0),
     maxValue: BigInt.from(bpCap),
     setStateCallback: setState,
@@ -155,7 +156,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     addCallback: (){print('add');},
     editCallback: (){print('edit');},
     removeCallback: (){print('remove');},
-    emptyValue: '0',
+    emptyValue: MainEquip.slot0.name,
   );
 
   late final List<TFixedStringFormWrapper> subEquipForms = <int>[1, 2, 3].map(
@@ -166,7 +167,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       addCallback: (){print('add');},
       editCallback: (){print('edit');},
       removeCallback: (){print('remove');},
-      emptyValue: '0',
+      emptyValue: 'Empty',
     ),
   ).toList();
 
@@ -371,9 +372,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
 
     // Equipment info
-    mainEquipForm.initForm(data.mainEquip.id.toString());
+    mainEquipForm.initForm(data.mainEquip.equip.name);
     for (int i = 0; i < 3; i++) {
-      subEquipForms[i].initForm(data.subEquips[i].id.toString());
+      subEquipForms[i].initForm(data.subEquips[i].equip.name);
     }
 
     // Set and update unused level up bonus info
