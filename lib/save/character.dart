@@ -113,7 +113,8 @@ class CharacterData {
   late SkillData skills;
   late TomeData tomes;
   late GemData gems;
-  late List<Equipment> equips;
+  late Equipment mainEquip;
+  late List<Equipment> subEquips;
 
   CharacterData.fromBytes({
     required Endian endianness,
@@ -135,11 +136,12 @@ class CharacterData {
     gems = GemData.fromBytes(bytes, 0xf2);
     usedManuals = bytes[0x102];
     bp = bytes.getU32(endianness, offset: 0x103);
-    equips = <Equipment>[];
-    for (int i = 0; i < 4; i++) {
-      equips.add(
+    mainEquip = Equipment(id: bytes.getU16(endianness, offset: 0x107));
+    subEquips = <Equipment>[];
+    for (int i = 0; i < 3; i++) {
+      subEquips.add(
         Equipment(
-          id: bytes.getU16(endianness, offset: 0x107 + (i * 2)),
+          id: bytes.getU16(endianness, offset: 0x109 + (i * 2)),
         ),
       );
     }
@@ -159,7 +161,8 @@ class CharacterData {
     skills = SkillData.from(other.skills);
     tomes = TomeData.from(other.tomes);
     gems = GemData.from(other.gems);
-    equips = other.equips.deepCopyElements(Equipment.from);
+    mainEquip = Equipment.from(other.mainEquip);
+    subEquips = other.subEquips.deepCopyElements(Equipment.from);
   }
 
   Iterable<int> toBytes(Endian endianness) {
@@ -177,8 +180,9 @@ class CharacterData {
     bytes = bytes.followedBy(gems.toBytes(endianness));
     bytes = bytes.followedBy(<int>[usedManuals]);
     bytes = bytes.followedBy(bp.toU32(endianness));
-    for (Equipment item in equips) {
-      bytes = bytes.followedBy(item.toBytes(endianness));
+    bytes = bytes.followedBy(mainEquip.toBytes(endianness));
+    for (Equipment equip in subEquips) {
+      bytes = bytes.followedBy(equip.toBytes(endianness));
     }
     return bytes;
   }
