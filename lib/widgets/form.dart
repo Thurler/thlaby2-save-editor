@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:thlaby2_save_editor/text_formatter.dart';
 
+enum FormBorder {
+  full,
+  fieldUnderline,
+  none,
+}
+
 @immutable
 abstract class TForm extends StatelessWidget {
   static const Color subtitleColor = Colors.grey;
@@ -11,13 +17,13 @@ abstract class TForm extends StatelessWidget {
   final String subtitle;
   final String title;
   final bool enabled;
-  final bool hasBorder;
+  final FormBorder border;
 
   const TForm({
     required this.title,
     required this.subtitle,
     this.enabled = true,
-    this.hasBorder = false,
+    this.border = FormBorder.none,
     this.errorMessage = '',
     super.key,
   }) : super();
@@ -42,13 +48,27 @@ abstract class TForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String errorText = (errorMessage != '') ? '\n$errorMessage' : '';
+    Widget field = buildFormField();
+    if (border == FormBorder.fieldUnderline) {
+      field = DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: TForm.subtitleColor.withOpacity(0.5), width: 2),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: field,
+        ),
+      );
+    }
     Widget result = Row(
       children: <Widget>[
         Expanded(child: buildTitleTile(errorText)),
-        Expanded(child: buildFormField()),
+        Expanded(child: field),
       ],
     );
-    if (hasBorder) {
+    if (border == FormBorder.full) {
       result = DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -69,7 +89,6 @@ class TStringForm extends TForm {
   final TextEditingController controller;
   final String hintText;
   final void Function()? onValueUpdate;
-  final Widget? suffixIcon;
 
   TStringForm({
     required super.title,
@@ -77,9 +96,8 @@ class TStringForm extends TForm {
     required this.controller,
     this.hintText = '',
     this.onValueUpdate,
-    this.suffixIcon,
     super.errorMessage,
-    super.hasBorder,
+    super.border,
     super.enabled,
     super.key,
   }) : super() {
@@ -99,9 +117,43 @@ class TStringForm extends TForm {
       inputFormatters: getFormatters(),
       decoration: InputDecoration(
         hintText: hintText,
-        suffixIcon: suffixIcon,
         contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
       ),
+    );
+  }
+}
+
+@immutable
+class TUneditableStringForm extends TStringForm {
+  final Widget suffix;
+
+  TUneditableStringForm({
+    required super.title,
+    required super.subtitle,
+    required super.controller,
+    required this.suffix,
+    super.hintText,
+    super.onValueUpdate,
+    super.errorMessage,
+    super.border,
+    super.enabled,
+    super.key,
+  });
+
+  @override
+  Widget buildFormField() {
+    return Row(
+      children: <Widget>[
+        const SizedBox(width: 20),
+        Expanded(
+          child: Text(
+            controller.text,
+            style: const TextStyle(fontSize: 16),
+          ),
+        ),
+        const SizedBox(width: 10),
+        suffix,
+      ],
     );
   }
 }
@@ -153,7 +205,7 @@ class TDropdownForm extends TForm {
     required this.options,
     required this.onChanged,
     super.errorMessage,
-    super.hasBorder,
+    super.border,
     super.enabled,
     super.key,
   }) : super();

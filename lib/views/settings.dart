@@ -135,7 +135,7 @@ class SettingsState extends CommonState<SettingsWidget> {
         hintText: 'Select a log level',
         options: _options,
         onChanged: _changeLogLevel,
-        hasBorder: true,
+        border: FormBorder.full,
       ),
     ];
     Widget? floatingActionButton;

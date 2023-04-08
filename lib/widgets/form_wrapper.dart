@@ -129,8 +129,6 @@ class TStringFormWrapper extends TFormWrapper {
     super.readOnly,
   });
 
-  Widget? formSuffix() => null;
-
   @override
   Widget toForm() {
     return TStringForm(
@@ -139,7 +137,6 @@ class TStringFormWrapper extends TFormWrapper {
       errorMessage: error,
       controller: controller,
       onValueUpdate: onValueUpdate,
-      suffixIcon: formSuffix(),
       enabled: !readOnly,
     );
   }
@@ -162,31 +159,44 @@ class TFixedStringFormWrapper extends TStringFormWrapper {
     super.onValueUpdate,
   }) : super(readOnly: true);
 
-  @override
-  Widget? formSuffix() {
+  Widget formSuffix() {
     List<Widget> icons;
     if (controller.text == emptyValue) {
       icons = <Widget>[
         TClickable(
           onTap: addCallback,
-          child: const Icon(Icons.add_circle),
+          child: Icon(Icons.add_circle, color: Colors.green.shade300),
         ),
       ];
     } else {
       icons = <Widget>[
         TClickable(
           onTap: editCallback,
-          child: const Icon(Icons.edit),
+          child: const Icon(Icons.edit, color: Colors.grey),
         ),
         TClickable(
           onTap: removeCallback,
-          child: const Icon(Icons.cancel),
+          child: Icon(Icons.cancel, color: Colors.red.shade300),
         ),
       ];
     }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: icons.separateWith(const SizedBox(width: 2)),
+    );
+  }
+
+  @override
+  Widget toForm() {
+    return TUneditableStringForm(
+      title: title,
+      subtitle: subtitle,
+      errorMessage: error,
+      controller: controller,
+      onValueUpdate: onValueUpdate,
+      suffix: formSuffix(),
+      border: FormBorder.fieldUnderline,
+      enabled: !readOnly,
     );
   }
 }
