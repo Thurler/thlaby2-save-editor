@@ -14,7 +14,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.libraryCap),
-    subtitle: 'Must be between 0 and '
+    subtitle: 'Must be below '
       '${CharacterEditState.libraryCap.toCommaSeparatedNotation()}',
   );
 
@@ -24,7 +24,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
   }) : super(
     minValue: BigInt.from(0),
     maxValue: BigInt.from(CharacterEditState.libraryElementCap),
-    subtitle: 'Must be between 0 and '
+    subtitle: 'Must be below '
       '${CharacterEditState.libraryElementCap.toCommaSeparatedNotation()}',
   );
 
