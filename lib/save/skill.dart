@@ -149,7 +149,15 @@ enum CommonSkill implements Skill {
   magicTraining(2, 5, 'Magic Training'),
   hakkeroCharge(1, 80, 'Hakkero Charge Mode'),
   hakkeroCustom(1, 70, 'Hakkero Custom Mode'),
-  magicDrain(7, 10, 'Magic Drain Missile');
+  magicDrain(7, 10, 'Magic Drain Missile'),
+  shopkeeper(10, 1, "Gensokyo's Shopkeeper"),
+  shopowner(10, 1, 'Keen-eyed Shop Owner Saga'),
+  effectiveChange(2, 5, 'Effective Formation Change'),
+  weirdCreatures(2, 5, 'Weird Creatures Knowledge'),
+  attackDebuff(2, 5, 'Attack Debuff Add-On'),
+  magicDebuff(2, 5, 'Magic Debuff Add-on'),
+  murakumoOwner(10, 10, "Murakumo's Previous Owner"),
+  guts(2, 5, 'Guts');
 
   @override
   final int maxLevel;
@@ -169,7 +177,10 @@ enum Spell implements Skill {
   magicMissile(5, 5, 'Magic Missile'),
   asteroidBelt(5, 5, 'Asteroid Belt'),
   masterSpark(5, 5, 'Master Spark'),
-  concentration(5, 5, 'Concentration');
+  concentration(5, 5, 'Concentration'),
+  firstAid(5, 5, 'First Aid'),
+  battleCommand(5, 5, 'Battle Command'),
+  preciseDiagnosis(5, 25, 'Precise Diagnosis');
 
   @override
   final int maxLevel;

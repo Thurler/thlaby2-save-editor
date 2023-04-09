@@ -22,6 +22,7 @@ enum Character {
       Spell.yinYang, Spell.fantasySeal,
       Spell.exorcisingBorder, Spell.greatBarrier,
     ],
+    <Skill>[],
   ),
   marisa(
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
@@ -35,17 +36,25 @@ enum Character {
       Spell.magicMissile, Spell.asteroidBelt,
       Spell.masterSpark, Spell.concentration,
     ],
+    <Skill>[],
   ),
   rinnosuke(
     <TomeStat>[
       TomeStat.mp, TomeStat.tp, TomeStat.atk,
       TomeStat.def, TomeStat.mag, TomeStat.mnd,
     ],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.shopkeeper, CommonSkill.shopowner,
+      CommonSkill.effectiveChange, CommonSkill.weirdCreatures,
+      CommonSkill.attackDebuff, CommonSkill.magicDebuff,
+      CommonSkill.murakumoOwner, CommonSkill.guts,
+    ],
+    <Skill>[Spell.firstAid, Spell.battleCommand],
+    <Skill>[Spell.preciseDiagnosis],
   ),
   keine(
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -53,9 +62,11 @@ enum Character {
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   youmu(
     <TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mnd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -63,9 +74,11 @@ enum Character {
     <TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.eva],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   rumia(
     <TomeStat>[TomeStat.mag, TomeStat.spd, TomeStat.aff],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -73,9 +86,11 @@ enum Character {
     <TomeStat>[TomeStat.tp, TomeStat.spd, TomeStat.aff],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   minoriko(
     <TomeStat>[TomeStat.mag, TomeStat.spd, TomeStat.res],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -83,9 +98,11 @@ enum Character {
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.mnd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   chen(
     <TomeStat>[TomeStat.atk, TomeStat.spd, TomeStat.eva],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -93,9 +110,11 @@ enum Character {
     <TomeStat>[TomeStat.def, TomeStat.mnd, TomeStat.aff],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   parsee(
     <TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.res],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -103,9 +122,11 @@ enum Character {
     <TomeStat>[TomeStat.def, TomeStat.mnd, TomeStat.eva],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   kaguya(
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -113,9 +134,11 @@ enum Character {
     <TomeStat>[TomeStat.hp, TomeStat.tp, TomeStat.atk],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   aya(
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.eva],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -123,9 +146,11 @@ enum Character {
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   kasen(
     <TomeStat>[TomeStat.hp, TomeStat.tp, TomeStat.spd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -133,9 +158,11 @@ enum Character {
     <TomeStat>[TomeStat.mnd, TomeStat.spd, TomeStat.eva],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   hina(
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -143,9 +170,11 @@ enum Character {
     <TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.spd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   utsuho(
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -153,9 +182,11 @@ enum Character {
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   yuugi(
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -163,9 +194,11 @@ enum Character {
     <TomeStat>[TomeStat.tp, TomeStat.def, TomeStat.mnd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   alice(
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -173,9 +206,11 @@ enum Character {
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.aff],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   eirin(
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.res],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -183,9 +218,11 @@ enum Character {
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   sanae(
     <TomeStat>[TomeStat.def, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -193,9 +230,11 @@ enum Character {
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   suika(
     <TomeStat>[TomeStat.atk, TomeStat.mnd, TomeStat.res],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -203,9 +242,11 @@ enum Character {
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   remilia(
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.spd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -213,9 +254,11 @@ enum Character {
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   kanako(
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -223,9 +266,11 @@ enum Character {
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   tenshi(
     <TomeStat>[TomeStat.tp, TomeStat.aff, TomeStat.res],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -233,9 +278,11 @@ enum Character {
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   yuyuko(
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -243,9 +290,11 @@ enum Character {
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   yukari(
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mnd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -253,9 +302,11 @@ enum Character {
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.spd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   eiki(
     <TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -263,9 +314,11 @@ enum Character {
     <TomeStat>[TomeStat.spd, TomeStat.eva, TomeStat.res],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   maribel(
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -273,9 +326,11 @@ enum Character {
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   mamizou(
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.eva],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -283,14 +338,17 @@ enum Character {
     <TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.res],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   miko(
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.aff],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   kokoro(
     <TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -300,9 +358,11 @@ enum Character {
     ],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   ),
   koishi(
     <TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.eva],
+    <Skill>[],
     <Skill>[],
     <Skill>[],
   ),
@@ -310,13 +370,17 @@ enum Character {
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp],
     <Skill>[],
     <Skill>[],
+    <Skill>[],
   );
 
   final List<TomeStat> naturalTomeStats;
   final List<Skill> skills;
   final List<Skill> spells;
+  final List<Skill> awakeningSpells;
 
-  const Character(this.naturalTomeStats, this.skills, this.spells);
+  const Character(
+    this.naturalTomeStats, this.skills, this.spells, this.awakeningSpells,
+  );
 
   bool isNaturalTomeStat(TomeStat stat) => naturalTomeStats.contains(stat);
 
