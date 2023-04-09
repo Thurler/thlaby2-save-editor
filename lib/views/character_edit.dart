@@ -59,8 +59,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
     minValue: BigInt.from(0),
     maxValue: BigInt.from(skill.maxLevel),
     title: skill.name,
-    subtitle: 'Must be at most ${skill.maxLevel}\n'
-        '${skill.levelCost} skill points used per level',
+    subtitle: CharacterEditState.skillSubtitle(skill),
   );
 
   TCharacterNumberForm.spell({
@@ -70,7 +69,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
     minValue: BigInt.from(1),
     maxValue: BigInt.from(skill.maxLevel),
     title: skill.name,
-    subtitle: CharacterEditState.skillSubtitle(skill),
+    subtitle: CharacterEditState.spellSubtitle(skill),
   );
 }
 
@@ -105,10 +104,15 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static String skillSubtitle(Skill skill) => 'Must be at most '
     '${skill.maxLevel}\n${skill.levelCost} skill points used per level';
 
+  static String spellSubtitle(Skill skill) => 'Must be between 1 and '
+    '${skill.maxLevel}\n${skill.levelCost} skill points used per level';
+
+  Character get character => widget.character;
+
   late final Widget _backgroundPortrait = Opacity(
     opacity: 0.8,
     child: Image.asset(
-      'img/character/${getCharacterFilename(widget.character)}.png',
+      'img/character/${getCharacterFilename(character)}.png',
       alignment: Alignment.bottomRight,
       fit: BoxFit.fitHeight,
       width: double.infinity,
@@ -133,7 +137,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       title: 'Skill points (Common)',
       forms: boostSkillForms + expSkillForms,
     ),
-    TFormGroup(title: 'Skill points (Personal)', forms: <TFormWrapper>[]),
+    TFormGroup(
+      title: 'Skill points (Personal)',
+      forms: personalSkillForms + personalSpellForms,
+    ),
     TFormGroup(title: 'Skill points (Subclass)', forms: <TFormWrapper>[]),
     TFormGroup(title: 'Tomes', forms: tomeForms),
     TFormGroup(title: 'Gems', forms: gemForms),
@@ -221,12 +228,26 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
   ).toList();
 
+  late final List<TNumberFormWrapper> personalSkillForms = character.skills.map(
+    (Skill skill) => TCharacterNumberForm.skill(
+      skill: skill,
+      setStateCallback: setState,
+    ),
+  ).toList();
+
+  late final List<TNumberFormWrapper> personalSpellForms = character.spells.map(
+    (Skill skill) => TCharacterNumberForm.spell(
+      skill: skill,
+      setStateCallback: setState,
+    ),
+  ).toList();
+
   late final List<TDropdownFormWrapper> tomeForms = TomeStat.values.map(
     (TomeStat stat) => TDropdownFormWrapper(
       title: 'Tomes used in ${stat.name}',
       subtitle: 'Changing this will affect skills data',
       setStateCallback: setState,
-      options: widget.character.tomeDropdownOptions(stat),
+      options: character.tomeDropdownOptions(stat),
       onValueUpdate: _updateTomeSkills,
     ),
   ).toList();
@@ -261,7 +282,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   ).toList();
 
   CharacterData get characterData => saveFileWrapper.saveFile.characterData[
-    widget.character.index
+    character.index
   ];
 
   //
@@ -316,7 +337,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         // update the subtitle to convey this new information
         bool isUnused = tomeForms[i].getValue() == TomeLevel.unused.name;
         TomeStat stat = TomeStat.values.elementAt(i);
-        bool isNatural = widget.character.isNaturalTomeStat(stat);
+        bool isNatural = character.isNaturalTomeStat(stat);
         BigInt maxValue;
         String subtitle;
         if (isUnused && !isNatural) {
@@ -349,7 +370,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     // Otherwise, no other character must have his subclass
     List<CharacterData> original = saveFileWrapper.saveFile.characterData;
     Iterable<CharacterData> overlap = original.where((CharacterData data) {
-      return data.character != widget.character && data.subclass == chosen;
+      return data.character != character && data.subclass == chosen;
     });
     if (overlap.isEmpty) {
       return '';
@@ -452,12 +473,24 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       data.skills.setExpData(i, expSkillForms[i].saveValue());
     }
 
+    // Personal skills and spells data
+    for (int i = 0; i < character.skills.length; i++) {
+      data.skills.personalSkills[i] = int.parse(
+        personalSkillForms[i].saveValue(),
+      );
+    }
+    for (int i = 0; i < character.spells.length; i++) {
+      data.skills.personalSpells[i] = int.parse(
+        personalSpellForms[i].saveValue(),
+      );
+    }
+
     // Tome data
     for (TomeStat stat in TomeStat.values) {
       data.tomes.setStatData(
         stat.index,
         tomeForms[stat.index].saveValue(),
-        isNatural: widget.character.isNaturalTomeStat(stat),
+        isNatural: character.isNaturalTomeStat(stat),
       );
     }
 
@@ -510,7 +543,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       );
     }
 
-    // Skills info
+    // Common skills info
     for (int i = 0; i < BoostSkill.values.length; i++) {
       boostSkillForms[i].initNumberForm(
         BigInt.from(data.skills.getBoostData(i)),
@@ -519,6 +552,18 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     for (int i = 0; i < ExpSkill.values.length; i++) {
       expSkillForms[i].initNumberForm(
         BigInt.from(data.skills.getExpData(i)),
+      );
+    }
+
+    // Personal skills and spells info
+    for (int i = 0; i < character.skills.length; i++) {
+      personalSkillForms[i].initNumberForm(
+        BigInt.from(data.skills.personalSkills[i]),
+      );
+    }
+    for (int i = 0; i < character.spells.length; i++) {
+      personalSpellForms[i].initNumberForm(
+        BigInt.from(data.skills.personalSpells[i]),
       );
     }
 
@@ -550,7 +595,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
   @override
   Widget build(BuildContext context) {
-    String characterName = widget.character.name.upperCaseFirstChar();
+    String characterName = character.name.upperCaseFirstChar();
     List<Widget> columnChildren = <Widget>[
       ExpansionPanelList(
         expansionCallback: (int index, bool isExpanded) {

@@ -9,73 +9,306 @@ import 'package:thlaby2_save_editor/save/skill.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
 
 enum Character {
-  reimu(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag]),
-  marisa(<TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd]),
-  rinnosuke(<TomeStat>[
-    TomeStat.mp, TomeStat.tp, TomeStat.atk,
-    TomeStat.def, TomeStat.mag, TomeStat.mnd,
-  ]),
-  keine(<TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag]),
-  momiji(<TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def]),
-  youmu(<TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mnd]),
-  kogasa(<TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.eva]),
-  rumia(<TomeStat>[TomeStat.mag, TomeStat.spd, TomeStat.aff]),
-  cirno(<TomeStat>[TomeStat.tp, TomeStat.spd, TomeStat.aff]),
-  minoriko(<TomeStat>[TomeStat.mag, TomeStat.spd, TomeStat.res]),
-  komachi(<TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.mnd]),
-  chen(<TomeStat>[TomeStat.atk, TomeStat.spd, TomeStat.eva]),
-  nitori(<TomeStat>[TomeStat.def, TomeStat.mnd, TomeStat.aff]),
-  parsee(<TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.res]),
-  wriggle(<TomeStat>[TomeStat.def, TomeStat.mnd, TomeStat.eva]),
-  kaguya(<TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.mnd]),
-  mokou(<TomeStat>[TomeStat.hp, TomeStat.tp, TomeStat.atk]),
-  aya(<TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.eva]),
-  mystia(<TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd]),
-  kasen(<TomeStat>[TomeStat.hp, TomeStat.tp, TomeStat.spd]),
-  nazrin(<TomeStat>[TomeStat.mnd, TomeStat.spd, TomeStat.eva]),
-  hina(<TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd]),
-  rin(<TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.spd]),
-  utsuho(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag]),
-  satori(<TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag]),
-  yuugi(<TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def]),
-  meiling(<TomeStat>[TomeStat.tp, TomeStat.def, TomeStat.mnd]),
-  alice(<TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.mnd]),
-  patchouli(<TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.aff]),
-  eirin(<TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.res]),
-  reisen(<TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd]),
-  sanae(<TomeStat>[TomeStat.def, TomeStat.mag, TomeStat.mnd]),
-  iku(<TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag]),
-  suika(<TomeStat>[TomeStat.atk, TomeStat.mnd, TomeStat.res]),
-  ran(<TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd]),
-  remilia(<TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.spd]),
-  sakuya(<TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd]),
-  kanako(<TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag]),
-  suwako(<TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag]),
-  tenshi(<TomeStat>[TomeStat.tp, TomeStat.aff, TomeStat.res]),
-  flandre(<TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag]),
-  yuyuko(<TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd]),
-  yuuka(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag]),
-  yukari(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mnd]),
-  byakuren(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.spd]),
-  eiki(<TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.mnd]),
-  renko(<TomeStat>[TomeStat.spd, TomeStat.eva, TomeStat.res]),
-  maribel(<TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag]),
-  shou(<TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd]),
-  mamizou(<TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.eva]),
-  futo(<TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.res]),
-  miko(<TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.aff]),
-  kokoro(<TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd]),
-  tokiko(<TomeStat>[
-    TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd, TomeStat.spd,
-  ]),
-  koishi(<TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.eva]),
-  akyuu(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]);
+  reimu(
+    <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
+    <Skill>[
+      CommonSkill.mainReimu, CommonSkill.grandIncantation,
+      CommonSkill.hakureiProtection, CommonSkill.finalPrayer,
+      CommonSkill.armoredOrb, CommonSkill.youkaiBuster,
+      CommonSkill.fantasyBlink, CommonSkill.barrierExpert,
+      CommonSkill.superYoukaiBuster,
+    ],
+    <Skill>[
+      Spell.yinYang, Spell.fantasySeal,
+      Spell.exorcisingBorder, Spell.greatBarrier,
+    ],
+  ),
+  marisa(
+    <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  rinnosuke(
+    <TomeStat>[
+      TomeStat.mp, TomeStat.tp, TomeStat.atk,
+      TomeStat.def, TomeStat.mag, TomeStat.mnd,
+    ],
+    <Skill>[],
+    <Skill>[],
+  ),
+  keine(
+    <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  momiji(
+    <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def],
+    <Skill>[],
+    <Skill>[],
+  ),
+  youmu(
+    <TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  kogasa(
+    <TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.eva],
+    <Skill>[],
+    <Skill>[],
+  ),
+  rumia(
+    <TomeStat>[TomeStat.mag, TomeStat.spd, TomeStat.aff],
+    <Skill>[],
+    <Skill>[],
+  ),
+  cirno(
+    <TomeStat>[TomeStat.tp, TomeStat.spd, TomeStat.aff],
+    <Skill>[],
+    <Skill>[],
+  ),
+  minoriko(
+    <TomeStat>[TomeStat.mag, TomeStat.spd, TomeStat.res],
+    <Skill>[],
+    <Skill>[],
+  ),
+  komachi(
+    <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  chen(
+    <TomeStat>[TomeStat.atk, TomeStat.spd, TomeStat.eva],
+    <Skill>[],
+    <Skill>[],
+  ),
+  nitori(
+    <TomeStat>[TomeStat.def, TomeStat.mnd, TomeStat.aff],
+    <Skill>[],
+    <Skill>[],
+  ),
+  parsee(
+    <TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.res],
+    <Skill>[],
+    <Skill>[],
+  ),
+  wriggle(
+    <TomeStat>[TomeStat.def, TomeStat.mnd, TomeStat.eva],
+    <Skill>[],
+    <Skill>[],
+  ),
+  kaguya(
+    <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  mokou(
+    <TomeStat>[TomeStat.hp, TomeStat.tp, TomeStat.atk],
+    <Skill>[],
+    <Skill>[],
+  ),
+  aya(
+    <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.eva],
+    <Skill>[],
+    <Skill>[],
+  ),
+  mystia(
+    <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  kasen(
+    <TomeStat>[TomeStat.hp, TomeStat.tp, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  nazrin(
+    <TomeStat>[TomeStat.mnd, TomeStat.spd, TomeStat.eva],
+    <Skill>[],
+    <Skill>[],
+  ),
+  hina(
+    <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  rin(
+    <TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  utsuho(
+    <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  satori(
+    <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  yuugi(
+    <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def],
+    <Skill>[],
+    <Skill>[],
+  ),
+  meiling(
+    <TomeStat>[TomeStat.tp, TomeStat.def, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  alice(
+    <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  patchouli(
+    <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.aff],
+    <Skill>[],
+    <Skill>[],
+  ),
+  eirin(
+    <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.res],
+    <Skill>[],
+    <Skill>[],
+  ),
+  reisen(
+    <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  sanae(
+    <TomeStat>[TomeStat.def, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  iku(
+    <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  suika(
+    <TomeStat>[TomeStat.atk, TomeStat.mnd, TomeStat.res],
+    <Skill>[],
+    <Skill>[],
+  ),
+  ran(
+    <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  remilia(
+    <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  sakuya(
+    <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  kanako(
+    <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  suwako(
+    <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  tenshi(
+    <TomeStat>[TomeStat.tp, TomeStat.aff, TomeStat.res],
+    <Skill>[],
+    <Skill>[],
+  ),
+  flandre(
+    <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  yuyuko(
+    <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  yuuka(
+    <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  yukari(
+    <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  byakuren(
+    <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.spd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  eiki(
+    <TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  renko(
+    <TomeStat>[TomeStat.spd, TomeStat.eva, TomeStat.res],
+    <Skill>[],
+    <Skill>[],
+  ),
+  maribel(
+    <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
+    <Skill>[],
+    <Skill>[],
+  ),
+  shou(
+    <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  mamizou(
+    <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.eva],
+    <Skill>[],
+    <Skill>[],
+  ),
+  futo(
+    <TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.res],
+    <Skill>[],
+    <Skill>[],
+  ),
+  miko(
+    <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.aff],
+    <Skill>[],
+    <Skill>[],
+  ),
+  kokoro(
+    <TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd],
+    <Skill>[],
+    <Skill>[],
+  ),
+  tokiko(
+    <TomeStat>[
+      TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd, TomeStat.spd,
+    ],
+    <Skill>[],
+    <Skill>[],
+  ),
+  koishi(
+    <TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.eva],
+    <Skill>[],
+    <Skill>[],
+  ),
+  akyuu(
+    <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp],
+    <Skill>[],
+    <Skill>[],
+  );
 
   final List<TomeStat> naturalTomeStats;
-  final List<Skill> skills = const <Skill>[];
-  final List<Skill> spells = const <Skill>[];
+  final List<Skill> skills;
+  final List<Skill> spells;
 
-  const Character(this.naturalTomeStats);
+  const Character(this.naturalTomeStats, this.skills, this.spells);
 
   bool isNaturalTomeStat(TomeStat stat) => naturalTomeStats.contains(stat);
 

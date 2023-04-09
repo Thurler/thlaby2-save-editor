@@ -131,6 +131,43 @@ enum ExpSkill implements Skill {
   const ExpSkill(this.maxLevel, this.levelCost, this.name);
 }
 
+enum CommonSkill implements Skill {
+  mainReimu(2, 5, 'Main Character: Reimu'),
+  grandIncantation(2, 5, 'Grand Incantation'),
+  hakureiProtection(2, 5, "Hakurei's Divine Protection"),
+  finalPrayer(2, 5, 'Final Prayer'),
+  armoredOrb(2, 5, 'Armored Yin-Yang Orb'),
+  youkaiBuster(2, 5, 'Youkai Buster'),
+  fantasyBlink(10, 16, 'Fantasy Seal -Blink-'),
+  barrierExpert(1, 50, 'Barrier Expert'),
+  superYoukaiBuster(2, 40, 'Super Youkai Buster');
+
+  @override
+  final int maxLevel;
+  @override
+  final int levelCost;
+  @override
+  final String name;
+
+  const CommonSkill(this.maxLevel, this.levelCost, this.name);
+}
+
+enum Spell implements Skill {
+  yinYang(5, 5, 'Yin-Yang Orb'),
+  fantasySeal(5, 5, 'Fantasy Seal'),
+  exorcisingBorder(5, 5, 'Exorcising Border'),
+  greatBarrier(5, 5, 'Great Hakurei Barrier');
+
+  @override
+  final int maxLevel;
+  @override
+  final int levelCost;
+  @override
+  final String name;
+
+  const Spell(this.maxLevel, this.levelCost, this.name);
+}
+
 class SkillData {
   late int hpBoost;
   late int mpBoost;
