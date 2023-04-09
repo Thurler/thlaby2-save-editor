@@ -265,7 +265,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   ];
 
   //
-  // Properly check for and validate changes, save/commit them
+  // Helped methods to handle state changes when forms get altered
   //
 
   void _editMainEquipment(TFixedStringFormWrapper form) {}
@@ -279,41 +279,64 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   }
 
   void _updateLevelPoints() {
-    int cap = levelBonusCap;
+    int remainingCap = levelBonusCap;
+    // The available points are always 1 less than current level
     int points = levelForm.getIntValue().toInt() - 1;
     for (TNumberFormWrapper form in levelBonusForms) {
+      // For each point allocated, we decrease the global cap and how many
+      // points are left over - this second one can go into the negatives
       int value = form.getIntValue().toInt();
+      remainingCap -= value;
       points -= value;
-      cap -= value;
     }
     setState((){
+      // The cap for each individual stat becomes whatever has been allocated,
+      // plus whatever is left from the global cap
       for (TNumberFormWrapper form in levelBonusForms) {
-        form.updateMaxValue(BigInt.from(cap) + form.getIntValue());
+        form.updateMaxValue(BigInt.from(remainingCap) + form.getIntValue());
       }
+      // The unused level up points form should be updated automatically
       unusedLevelForm.controller.text = points.toCommaSeparatedNotation();
     });
   }
 
   void _updateTomeSkills() {
+    // First we map out what the skill names and attributes will be for our
+    // current tome configuration
     List<Skill> commonSkills = characterData.getCommonSkills(
       tomeForms.map((TDropdownFormWrapper f) => f.getValue()),
     );
     setState((){
       for (int i = 0; i < BoostSkill.values.length; i++) {
-        boostSkillForms[i].title = commonSkills[i].name;
-        boostSkillForms[i].subtitle = skillSubtitle(commonSkills[i]);
+        Skill skill = commonSkills[i];
+        // The title is always updated to match the skill name
+        boostSkillForms[i].title = skill.name;
+        // If the stat has no tomes attached to it and it is not a natural stat
+        // for this character, we must zero out the corresponding skill and
+        // update the subtitle to convey this new information
         bool isUnused = tomeForms[i].getValue() == TomeLevel.unused.name;
-        bool isNatural = widget.character.isNaturalTomeStat(TomeStat.values.elementAt(i));
+        TomeStat stat = TomeStat.values.elementAt(i);
+        bool isNatural = widget.character.isNaturalTomeStat(stat);
+        BigInt maxValue;
+        String subtitle;
         if (isUnused && !isNatural) {
-          boostSkillForms[i].updateMaxValue(BigInt.from(0));
-          boostSkillForms[i].subtitle = 'Needs a Tome of Insight to unlock';
+          // Zero out the skill and hint at the need for a tome of insight
+          maxValue = BigInt.from(0);
+          subtitle = 'Needs a Tome of Insight to unlock';
         } else {
-          boostSkillForms[i].updateMaxValue(BigInt.from(commonSkills[i].maxLevel));
-          boostSkillForms[i].subtitle = skillSubtitle(commonSkills[i]);
+          // Unlock the skill from the zero cap and return to regular subtitle
+          maxValue = BigInt.from(skill.maxLevel);
+          subtitle = skillSubtitle(skill);
         }
+        boostSkillForms[i].updateMaxValue(maxValue);
+        boostSkillForms[i].subtitle = subtitle;
       }
     });
   }
+
+  //
+  // Properly check for and validate changes, save/commit them
+  //
 
   String _checkForDuplicateUniqueSubclasses(String value) {
     Subclass chosen = Subclass.values.firstWhere(
