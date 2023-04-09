@@ -72,6 +72,8 @@ enum Character {
   akyuu(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]);
 
   final List<TomeStat> naturalTomeStats;
+  final List<Skill> skills = const <Skill>[];
+  final List<Skill> spells = const <Skill>[];
 
   const Character(this.naturalTomeStats);
 
@@ -84,10 +86,14 @@ enum Character {
       levels.add(TomeLevel.insight);
     }
     if (stat.multiLevel && isNatural) {
-      levels.add(TomeLevel.spartanNatural);
+      if (this != rinnosuke) {
+        levels.add(TomeLevel.spartanNatural);
+      }
       levels.add(TomeLevel.veteranNatural);
     } else if (stat.multiLevel) {
-      levels.add(TomeLevel.spartan);
+      if (this != rinnosuke) {
+        levels.add(TomeLevel.spartan);
+      }
       levels.add(TomeLevel.veteran);
     }
     return levels.map((TomeLevel l) => l.name).toList();
