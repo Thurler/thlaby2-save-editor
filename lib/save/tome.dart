@@ -49,6 +49,16 @@ class TomeData {
   late TomeLevel aff;
   late TomeLevel res;
 
+  static TomeLevel levelFromString(String value, {required bool isNatural}) {
+    Iterable<TomeLevel> matches = TomeLevel.values.where(
+      (TomeLevel l) => l.name == value,
+    );
+    if (matches.length > 1) {
+      return matches.firstWhere((TomeLevel l) => l.flag == (isNatural ? 0 : 1));
+    }
+    return matches.first;
+  }
+
   TomeLevel getStatData(int index) {
     return <TomeLevel>[
       hp, mp, tp, atk, def, mag, mnd, spd, eva, acc, aff, res,
@@ -56,7 +66,7 @@ class TomeData {
   }
 
   void setStatData(int index, String raw, {required bool isNatural}) {
-    TomeLevel value = _levelFromString(raw, isNatural: isNatural);
+    TomeLevel value = levelFromString(raw, isNatural: isNatural);
     switch (index) {
       case 0: hp = value; break;
       case 1: mp = value; break;
@@ -71,16 +81,6 @@ class TomeData {
       case 10: aff = value; break;
       case 11: res = value; break;
     }
-  }
-
-  TomeLevel _levelFromString(String value, {required bool isNatural}) {
-    Iterable<TomeLevel> matches = TomeLevel.values.where(
-      (TomeLevel l) => l.name == value,
-    );
-    if (matches.length > 1) {
-      return matches.firstWhere((TomeLevel l) => l.flag == (isNatural ? 0 : 1));
-    }
-    return matches.first;
   }
 
   TomeLevel _levelFromBytes(int flag, int level) {

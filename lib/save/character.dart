@@ -149,8 +149,41 @@ class CharacterData {
   late MainEquip mainEquip;
   late List<SubEquip> subEquips;
 
-  List<Skill> getCommonSkills() {
+  bool get isKourin => character == Character.rinnosuke;
+
+  Skill _getSkill(TomeLevel tomeLevel, List<Skill?> skills) {
+    // Order is regular / 2 / mega / high / giga
+    Skill defaultSkill = skills.elementAt(0)!; // Regular always has everything
+    Skill? result;
+    if (tomeLevel.index < TomeLevel.spartanNatural.index) {
+      result = isKourin ? skills.elementAt(3) : skills.elementAt(0);
+    } else if (tomeLevel.index < TomeLevel.veteranNatural.index) {
+      result = skills.elementAt(1);
+    } else {
+      result = isKourin ? skills.elementAt(4) : skills.elementAt(2);
+    }
+    return result ?? defaultSkill;
+  }
+
+  List<Skill?> _boostSkills(int index) {
+    return <Skill?>[
+      BoostSkill.values.elementAtSafe(index),
+      Boost2Skill.values.elementAtSafe(index),
+      BoostMegaSkill.values.elementAtSafe(index),
+      BoostHighSkill.values.elementAtSafe(index),
+      BoostGigaSkill.values.elementAtSafe(index),
+    ];
+  }
+
+  List<Skill> getCommonSkills(Iterable<String> tomeSelections) {
     List<Skill> commonSkills = <Skill>[];
+    for (int i = 0; i < tomeSelections.length; i++) {
+      TomeLevel level = TomeData.levelFromString(
+        tomeSelections.elementAt(i),
+        isNatural: character.isNaturalTomeStat(TomeStat.values.elementAt(i)),
+      );
+      commonSkills.add(_getSkill(level, _boostSkills(i)));
+    }
     return commonSkills;
   }
 

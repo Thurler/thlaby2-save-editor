@@ -21,6 +21,8 @@ extension ListExtension<T> on List<T> {
     return result;
   }
 
+  T? elementAtSafe(int index) => index < length ? elementAt(index) : null;
+
   int getU16(Endian endianness, {int offset = 0}) {
     int result = 0;
     List<int> operands = sublist(offset, offset + 2).map(

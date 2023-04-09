@@ -70,8 +70,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
     minValue: BigInt.from(1),
     maxValue: BigInt.from(skill.maxLevel),
     title: skill.name,
-    subtitle: 'Must be at most ${skill.maxLevel}\n'
-        '${skill.levelCost} skill points used per level',
+    subtitle: CharacterEditState.skillSubtitle(skill),
   );
 }
 
@@ -102,6 +101,20 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const int libraryCap = 99999999; // Hard cap at library
   static const int libraryElementCap = 100; // Hard cap at library
   static const int gemCap = 20; // Hard cap at shrine
+
+  static String skillSubtitle(Skill skill) => 'Must be at most '
+    '${skill.maxLevel}\n${skill.levelCost} skill points used per level';
+
+  late final Widget _backgroundPortrait = Opacity(
+    opacity: 0.8,
+    child: Image.asset(
+      'img/character/${getCharacterFilename(widget.character)}.png',
+      alignment: Alignment.bottomRight,
+      fit: BoxFit.fitHeight,
+      width: double.infinity,
+      height: double.infinity,
+    ),
+  );
 
   late final List<TFormGroup> expansionGroups = <TFormGroup>[
     TFormGroup(
@@ -214,6 +227,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       subtitle: 'Changing this will affect skills data',
       setStateCallback: setState,
       options: widget.character.tomeDropdownOptions(stat),
+      onValueUpdate: _updateTomeSkills,
     ),
   ).toList();
 
@@ -246,6 +260,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
   ).toList();
 
+  CharacterData get characterData => saveFileWrapper.saveFile.characterData[
+    widget.character.index
+  ];
+
   //
   // Properly check for and validate changes, save/commit them
   //
@@ -273,6 +291,27 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         form.updateMaxValue(BigInt.from(cap) + form.getIntValue());
       }
       unusedLevelForm.controller.text = points.toCommaSeparatedNotation();
+    });
+  }
+
+  void _updateTomeSkills() {
+    List<Skill> commonSkills = characterData.getCommonSkills(
+      tomeForms.map((TDropdownFormWrapper f) => f.getValue()),
+    );
+    setState((){
+      for (int i = 0; i < BoostSkill.values.length; i++) {
+        boostSkillForms[i].title = commonSkills[i].name;
+        boostSkillForms[i].subtitle = skillSubtitle(commonSkills[i]);
+        bool isUnused = tomeForms[i].getValue() == TomeLevel.unused.name;
+        bool isNatural = widget.character.isNaturalTomeStat(TomeStat.values.elementAt(i));
+        if (isUnused && !isNatural) {
+          boostSkillForms[i].updateMaxValue(BigInt.from(0));
+          boostSkillForms[i].subtitle = 'Needs a Tome of Insight to unlock';
+        } else {
+          boostSkillForms[i].updateMaxValue(BigInt.from(commonSkills[i].maxLevel));
+          boostSkillForms[i].subtitle = skillSubtitle(commonSkills[i]);
+        }
+      }
     });
   }
 
@@ -361,8 +400,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
 
     // Get save file reference and commit changes to forms
-    int characterIndex = widget.character.index;
-    CharacterData data = saveFileWrapper.saveFile.characterData[characterIndex];
+    CharacterData data = characterData;
 
     // Basic info - level, exp, bp, subclass
     data.level = int.parse(levelForm.saveValue());
@@ -426,8 +464,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     super.initState();
 
     // Initialize form data based on save data
-    int characterIndex = widget.character.index;
-    CharacterData data = saveFileWrapper.saveFile.characterData[characterIndex];
+    CharacterData data = characterData;
 
     // Basic info - level, exp, bp, subclass
     levelForm.initNumberForm(BigInt.from(data.level));
@@ -466,6 +503,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     for (int i = 0; i < TomeStat.values.length; i++) {
       tomeForms[i].initDropdownForm(data.tomes.getStatData(i).name);
     }
+    _updateTomeSkills();
 
     // Gems info
     for (int i = 0; i < gemStats.length; i++) {
@@ -490,16 +528,6 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   @override
   Widget build(BuildContext context) {
     String characterName = widget.character.name.upperCaseFirstChar();
-    Widget backgroundPortrait = Opacity(
-      opacity: 0.8,
-      child: Image.asset(
-        'img/character/${getCharacterFilename(widget.character)}.png',
-        alignment: Alignment.bottomRight,
-        fit: BoxFit.fitHeight,
-        width: double.infinity,
-        height: double.infinity,
-      ),
-    );
     List<Widget> columnChildren = <Widget>[
       ExpansionPanelList(
         expansionCallback: (int index, bool isExpanded) {
@@ -531,7 +559,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         backgroundColor: Colors.white.withOpacity(0.2),
         body: Stack(
           children: <Widget>[
-            backgroundPortrait,
+            _backgroundPortrait,
             Positioned.fill(
               child: ListView(
                 children: <Widget>[

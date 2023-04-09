@@ -89,9 +89,9 @@ class TFormGroup {
 abstract class TFormWrapper {
   final SetStateFunction setStateCallback;
   final TextEditingController controller = TextEditingController();
-  final String title;
-  final String subtitle;
   final bool readOnly;
+  String title;
+  String subtitle;
   String initialValue = '';
   String error = '';
 
@@ -270,6 +270,7 @@ class TNumberFormWrapper extends TFormWrapper {
 class TDropdownFormWrapper extends TFormWrapper {
   final List<String> options;
   late String Function(String)? validateFunction;
+  void Function()? onValueUpdate;
 
   TDropdownFormWrapper({
     required super.title,
@@ -277,6 +278,7 @@ class TDropdownFormWrapper extends TFormWrapper {
     required super.setStateCallback,
     required this.options,
     this.validateFunction,
+    this.onValueUpdate,
   });
 
   void _onChanged(String? chosen, {bool callSetState = true}) {
@@ -284,6 +286,7 @@ class TDropdownFormWrapper extends TFormWrapper {
       error = validateFunction?.call(chosen) ?? '';
       controller.text = chosen;
       if (callSetState) {
+        onValueUpdate?.call();
         setStateCallback((){});
       }
     }
