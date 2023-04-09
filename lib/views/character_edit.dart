@@ -366,7 +366,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         title: 'Level up bonuses',
         forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
       ),
-      TFormGroup(title: 'Skill points', forms: <TFormWrapper>[]),
+      TFormGroup(title: 'Skill points (Common)', forms: <TFormWrapper>[]),
+      TFormGroup(title: 'Skill points (Personal)', forms: <TFormWrapper>[]),
+      TFormGroup(title: 'Skill points (Subclass)', forms: <TFormWrapper>[]),
       TFormGroup(title: 'Tomes', forms: tomeForms),
       TFormGroup(title: 'Gems', forms: gemForms),
       TFormGroup(
