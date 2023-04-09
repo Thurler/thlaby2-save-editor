@@ -157,7 +157,16 @@ enum CommonSkill implements Skill {
   attackDebuff(2, 5, 'Attack Debuff Add-On'),
   magicDebuff(2, 5, 'Magic Debuff Add-on'),
   murakumoOwner(10, 10, "Murakumo's Previous Owner"),
-  guts(2, 5, 'Guts');
+  guts(2, 5, 'Guts'),
+  withMokou(2, 5, 'With Mokou'),
+  organizedFormation(1, 10, 'Organized Formation'),
+  firmDefense(2, 5, 'Firm Defense'),
+  teacherCommand(2, 6, "Teacher's Command"),
+  historianSchool(1, 10, "Historian's School"),
+  historyAccumulation(3, 16, 'History Accumulation'),
+  imperviousChange(1, 50, 'Impervious Formation Change'),
+  wereHakutaku(10, 7, 'Were-Hakutaku Form'),
+  createHistory(3, 25, 'Ability to Create History');
 
   @override
   final int maxLevel;
@@ -180,7 +189,11 @@ enum Spell implements Skill {
   concentration(5, 5, 'Concentration'),
   firstAid(5, 5, 'First Aid'),
   battleCommand(5, 5, 'Battle Command'),
-  preciseDiagnosis(5, 25, 'Precise Diagnosis');
+  preciseDiagnosis(5, 25, 'Precise Diagnosis'),
+  ancientHistory(5, 5, 'Ancient History -Old History-'),
+  newHistory(5, 5, 'New History -Next History-'),
+  treasuresSword(5, 5, 'Three Treasures - Sword'),
+  treasuresMirror(5, 5, 'Three Treasures - Mirror');
 
   @override
   final int maxLevel;

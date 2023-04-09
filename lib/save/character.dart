@@ -54,8 +54,17 @@ enum Character {
   ),
   keine(
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.withMokou, CommonSkill.organizedFormation,
+      CommonSkill.firmDefense, CommonSkill.teacherCommand,
+      CommonSkill.historianSchool, CommonSkill.historyAccumulation,
+      CommonSkill.imperviousChange, CommonSkill.wereHakutaku,
+      CommonSkill.createHistory,
+    ],
+    <Skill>[
+      Spell.ancientHistory, Spell.newHistory,
+      Spell.treasuresSword, Spell.treasuresMirror,
+    ],
     <Skill>[],
   ),
   momiji(
