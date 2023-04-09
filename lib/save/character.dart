@@ -25,8 +25,16 @@ enum Character {
   ),
   marisa(
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.maliceMarisa, CommonSkill.mainMarisa, CommonSkill.sheerForce,
+      CommonSkill.suddenImpulse, CommonSkill.givingWings,
+      CommonSkill.magicTraining, CommonSkill.hakkeroCharge,
+      CommonSkill.hakkeroCustom, CommonSkill.magicDrain,
+    ],
+    <Skill>[
+      Spell.magicMissile, Spell.asteroidBelt,
+      Spell.masterSpark, Spell.concentration,
+    ],
   ),
   rinnosuke(
     <TomeStat>[

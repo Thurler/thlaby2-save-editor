@@ -140,7 +140,16 @@ enum CommonSkill implements Skill {
   youkaiBuster(2, 5, 'Youkai Buster'),
   fantasyBlink(10, 16, 'Fantasy Seal -Blink-'),
   barrierExpert(1, 50, 'Barrier Expert'),
-  superYoukaiBuster(2, 40, 'Super Youkai Buster');
+  superYoukaiBuster(2, 40, 'Super Youkai Buster'),
+  maliceMarisa(2, 5, 'MAlice Cannon (Marisa)'),
+  mainMarisa(2, 5, 'Main Character: Marisa'),
+  sheerForce(1, 15, 'Sheer Force'),
+  suddenImpulse(2, 5, 'Sudden Impulse'),
+  givingWings(2, 5, 'Giving You Wings'),
+  magicTraining(2, 5, 'Magic Training'),
+  hakkeroCharge(1, 80, 'Hakkero Charge Mode'),
+  hakkeroCustom(1, 70, 'Hakkero Custom Mode'),
+  magicDrain(7, 10, 'Magic Drain Missile');
 
   @override
   final int maxLevel;
@@ -156,7 +165,11 @@ enum Spell implements Skill {
   yinYang(5, 5, 'Yin-Yang Orb'),
   fantasySeal(5, 5, 'Fantasy Seal'),
   exorcisingBorder(5, 5, 'Exorcising Border'),
-  greatBarrier(5, 5, 'Great Hakurei Barrier');
+  greatBarrier(5, 5, 'Great Hakurei Barrier'),
+  magicMissile(5, 5, 'Magic Missile'),
+  asteroidBelt(5, 5, 'Asteroid Belt'),
+  masterSpark(5, 5, 'Master Spark'),
+  concentration(5, 5, 'Concentration');
 
   @override
   final int maxLevel;
