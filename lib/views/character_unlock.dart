@@ -118,7 +118,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   // or for entire groups from the preset buttons
   //
 
-  void _characterTap(CharacterName character) {
+  void _characterTap(Character character) {
     CharacterUnlockFlag flag = _flags.firstWhere(
       (CharacterUnlockFlag f) => f.character == character,
     );

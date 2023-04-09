@@ -8,63 +8,88 @@ import 'package:thlaby2_save_editor/save/library.dart';
 import 'package:thlaby2_save_editor/save/skill.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
 
-enum CharacterName {
-  reimu,
-  marisa,
-  rinnosuke,
-  keine,
-  momiji,
-  youmu,
-  kogasa,
-  rumia,
-  cirno,
-  minoriko,
-  komachi,
-  chen,
-  nitori,
-  parsee,
-  wriggle,
-  kaguya,
-  mokou,
-  aya,
-  mystia,
-  kasen,
-  nazrin,
-  hina,
-  rin,
-  utsuho,
-  satori,
-  yuugi,
-  meiling,
-  alice,
-  patchouli,
-  eirin,
-  reisen,
-  sanae,
-  iku,
-  suika,
-  ran,
-  remilia,
-  sakuya,
-  kanako,
-  suwako,
-  tenshi,
-  flandre,
-  yuyuko,
-  yuuka,
-  yukari,
-  byakuren,
-  eiki,
-  renko,
-  maribel,
-  shou,
-  mamizou,
-  futo,
-  miko,
-  kokoro,
-  tokiko,
-  koishi,
-  akyuu,
+enum Character {
+  reimu(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag]),
+  marisa(<TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd]),
+  rinnosuke(<TomeStat>[
+    TomeStat.mp, TomeStat.tp, TomeStat.atk,
+    TomeStat.def, TomeStat.mag, TomeStat.mnd,
+  ]),
+  keine(<TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag]),
+  momiji(<TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def]),
+  youmu(<TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mnd]),
+  kogasa(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  rumia(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  cirno(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  minoriko(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  komachi(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  chen(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  nitori(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  parsee(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  wriggle(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  kaguya(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  mokou(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  aya(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  mystia(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  kasen(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  nazrin(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  hina(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  rin(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  utsuho(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  satori(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  yuugi(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  meiling(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  alice(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  patchouli(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  eirin(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  reisen(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  sanae(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  iku(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  suika(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  ran(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  remilia(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  sakuya(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  kanako(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  suwako(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  tenshi(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  flandre(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  yuyuko(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  yuuka(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  yukari(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  byakuren(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  eiki(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  renko(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  maribel(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  shou(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  mamizou(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  futo(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  miko(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  kokoro(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  tokiko(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  koishi(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]),
+  akyuu(<TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp]);
+
+  final List<TomeStat> naturalTomeStats;
+
+  const Character(this.naturalTomeStats);
+
+  bool isNaturalTomeStat(TomeStat stat) => naturalTomeStats.contains(stat);
+
+  List<String> tomeDropdownOptions(TomeStat stat) {
+    List<TomeLevel> levels = <TomeLevel>[TomeLevel.unused];
+    bool isNatural = isNaturalTomeStat(stat);
+    if (!isNatural) {
+      levels.add(TomeLevel.insight);
+    }
+    if (stat.multiLevel && isNatural) {
+      levels.add(TomeLevel.spartanNatural);
+      levels.add(TomeLevel.veteranNatural);
+    } else if (stat.multiLevel) {
+      levels.add(TomeLevel.spartan);
+      levels.add(TomeLevel.veteran);
+    }
+    return levels.map((TomeLevel l) => l.name).toList();
+  }
 }
 
 enum Subclass {
@@ -100,7 +125,7 @@ enum Subclass {
 }
 
 class CharacterData {
-  late CharacterName character;
+  late Character character;
   late int level;
   late int unusedSkillPoints;
   late int unusedBonusPoints;
@@ -121,7 +146,7 @@ class CharacterData {
     required int index,
     required List<int> bytes,
   }) {
-    character = CharacterName.values.elementAt(index);
+    character = Character.values.elementAt(index);
     level = bytes.getU32(endianness);
     experience = bytes.getU64(endianness, offset: 0x4);
     libraryLevels = LibraryData.fromBytes(endianness, bytes, 0xc);

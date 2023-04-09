@@ -26,7 +26,7 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
     'Kokoro', 'Tokiko', 'Koisi', 'Akyuu'
   ];
 
-  String getCharacterFilename(CharacterName c) {
+  String getCharacterFilename(Character c) {
     return characterFilenames[c.index];
   }
 

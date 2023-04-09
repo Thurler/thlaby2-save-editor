@@ -1,12 +1,12 @@
 import 'package:thlaby2_save_editor/save/character.dart';
 
 class PartySlot {
-  late CharacterName character;
+  late Character character;
   late bool isUsed;
 
   PartySlot.empty() : isUsed = false;
   PartySlot.filled(int byte) {
-    character = CharacterName.values.elementAt(byte - 1);
+    character = Character.values.elementAt(byte - 1);
     isUsed = true;
   }
 

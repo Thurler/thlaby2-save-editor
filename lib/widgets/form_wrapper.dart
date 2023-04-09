@@ -216,7 +216,7 @@ class TNumberFormWrapper extends TFormWrapper {
     super.readOnly,
   });
 
-  String validate(String raw, {bool callSetState = true}) {
+  String _validate(String raw, {bool callSetState = true}) {
     String ret = raw;
     BigInt value = BigInt.parse(raw);
     if (value < minValue) {
@@ -231,7 +231,7 @@ class TNumberFormWrapper extends TFormWrapper {
   }
 
   void initNumberForm(BigInt value) {
-    validate(value.toString(), callSetState: false);
+    _validate(value.toString(), callSetState: false);
     super.initForm(value.toCommaSeparatedNotation());
   }
 
@@ -260,7 +260,7 @@ class TNumberFormWrapper extends TFormWrapper {
       errorMessage: error,
       controller: controller,
       maxLength: maxValue.toString().length,
-      validationCallback: validate,
+      validationCallback: _validate,
       onValueUpdate: onValueUpdate,
       enabled: !readOnly,
     );
@@ -269,18 +269,19 @@ class TNumberFormWrapper extends TFormWrapper {
 
 class TDropdownFormWrapper extends TFormWrapper {
   final List<String> options;
-  late String Function(String) validateFunction;
+  late String Function(String)? validateFunction;
 
   TDropdownFormWrapper({
     required super.title,
     required super.subtitle,
     required super.setStateCallback,
     required this.options,
+    this.validateFunction,
   });
 
-  void onChanged(String? chosen, {bool callSetState = true}) {
+  void _onChanged(String? chosen, {bool callSetState = true}) {
     if (chosen != null) {
-      error = validateFunction(chosen);
+      error = validateFunction?.call(chosen) ?? '';
       controller.text = chosen;
       if (callSetState) {
         setStateCallback((){});
@@ -288,9 +289,8 @@ class TDropdownFormWrapper extends TFormWrapper {
     }
   }
 
-  void initDropdownForm(String value, String Function(String) validation) {
-    validateFunction = validation;
-    onChanged(value, callSetState: false);
+  void initDropdownForm(String value) {
+    _onChanged(value, callSetState: false);
     super.initForm(value);
   }
 
@@ -302,7 +302,7 @@ class TDropdownFormWrapper extends TFormWrapper {
       errorMessage: error,
       value: controller.text,
       options: options,
-      onChanged: onChanged,
+      onChanged: _onChanged,
       hintText: '',
     );
   }

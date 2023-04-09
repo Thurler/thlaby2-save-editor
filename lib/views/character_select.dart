@@ -15,7 +15,7 @@ class CharacterSelectState extends CommonState<CharacterSelectWidget> {
   @override
   Widget build(BuildContext context) {
     TCharacterSelect characterSelect = TCharacterSelect(
-      characterTapFunction: (CharacterName ch) => Navigator.of(context).pop(ch),
+      characterTapFunction: (Character ch) => Navigator.of(context).pop(ch),
     );
     return Scaffold(
       appBar: AppBar(

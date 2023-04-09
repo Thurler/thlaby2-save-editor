@@ -157,7 +157,7 @@ class SaveFile {
     for (int i = 0; i < bytes.length; i++) {
       characterUnlockFlags.add(
         CharacterUnlockFlag(
-          character: CharacterName.values.elementAt(i),
+          character: Character.values.elementAt(i),
           isUnlocked: bytes[i] > 0x0,
         ),
       );

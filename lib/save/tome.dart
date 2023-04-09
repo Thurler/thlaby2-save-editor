@@ -1,17 +1,38 @@
 import 'dart:typed_data';
 
+enum TomeStat {
+  hp('HP', multiLevel: true),
+  mp('MP', multiLevel: true),
+  tp('TP', multiLevel: true),
+  atk('ATK', multiLevel: true),
+  def('DEF', multiLevel: true),
+  mag('MAG', multiLevel: true),
+  mnd('MND', multiLevel: true),
+  spd('SPD', multiLevel: true),
+  eva('EVA', multiLevel: false),
+  acc('ACC', multiLevel: false),
+  aff('Affinity', multiLevel: false),
+  res('Resistance', multiLevel: false);
+
+  final String name;
+  final bool multiLevel;
+
+  const TomeStat(this.name, {required this.multiLevel});
+}
+
 enum TomeLevel {
-  unused(0, 0),
-  insight(1, 0),
-  spartanNatural(0, 2),
-  spartan(1, 2),
-  veteranNatural(0, 3),
-  veteran(1, 3);
+  unused(0, 0, 'Not used'),
+  insight(1, 0, 'Insight'),
+  spartanNatural(0, 2, 'Spartan'),
+  spartan(1, 2, 'Spartan'),
+  veteranNatural(0, 3, 'Veteran'),
+  veteran(1, 3, 'Veteran');
 
   final int flag;
   final int level;
+  final String name;
 
-  const TomeLevel(this.flag, this.level);
+  const TomeLevel(this.flag, this.level, this.name);
 }
 
 class TomeData {
@@ -27,6 +48,40 @@ class TomeData {
   late TomeLevel acc;
   late TomeLevel aff;
   late TomeLevel res;
+
+  TomeLevel getStatData(int index) {
+    return <TomeLevel>[
+      hp, mp, tp, atk, def, mag, mnd, spd, eva, acc, aff, res,
+    ][index];
+  }
+
+  void setStatData(int index, String raw, {required bool isNatural}) {
+    TomeLevel value = _levelFromString(raw, isNatural: isNatural);
+    switch (index) {
+      case 0: hp = value; break;
+      case 1: mp = value; break;
+      case 2: tp = value; break;
+      case 3: atk = value; break;
+      case 4: def = value; break;
+      case 5: mag = value; break;
+      case 6: mnd = value; break;
+      case 7: spd = value; break;
+      case 8: eva = value; break;
+      case 9: acc = value; break;
+      case 10: aff = value; break;
+      case 11: res = value; break;
+    }
+  }
+
+  TomeLevel _levelFromString(String value, {required bool isNatural}) {
+    Iterable<TomeLevel> matches = TomeLevel.values.where(
+      (TomeLevel l) => l.name == value,
+    );
+    if (matches.length > 1) {
+      return matches.firstWhere((TomeLevel l) => l.flag == (isNatural ? 0 : 1));
+    }
+    return matches.first;
+  }
 
   TomeLevel _levelFromBytes(int flag, int level) {
     bool flagSet = flag > 0;

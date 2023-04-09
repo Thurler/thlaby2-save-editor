@@ -106,8 +106,8 @@ class PartyDataState extends CommonState<PartyDataWidget> {
   Future<void> _changePartyMember(PartySlot slot) async {
     NavigatorState state = Navigator.of(context);
     await logger.log(LogLevel.info, 'Opening character select widget');
-    CharacterName? selected = await state.push(
-      MaterialPageRoute<CharacterName>(
+    Character? selected = await state.push(
+      MaterialPageRoute<Character>(
         builder: (BuildContext context) => const CharacterSelectWidget(),
       ),
     );

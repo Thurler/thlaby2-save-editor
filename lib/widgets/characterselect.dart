@@ -8,7 +8,7 @@ import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/widgets/clickable.dart';
 
 class TCharacterSelect extends StatefulWidget {
-  final void Function(CharacterName c) characterTapFunction;
+  final void Function(Character c) characterTapFunction;
   final Widget Function(bool l, bool h)? titleAppend;
   final List<CharacterUnlockFlag>? unlockFlags;
   final bool highlightIfLocked;
@@ -26,7 +26,7 @@ class TCharacterSelect extends StatefulWidget {
 }
 
 class TCharacterSelectState extends CommonState<TCharacterSelect> {
-  CharacterName? _hover;
+  Character? _hover;
   late List<CharacterUnlockFlag> flags;
 
   void callUpdateFlags() {
@@ -53,7 +53,7 @@ class TCharacterSelectState extends CommonState<TCharacterSelect> {
   // Helper functions to draw stuff on screen, helps declutter the build method
   //
 
-  Widget _drawCharacter(CharacterName character) {
+  Widget _drawCharacter(Character character) {
     int index = character.index;
     bool isUnlocked = flags[index].isUnlocked;
     bool match = _hover == character;
@@ -128,7 +128,7 @@ class TCharacterSelectState extends CommonState<TCharacterSelect> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> characters = CharacterName.values.map(_drawCharacter).toList();
+    List<Widget> characters = Character.values.map(_drawCharacter).toList();
     return Wrap(
       spacing: 10,
       runSpacing: 10,

@@ -34,12 +34,12 @@ class CharacterUnlockState extends CommonState<CharacterDataWidget> {
     _characterSelectKey.currentState?.callUpdateFlags();
   }
 
-  void _characterTap(CharacterName character) {
+  void _characterTap(Character character) {
     // ignore: discarded_futures
     _navigateToCharacterData(character);
   }
 
-  Future<void> _navigateToCharacterData(CharacterName character) async {
+  Future<void> _navigateToCharacterData(Character character) async {
     NavigatorState state = Navigator.of(context);
     await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
     if (!state.mounted) {

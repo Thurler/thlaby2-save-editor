@@ -1,7 +1,7 @@
 import 'package:thlaby2_save_editor/save/character.dart';
 
 class CharacterUnlockFlag {
-  late CharacterName character;
+  late Character character;
   late bool isUnlocked;
 
   CharacterUnlockFlag({

@@ -6,6 +6,7 @@ import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/equip.dart';
+import 'package:thlaby2_save_editor/save/tome.dart';
 import 'package:thlaby2_save_editor/widgets/form_wrapper.dart';
 
 class TCharacterNumberForm extends TNumberFormWrapper {
@@ -52,7 +53,7 @@ class TCharacterNumberForm extends TNumberFormWrapper {
 }
 
 class CharacterEditWidget extends StatefulWidget {
-  final CharacterName character;
+  final Character character;
   const CharacterEditWidget({required this.character, super.key});
 
   @override
@@ -108,6 +109,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     title: 'Subclass',
     subtitle: 'Changing this will affect skills data',
     setStateCallback: setState,
+    validateFunction: _checkForDuplicateUniqueSubclasses,
     options: Subclass.values.map((Subclass s)=>s.prettyName).toList(),
   );
 
@@ -139,6 +141,15 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       title: 'Points in $stat',
       setStateCallback: setState,
       onValueUpdate: _updateLevelPoints,
+    ),
+  ).toList();
+
+  late final List<TDropdownFormWrapper> tomeForms = TomeStat.values.map(
+    (TomeStat stat) => TDropdownFormWrapper(
+      title: 'Tomes used in ${stat.name}',
+      subtitle: 'Changing this will affect skills data',
+      setStateCallback: setState,
+      options: widget.character.tomeDropdownOptions(stat),
     ),
   ).toList();
 
@@ -308,6 +319,15 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
     data.unusedBonusPoints = int.parse(unusedLevelForm.saveValue());
 
+    // Tome data
+    for (TomeStat stat in TomeStat.values) {
+      data.tomes.setStatData(
+        stat.index,
+        tomeForms[stat.index].saveValue(),
+        isNatural: widget.character.isNaturalTomeStat(stat),
+      );
+    }
+
     // Gem data
     for (int i = 0; i < gemStats.length; i++) {
       data.gems.setStatData(i, gemForms[i].saveValue());
@@ -347,11 +367,8 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
       ),
       TFormGroup(title: 'Skill points', forms: <TFormWrapper>[]),
-      TFormGroup(title: 'Tomes', forms: <TFormWrapper>[]),
-      TFormGroup(
-        title: 'Gems',
-        forms: gemForms,
-      ),
+      TFormGroup(title: 'Tomes', forms: tomeForms),
+      TFormGroup(title: 'Gems', forms: gemForms),
       TFormGroup(
         title: 'Equipment',
         forms: <TFormWrapper>[mainEquipForm] + subEquipForms,
@@ -366,10 +383,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     levelForm.initNumberForm(BigInt.from(data.level));
     expForm.initNumberForm(data.experience);
     bpForm.initNumberForm(BigInt.from(data.bp));
-    subclassForm.initDropdownForm(
-      data.subclass.prettyName,
-      _checkForDuplicateUniqueSubclasses,
-    );
+    subclassForm.initDropdownForm(data.subclass.prettyName);
 
     // Library info + Level up info
     for (int i = 0; i < stats.length; i++) {
@@ -384,6 +398,11 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       libraryElementForms[i].initNumberForm(
         BigInt.from(data.libraryLevels.getElementData(i)),
       );
+    }
+
+    // Tomes info
+    for (int i = 0; i < TomeStat.values.length; i++) {
+      tomeForms[i].initDropdownForm(data.tomes.getStatData(i).name);
     }
 
     // Gems info
