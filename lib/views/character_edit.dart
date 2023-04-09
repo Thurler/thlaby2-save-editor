@@ -139,7 +139,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
     TFormGroup(
       title: 'Skill points (Personal)',
-      forms: personalSkillForms + personalSpellForms,
+      forms: personalSkillForms + personalSpellForms + awakeningSpellForms,
     ),
     TFormGroup(title: 'Skill points (Subclass)', forms: <TFormWrapper>[]),
     TFormGroup(title: 'Tomes', forms: tomeForms),
@@ -237,6 +237,14 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
   late final List<TNumberFormWrapper> personalSpellForms = character.spells.map(
     (Skill skill) => TCharacterNumberForm.spell(
+      skill: skill,
+      setStateCallback: setState,
+    ),
+  ).toList();
+
+  late final List<TNumberFormWrapper> awakeningSpellForms =
+  character.awakeningSpells.map(
+    (Skill skill) => TCharacterNumberForm.skill(
       skill: skill,
       setStateCallback: setState,
     ),
@@ -479,9 +487,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         personalSkillForms[i].saveValue(),
       );
     }
-    for (int i = 0; i < character.spells.length; i++) {
+    int spellLength = (character.spells + character.awakeningSpells).length;
+    for (int i = 0; i < spellLength; i++) {
       data.skills.personalSpells[i] = int.parse(
-        personalSpellForms[i].saveValue(),
+        (personalSpellForms + awakeningSpellForms)[i].saveValue(),
       );
     }
 
@@ -564,6 +573,11 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     for (int i = 0; i < character.spells.length; i++) {
       personalSpellForms[i].initNumberForm(
         BigInt.from(data.skills.personalSpells[i]),
+      );
+    }
+    for (int i = 0; i < character.awakeningSpells.length; i++) {
+      awakeningSpellForms[i].initNumberForm(
+        BigInt.from(data.skills.personalSpells[i + character.spells.length]),
       );
     }
 
