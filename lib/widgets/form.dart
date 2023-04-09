@@ -53,7 +53,10 @@ abstract class TForm extends StatelessWidget {
       field = DecoratedBox(
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: TForm.subtitleColor.withOpacity(0.5), width: 2),
+            bottom: BorderSide(
+              color: TForm.subtitleColor.withOpacity(0.5),
+              width: 2,
+            ),
           ),
         ),
         child: Padding(

@@ -153,9 +153,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     title: 'Main equipment',
     subtitle: 'Item occupying main slot',
     setStateCallback: setState,
-    addCallback: (){print('add');},
-    editCallback: (){print('edit');},
-    removeCallback: (){print('remove');},
+    addCallback: ()=>_editMainEquipment(mainEquipForm),
+    editCallback: ()=>_editMainEquipment(mainEquipForm),
+    removeCallback: ()=>_removeEquipment(mainEquipForm),
     emptyValue: MainEquip.slot0.name,
   );
 
@@ -164,9 +164,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       title: 'Sub equipment $i',
       subtitle: 'Item occupying sub slot $i',
       setStateCallback: setState,
-      addCallback: (){print('add');},
-      editCallback: (){print('edit');},
-      removeCallback: (){print('remove');},
+      addCallback: ()=>_editSubEquipment(subEquipForms[i-1]),
+      editCallback: ()=>_editSubEquipment(subEquipForms[i-1]),
+      removeCallback: ()=>_removeEquipment(subEquipForms[i-1]),
       emptyValue: 'Empty',
     ),
   ).toList();
@@ -174,6 +174,16 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   //
   // Properly check for and validate changes, save/commit them
   //
+
+  void _editMainEquipment(TFixedStringFormWrapper form) {}
+
+  void _editSubEquipment(TFixedStringFormWrapper form) {}
+
+  void _removeEquipment(TFixedStringFormWrapper form) {
+    setState((){
+      form.controller.text = form.emptyValue;
+    });
+  }
 
   void _updateLevelPoints() {
     int cap = levelBonusCap;
@@ -303,6 +313,18 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       data.gems.setStatData(i, gemForms[i].saveValue());
     }
 
+    // Equipment data
+    MainEquip chosenMain = MainEquip.values.firstWhere(
+      (MainEquip e) => e.name == mainEquipForm.saveValue(),
+    );
+    data.mainEquip = chosenMain;
+    for (int i = 0; i < 3; i++) {
+      SubEquip chosenSub = SubEquip.values.firstWhere(
+        (SubEquip e) => e.name == subEquipForms[i].saveValue(),
+      );
+      data.subEquips[i] = chosenSub;
+    }
+
     // Refresh widget to get rid of the save symbol
     setState((){});
   }
@@ -372,9 +394,9 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
 
     // Equipment info
-    mainEquipForm.initForm(data.mainEquip.equip.name);
+    mainEquipForm.initForm(data.mainEquip.name);
     for (int i = 0; i < 3; i++) {
-      subEquipForms[i].initForm(data.subEquips[i].equip.name);
+      subEquipForms[i].initForm(data.subEquips[i].name);
     }
 
     // Set and update unused level up bonus info

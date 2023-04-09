@@ -68,6 +68,10 @@ enum MainEquip {
   final String name;
 
   const MainEquip(this.id, this.name);
+
+  Iterable<int> toBytes(Endian endianness) {
+    return id.toU16(endianness);
+  }
 }
 
 enum SubEquip {
@@ -317,36 +321,8 @@ enum SubEquip {
   final String name;
 
   const SubEquip(this.id, this.name);
-}
-
-class MainEquipment {
-  late MainEquip equip;
-
-  MainEquipment.fromId(int id) {
-    equip = MainEquip.values.firstWhere((MainEquip e) => e.id == id);
-  }
-
-  MainEquipment.from(MainEquipment other) {
-    equip = other.equip;
-  }
 
   Iterable<int> toBytes(Endian endianness) {
-    return equip.id.toU16(endianness);
-  }
-}
-
-class SubEquipment {
-  late SubEquip equip;
-
-  SubEquipment.fromId(int id) {
-    equip = SubEquip.values.firstWhere((SubEquip e) => e.id == id);
-  }
-
-  SubEquipment.from(SubEquipment other) {
-    equip = other.equip;
-  }
-
-  Iterable<int> toBytes(Endian endianness) {
-    return equip.id.toU16(endianness);
+    return id.toU16(endianness);
   }
 }
