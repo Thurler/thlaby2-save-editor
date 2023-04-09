@@ -6,6 +6,7 @@ import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/equip.dart';
+import 'package:thlaby2_save_editor/save/skill.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
 import 'package:thlaby2_save_editor/widgets/form_wrapper.dart';
 
@@ -50,6 +51,28 @@ class TCharacterNumberForm extends TNumberFormWrapper {
     subtitle: 'Must be at most '
       '${CharacterEditState.gemCap.toCommaSeparatedNotation()}',
   );
+
+  TCharacterNumberForm.skill({
+    required Skill skill,
+    required super.setStateCallback,
+  }) : super(
+    minValue: BigInt.from(0),
+    maxValue: BigInt.from(skill.maxLevel),
+    title: skill.name,
+    subtitle: 'Must be at most ${skill.maxLevel}\n'
+        '${skill.levelCost} skill points used per level',
+  );
+
+  TCharacterNumberForm.spell({
+    required Skill skill,
+    required super.setStateCallback,
+  }) : super(
+    minValue: BigInt.from(1),
+    maxValue: BigInt.from(skill.maxLevel),
+    title: skill.name,
+    subtitle: 'Must be at most ${skill.maxLevel}\n'
+        '${skill.levelCost} skill points used per level',
+  );
 }
 
 class CharacterEditWidget extends StatefulWidget {
@@ -70,6 +93,8 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const List<String> elements = <String>[
     'FIR', 'CLD', 'WND', 'NTR', 'MYS', 'SPI', 'DRK', 'PHY',
   ];
+  static const List<Skill> boostSkills = BoostSkill.values;
+  static const List<Skill> expSkills = ExpSkill.values;
   static const String expCap = '999999999999999999'; // Can go higher, but why
   static const int levelCap = 9999999; // Save load sets it to this if higher
   static const int levelBonusCap = levelCap - 1;
@@ -78,7 +103,32 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const int libraryElementCap = 100; // Hard cap at library
   static const int gemCap = 20; // Hard cap at shrine
 
-  late List<TFormGroup> expansionGroups;
+  late final List<TFormGroup> expansionGroups = <TFormGroup>[
+    TFormGroup(
+      title: 'Level, EXP, BP, Subclass',
+      forms: <TFormWrapper>[levelForm, expForm, bpForm, subclassForm],
+    ),
+    TFormGroup(
+      title: 'Library points',
+      forms: libraryForms + libraryElementForms,
+    ),
+    TFormGroup(
+      title: 'Level up bonuses',
+      forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
+    ),
+    TFormGroup(
+      title: 'Skill points (Common)',
+      forms: boostSkillForms + expSkillForms,
+    ),
+    TFormGroup(title: 'Skill points (Personal)', forms: <TFormWrapper>[]),
+    TFormGroup(title: 'Skill points (Subclass)', forms: <TFormWrapper>[]),
+    TFormGroup(title: 'Tomes', forms: tomeForms),
+    TFormGroup(title: 'Gems', forms: gemForms),
+    TFormGroup(
+      title: 'Equipment',
+      forms: <TFormWrapper>[mainEquipForm] + subEquipForms,
+    ),
+  ];
 
   late final TNumberFormWrapper levelForm = TNumberFormWrapper(
     title: 'Level',
@@ -141,6 +191,20 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       title: 'Points in $stat',
       setStateCallback: setState,
       onValueUpdate: _updateLevelPoints,
+    ),
+  ).toList();
+
+  late final List<TNumberFormWrapper> boostSkillForms = boostSkills.map(
+    (Skill skill) => TCharacterNumberForm.skill(
+      skill: skill,
+      setStateCallback: setState,
+    ),
+  ).toList();
+
+  late final List<TNumberFormWrapper> expSkillForms = expSkills.map(
+    (Skill skill) => TCharacterNumberForm.skill(
+      skill: skill,
+      setStateCallback: setState,
     ),
   ).toList();
 
@@ -319,6 +383,14 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
     data.unusedBonusPoints = int.parse(unusedLevelForm.saveValue());
 
+    // Common skills data
+    for (int i = 0; i < BoostSkill.values.length; i++) {
+      data.skills.setBoostData(i, boostSkillForms[i].saveValue());
+    }
+    for (int i = 0; i < ExpSkill.values.length; i++) {
+      data.skills.setExpData(i, expSkillForms[i].saveValue());
+    }
+
     // Tome data
     for (TomeStat stat in TomeStat.values) {
       data.tomes.setStatData(
@@ -352,30 +424,6 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   @override
   void initState() {
     super.initState();
-    // Set the expansion group titles and form structure
-    expansionGroups = <TFormGroup>[
-      TFormGroup(
-        title: 'Level, EXP, BP, Subclass',
-        forms: <TFormWrapper>[levelForm, expForm, bpForm, subclassForm],
-      ),
-      TFormGroup(
-        title: 'Library points',
-        forms: libraryForms + libraryElementForms,
-      ),
-      TFormGroup(
-        title: 'Level up bonuses',
-        forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
-      ),
-      TFormGroup(title: 'Skill points (Common)', forms: <TFormWrapper>[]),
-      TFormGroup(title: 'Skill points (Personal)', forms: <TFormWrapper>[]),
-      TFormGroup(title: 'Skill points (Subclass)', forms: <TFormWrapper>[]),
-      TFormGroup(title: 'Tomes', forms: tomeForms),
-      TFormGroup(title: 'Gems', forms: gemForms),
-      TFormGroup(
-        title: 'Equipment',
-        forms: <TFormWrapper>[mainEquipForm] + subEquipForms,
-      ),
-    ];
 
     // Initialize form data based on save data
     int characterIndex = widget.character.index;
@@ -399,6 +447,18 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     for (int i = 0; i < elements.length; i++) {
       libraryElementForms[i].initNumberForm(
         BigInt.from(data.libraryLevels.getElementData(i)),
+      );
+    }
+
+    // Skills info
+    for (int i = 0; i < BoostSkill.values.length; i++) {
+      boostSkillForms[i].initNumberForm(
+        BigInt.from(data.skills.getBoostData(i)),
+      );
+    }
+    for (int i = 0; i < ExpSkill.values.length; i++) {
+      expSkillForms[i].initNumberForm(
+        BigInt.from(data.skills.getExpData(i)),
       );
     }
 

@@ -149,6 +149,11 @@ class CharacterData {
   late MainEquip mainEquip;
   late List<SubEquip> subEquips;
 
+  List<Skill> getCommonSkills() {
+    List<Skill> commonSkills = <Skill>[];
+    return commonSkills;
+  }
+
   CharacterData.fromBytes({
     required Endian endianness,
     required int index,
