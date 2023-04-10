@@ -102,10 +102,10 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const int gemCap = 20; // Hard cap at shrine
 
   static String skillSubtitle(Skill skill) => 'Must be at most '
-    '${skill.maxLevel}\n${skill.levelCost} skill points used per level';
+    '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
 
   static String spellSubtitle(Skill skill) => 'Must be between 1 and '
-    '${skill.maxLevel}\n${skill.levelCost} skill points used per level';
+    '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
 
   Character get character => widget.character;
 
