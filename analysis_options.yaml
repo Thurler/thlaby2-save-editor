@@ -104,3 +104,5 @@ linter:
 
     # Pub
     sort_pub_dependencies: true
+
+# https://dart.dev/guides/language/analysis-options
