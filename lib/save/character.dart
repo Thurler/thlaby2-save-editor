@@ -360,184 +360,316 @@ enum Character {
   ),
   meiling(
     <TomeStat>[TomeStat.tp, TomeStat.def, TomeStat.mnd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.sdmResidents, CommonSkill.gatekeeperDuty, CommonSkill.guts,
+      CommonSkill.natural, CommonSkill.gatekeeperNap, CommonSkill.chinaQigong,
+      CommonSkill.rocKillingFist, CommonSkill.spiralLightStep,
+      CommonSkill.chineseGirlQigong, CommonSkill.proofKinship,
+    ],
+    <Skill>[
+      Spell.brilliantGem, Spell.mountainBreaker,
+      Spell.colorfulRain, Spell.healer,
+    ],
     <Skill>[],
   ),
   alice(
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.mnd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.manipulationDolls, CommonSkill.dollGuard,
+      CommonSkill.maliceAlice, CommonSkill.finalBlow, CommonSkill.rapidCharge,
+      CommonSkill.dollMobility, CommonSkill.controlledDolls,
+      CommonSkill.firstAidDolls, CommonSkill.additionalGuards,
+    ],
+    <Skill>[
+      Spell.artfulSacrifice, Spell.littleLegion,
+      Spell.hangedHourai, Spell.tripWire,
+    ],
     <Skill>[],
   ),
   patchouli(
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.aff],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.girlKnowledgeShade,
+      CommonSkill.passivePhilosopher,
+      CommonSkill.unmovingGreatLibrary,
+      CommonSkill.infiniteBookCollection,
+      CommonSkill.asthmaMedicine,
+      CommonSkill.speedyIncantation,
+    ],
+    <Skill>[
+      Spell.royalFlare, Spell.princessUndine, Spell.djinnGust,
+      Spell.satelliteHimawari, Spell.silentSelene,
+    ],
     <Skill>[],
   ),
   eirin(
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.res],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.peopleMoon,
+      CommonSkill.healingLimitBreak,
+      CommonSkill.pharmacistMixing,
+      CommonSkill.specialEndurance,
+      CommonSkill.lunarSageWisdom,
+      CommonSkill.poisonMixing,
+    ],
+    <Skill>[
+      Spell.mercurySea, Spell.omoikaneDevice,
+      Spell.houraiElixir, Spell.astronomicalEntombing,
+    ],
     <Skill>[],
   ),
   reisen(
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.mindModulation,
+      CommonSkill.wavelengthInsanity,
+      CommonSkill.intenseVertigo,
+      CommonSkill.vaporousRedEyes,
+      CommonSkill.enhancedMindModulation,
+      CommonSkill.grandVertigo,
+    ],
+    <Skill>[
+      Spell.lunaticRedEyes, Spell.mindStarmine, Spell.discarder,
+      Spell.gasWovenOrb, Spell.grandPatriotElixir,
+    ],
     <Skill>[],
   ),
   sanae(
     <TomeStat>[TomeStat.def, TomeStat.mag, TomeStat.mnd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.believersMoriya,
+      CommonSkill.expansionConsciousness,
+      CommonSkill.lastWish,
+      CommonSkill.moriyaProtection,
+      CommonSkill.powerLivingGod,
+      CommonSkill.miracleFafrotskies,
+      CommonSkill.sacrificalMaiden,
+      CommonSkill.hisoutenGuard,
+    ],
+    <Skill>[
+      Spell.nightGuesstStars, Spell.mosesMiracle,
+      Spell.yasakaWind, Spell.miracleFruit,
+    ],
     <Skill>[],
   ),
   iku(
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.magicCounter,
+      CommonSkill.hagoromoSky,
+      CommonSkill.suppleHagoromo,
+      CommonSkill.heavenlyBlow,
+      CommonSkill.lightningFish,
+      CommonSkill.magicCounterPlus,
+      CommonSkill.thunderAbtruseClouds,
+      CommonSkill.pearlClawedDragon,
+    ],
+    <Skill>[
+      Spell.elekiterPalace, Spell.lightDragonSigh,
+      Spell.thunedrcloudStickleback, Spell.whiskersDragonGod,
+    ],
     <Skill>[],
   ),
   suika(
     <TomeStat>[TomeStat.atk, TomeStat.mnd, TomeStat.res],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.ibukiGourd,
+      CommonSkill.freeSpiritedOni,
+      CommonSkill.fogLabyrinth,
+      CommonSkill.artOniBinding,
+      CommonSkill.earthSpiritDense,
+      CommonSkill.pandemonicSprinkle,
+    ],
+    <Skill>[
+      Spell.throwingTogakushi, Spell.throwingAtlas, Spell.gatheringDissipating,
+      Spell.missingPower, Spell.artSegakiBinding,
+    ],
     <Skill>[],
   ),
   ran(
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+      CommonSkill.abilityShikigamis,
+      CommonSkill.superFastHardArithmetic,
+      CommonSkill.shikigamiDefense,
+      CommonSkill.hermitFoxThoughts,
+      CommonSkill.kokkuriContract,
+      CommonSkill.friedTofuPower,
+    ],
+    <Skill>[
+      Spell.foxTanukiLaser, Spell.princessTenko, Spell.soaringOzuno,
+      Spell.banquetGeneralGods, Spell.eightyMillionBoards,
+    ],
     <Skill>[],
   ),
   remilia(
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.spd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   sakuya(
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   kanako(
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   suwako(
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   tenshi(
     <TomeStat>[TomeStat.tp, TomeStat.aff, TomeStat.res],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   flandre(
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   yuyuko(
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   yuuka(
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   yukari(
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mnd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   byakuren(
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.spd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   eiki(
     <TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.mnd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   renko(
     <TomeStat>[TomeStat.spd, TomeStat.eva, TomeStat.res],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   maribel(
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   shou(
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   mamizou(
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.eva],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   futo(
     <TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.res],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   miko(
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.aff],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   kokoro(
     <TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   tokiko(
     <TomeStat>[
       TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd, TomeStat.spd,
     ],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   koishi(
     <TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.eva],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   ),
   akyuu(
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp],
-    <Skill>[],
-    <Skill>[],
+    <Skill>[
+    ],
+    <Skill>[
+    ],
     <Skill>[],
   );
 
