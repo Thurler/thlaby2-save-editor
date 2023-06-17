@@ -127,6 +127,7 @@ class MainState extends CommonState<MainWidget> {
       children: <Widget>[
         Image.asset('img/title.png'),
         SpacedRow(
+          spacer: const SizedBox(width: 20),
           children: <Widget>[
             const TButton(
               text: 'Open DLSite save file',

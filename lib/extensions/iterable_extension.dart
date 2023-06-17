@@ -3,7 +3,10 @@ extension IterableExtension<T> on Iterable<T> {
     return map((T t)=>f(t));
   }
 
-  List<T> separateWith(T separator, {bool separatorOnEnds = false}) {
+  List<T> separateWith(T? separator, {bool separatorOnEnds = false}) {
+    if (separator == null) {
+      return toList();
+    }
     List<T> result = <T>[];
     if (separatorOnEnds) {
       result.add(separator);

@@ -6,11 +6,13 @@ class CommonScaffold extends StatelessWidget {
   final String title;
   final List<Widget> children;
   final void Function()? settingsLink;
+  final FloatingActionButton? floatingActionButton;
 
   const CommonScaffold({
     required this.title,
     required this.children,
     this.settingsLink,
+    this.floatingActionButton,
     super.key,
   });
 
@@ -29,6 +31,7 @@ class CommonScaffold extends StatelessWidget {
             ),
         ],
       ),
+      floatingActionButton: floatingActionButton,
       body: ListView(
         children: <Widget>[
           Padding(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-@immutable
 class TBadge extends StatelessWidget {
   final String text;
   final Color color;

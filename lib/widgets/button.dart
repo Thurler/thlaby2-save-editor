@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-@immutable
 class TButton extends StatelessWidget {
   final String text;
   final void Function()? onPressed;
@@ -19,23 +18,6 @@ class TButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = <Widget>[
-      Flexible(
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    ];
-    if (icon != null) {
-      children.insertAll(0, <Widget>[
-        Icon(icon),
-        const SizedBox(width: 10),
-      ]);
-    }
     return ElevatedButton(
       onPressed: onPressed,
       child: Padding(
@@ -43,7 +25,20 @@ class TButton extends StatelessWidget {
         child: Row(
           mainAxisSize: usesMaxWidth ? MainAxisSize.max : MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: children,
+          children: <Widget>[
+            if (icon != null)
+              Icon(icon),
+              const SizedBox(width: 10),
+            Flexible(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

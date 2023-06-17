@@ -1,25 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:thlaby2_save_editor/text_formatter.dart';
+import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
+class TFormTitle extends StatelessWidget {
+  static const Color subtitleColor = Colors.grey;
+
+  final String title;
+  final String subtitle;
+  final String errorMessage;
+
+  const TFormTitle({
+    required this.title,
+    required this.subtitle,
+    this.errorMessage = '',
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(title),
+      subtitle: RichText(
+        text: TextSpan(
+          style: const TextStyle(color: subtitleColor),
+          children: <TextSpan>[
+            TextSpan(text: subtitle),
+            TextSpan(
+              text: errorMessage != '' ? '\n$errorMessage' : '',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+abstract class TFormField extends StatelessWidget {
+  final bool enabled;
+  const TFormField({required this.enabled, super.key});
+}
+
+class TFormDropdownField extends TFormField {
+  final void Function(String?) onChanged;
+  final List<String> options;
+  final String hintText;
+  final String value;
+
+  const TFormDropdownField({
+    required this.value,
+    required this.hintText,
+    required this.options,
+    required this.onChanged,
+    required super.enabled,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      isExpanded: true,
+      hint: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 0, 15),
+        child: Text(hintText),
+      ),
+      value: (value != '') ? value : null,
+      onChanged: enabled ? onChanged : null,
+      items: options.map((String option) {
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Text(option),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class TForm extends StatelessWidget {
+  final TFormTitle title;
+  final TFormField field;
+
+  const TForm({required this.title, required this.field, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SpacedRow(children: <Widget>[title, field]);
+  }
+}
+
+// MARKED FOR DELETION - EVERYTHING BELOW
 enum FormBorder {
   full,
   fieldUnderline,
   none,
 }
 
-@immutable
-abstract class TForm extends StatelessWidget {
-  static const Color subtitleColor = Colors.grey;
-  final TextStyle subtitleStyle = const TextStyle(color: subtitleColor);
-  final TextStyle errorStyle = const TextStyle(color: Colors.red);
-  final String errorMessage;
-  final String subtitle;
+abstract class TLegacyForm extends StatelessWidget {
+
   final String title;
+  final String subtitle;
+  final String errorMessage;
   final bool enabled;
   final FormBorder border;
 
-  const TForm({
+  const TLegacyForm({
     required this.title,
     required this.subtitle,
     this.enabled = true,
@@ -28,33 +116,17 @@ abstract class TForm extends StatelessWidget {
     super.key,
   }) : super();
 
-  Widget buildTitleTile(String errorText) {
-    return ListTile(
-      title: Text(title),
-      subtitle: RichText(
-        text: TextSpan(
-          style: subtitleStyle,
-          children: <TextSpan>[
-            TextSpan(text: subtitle),
-            TextSpan(text: errorText, style: errorStyle),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget buildFormField();
 
   @override
   Widget build(BuildContext context) {
-    String errorText = (errorMessage != '') ? '\n$errorMessage' : '';
     Widget field = buildFormField();
     if (border == FormBorder.fieldUnderline) {
       field = DecoratedBox(
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: TForm.subtitleColor.withOpacity(0.5),
+              color: TFormTitle.subtitleColor.withOpacity(0.5),
               width: 2,
             ),
           ),
@@ -67,7 +139,13 @@ abstract class TForm extends StatelessWidget {
     }
     Widget result = Row(
       children: <Widget>[
-        Expanded(child: buildTitleTile(errorText)),
+        Expanded(
+          child: TFormTitle(
+            title: title,
+            subtitle: subtitle,
+            errorMessage: errorMessage,
+          ),
+        ),
         Expanded(child: field),
       ],
     );
@@ -75,7 +153,7 @@ abstract class TForm extends StatelessWidget {
       result = DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: TForm.subtitleColor),
+          border: Border.all(color: TFormTitle.subtitleColor),
         ),
         child: Padding(
           padding: const EdgeInsets.only(right: 15),
@@ -88,7 +166,7 @@ abstract class TForm extends StatelessWidget {
 }
 
 @immutable
-class TStringForm extends TForm {
+class TStringForm extends TLegacyForm {
   final TextEditingController controller;
   final String hintText;
   final void Function()? onValueUpdate;
@@ -194,7 +272,7 @@ class TNumberForm extends TStringForm {
 }
 
 @immutable
-class TDropdownForm extends TForm {
+class TDropdownForm extends TLegacyForm {
   final void Function(String?) onChanged;
   final List<String> options;
   final String hintText;

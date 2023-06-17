@@ -11,7 +11,7 @@ class TAppBarButton extends StatelessWidget {
     required this.icon,
     required this.onTap,
     super.key,
-  }) : super();
+  });
 
   @override
   Widget build(BuildContext context) {
