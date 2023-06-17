@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/views/character_data.dart';
 import 'package:thlaby2_save_editor/views/party_data.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
-import 'package:thlaby2_save_editor/widgets/appbar_button.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
+import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 class MenuWidget extends StatefulWidget {
   const MenuWidget({super.key});
@@ -124,88 +124,82 @@ class MenuState extends CommonState<MenuWidget> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> buttons = <Widget>[
-      const TButton(
-        text: 'General Data',
-        icon: Icons.info_outline,
-      ),
-      const TButton(
-        text: 'Event Data',
-        icon: Icons.warning_amber,
-      ),
-      TButton(
-        text: 'Character Data',
-        icon: Icons.person,
-        onPressed: _editCharacterData,
-      ),
-      TButton(
-        text: 'Party Data',
-        icon: Icons.groups,
-        onPressed: _editPartyData,
-      ),
-      const TButton(
-        text: 'Achievement Data',
-        icon: Icons.star_border_purple500,
-      ),
-      const TButton(
-        text: 'Bestiary Data',
-        icon: Icons.school_outlined,
-      ),
-      const TButton(
-        text: 'Inventory Data',
-        icon: Icons.inventory_2_outlined,
-      ),
-      const TButton(
-        text: 'Map Data',
-        icon: Icons.map,
-      ),
-    ];
-    List<Widget> columnChildren = <Widget>[];
-    for (int i = 0; i < buttons.length; i += 2) {
-      columnChildren.add(makeRowFromWidgets(buttons.sublist(i, i+2)));
-    }
-    columnChildren.add(const Divider());
-    columnChildren.add(
-      makeRowFromWidgets(
-        <Widget>[
-          const TButton(
-            text: 'Export as DLSite save',
-            icon: Icons.save,
-          ),
-          TButton(
-            text: 'Export as Steam save',
-            onPressed: _saveSteamSaveFile,
-            icon: Icons.save,
-          ),
-        ],
-      ),
-    );
     return WillPopScope(
       onWillPop: _alertUnexportedChanges,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Touhou Labyrinth 2 Save Editor - Menu'),
-          actions: <Widget>[
-            TAppBarButton(
-              text: 'Settings',
-              icon: Icons.settings,
-              onTap: _navigateToSettings,
-            ),
-          ],
-        ),
-        body: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: columnChildren.separateWith(
-                  const SizedBox(height: 20),
-                  separatorOnEnds: true,
-                ),
+      child: CommonScaffold(
+        title: 'Touhou Labyrinth 2 Save Editor - Menu',
+        settingsLink: _navigateToSettings,
+        children: <Widget>[
+          const SpacedRow(
+            spacer: SizedBox(width: 20),
+            children: <Widget>[
+              TButton(
+                text: 'General Data',
+                icon: Icons.info_outline,
               ),
-            ),
-          ],
-        ),
+              TButton(
+                text: 'Event Data',
+                icon: Icons.warning_amber,
+              ),
+            ],
+          ),
+          SpacedRow(
+            spacer: const SizedBox(width: 20),
+            children: <Widget>[
+              TButton(
+                text: 'Character Data',
+                icon: Icons.person,
+                onPressed: _editCharacterData,
+              ),
+              TButton(
+                text: 'Party Data',
+                icon: Icons.groups,
+                onPressed: _editPartyData,
+              ),
+            ],
+          ),
+          const SpacedRow(
+            spacer: SizedBox(width: 20),
+            children: <Widget>[
+              TButton(
+                text: 'Achievement Data',
+                icon: Icons.star_border_purple500,
+              ),
+              TButton(
+                text: 'Bestiary Data',
+                icon: Icons.school_outlined,
+              )
+            ],
+          ),
+          const SpacedRow(
+            spacer: SizedBox(width: 20),
+            children: <Widget>[
+              TButton(
+                text: 'Inventory Data',
+                icon: Icons.inventory_2_outlined,
+              ),
+              TButton(
+                text: 'Map Data',
+                icon: Icons.map,
+              ),
+            ],
+          ),
+          const Divider(),
+          SpacedRow(
+            spacer: const SizedBox(width: 20),
+            children: <Widget>[
+              const TButton(
+                text: 'Export as DLSite save',
+                icon: Icons.save,
+              ),
+              TButton(
+                text: 'Export as Steam save',
+                onPressed: _saveSteamSaveFile,
+                icon: Icons.save,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -30,18 +30,6 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
     return characterFilenames[c.index];
   }
 
-  // MARKED FOR DELETION
-  Row makeRowFromWidgets(List<Widget> widgets, {bool expanded = false}) {
-    if (expanded) {
-      widgets = widgets.map((Widget w)=>Expanded(child: w)).toList();
-    } else {
-      widgets = widgets.map((Widget w)=>Flexible(child: w)).toList();
-    }
-    return Row(
-      children: widgets.separateWith(const SizedBox(width: 20)),
-    );
-  }
-
   Future<void> handleException({
     required String logMessage,
     required String dialogTitle,
