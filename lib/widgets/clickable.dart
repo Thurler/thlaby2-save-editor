@@ -6,23 +6,25 @@ class TClickable extends StatelessWidget {
   final void Function(PointerEnterEvent)? onEnter;
   final void Function(PointerExitEvent)? onExit;
   final Widget child;
+  final bool enabled;
 
   const TClickable({
-    required this.onTap,
     required this.child,
+    required this.onTap,
     this.onEnter,
     this.onExit,
+    this.enabled = true,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: enabled ? onTap : null,
       child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: onEnter,
-        onExit: onExit,
+        cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        onEnter: enabled ? onEnter : null,
+        onExit: enabled ? onExit : null,
         child: child,
       ),
     );

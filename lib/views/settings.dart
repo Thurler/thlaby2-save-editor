@@ -6,6 +6,7 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
+import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 class Settings {
   late LogLevel logLevel;
@@ -133,10 +134,9 @@ class SettingsState extends CommonState<SettingsWidget> {
       onWillPop: _checkChangesAndConfirm,
       child: CommonScaffold(
         title: 'Touhou Labyrinth 2 Save Editor - Settings',
-        floatingActionButton: _hasChanges() ? FloatingActionButton(
-          onPressed: _saveChanges,
-          child: const Icon(Icons.save),
-        ) : null,
+        floatingActionButton: _hasChanges()
+          ? TSaveButton(onPressed: _saveChanges)
+          : null,
         children: <Widget>[
           RoundedBorder(
             color: TFormTitle.subtitleColor,

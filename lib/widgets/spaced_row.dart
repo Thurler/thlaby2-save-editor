@@ -5,9 +5,11 @@ class SpacedRow extends StatelessWidget {
   final List<Widget> children;
   final bool expanded;
   final Widget? spacer;
+  final MainAxisAlignment mainAxisAlignment;
 
   const SpacedRow({
     required this.children,
+    this.mainAxisAlignment = MainAxisAlignment.start,
     this.expanded = false,
     this.spacer,
     super.key,
@@ -16,6 +18,7 @@ class SpacedRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: mainAxisAlignment,
       children: children.map<Widget>(
         (Widget w) => expanded ? Expanded(child: w) : Flexible(child: w),
       ).separateWith(spacer),
