@@ -18,7 +18,7 @@ extension IntExtension on int {
       copy.write(',${raw.substring(i, i+3)}');
     }
     String sign = negative ? '-' : '';
-    return '$sign${copy.toString()}';
+    return '$sign$copy';
   }
 
   Iterable<int> toU16(Endian endianness) {
@@ -78,7 +78,7 @@ extension BigIntExtension on BigInt {
       copy.write(',${raw.substring(i, i+3)}');
     }
     String sign = negative ? '-' : '';
-    return '$sign${copy.toString()}';
+    return '$sign$copy';
   }
 
   Iterable<int> toU64(Endian endianness) {

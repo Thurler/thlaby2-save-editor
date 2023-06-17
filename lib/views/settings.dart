@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
+import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
+import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 class Settings {
   late LogLevel logLevel;
@@ -127,41 +130,32 @@ class SettingsState extends CommonState<SettingsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = <Widget>[
-      TDropdownForm(
-        title: 'Log level',
-        subtitle: 'Specifies what severity of information will be logged',
-        value: _options[_editable.logLevel.index],
-        hintText: 'Select a log level',
-        options: _options,
-        onChanged: _changeLogLevel,
-        border: FormBorder.full,
-      ),
-    ];
-    Widget? floatingActionButton;
-    if (_hasChanges()) {
-      floatingActionButton = FloatingActionButton(
-        onPressed: _saveChanges,
-        child: const Icon(Icons.save),
-      );
-    }
     return WillPopScope(
       onWillPop: _checkChangesAndConfirm,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Touhou Labyrinth 2 Save Editor - Settings'),
-        ),
-        floatingActionButton: floatingActionButton,
-        body: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: children,
+      child: CommonScaffold(
+        title: 'Touhou Labyrinth 2 Save Editor - Settings',
+        floatingActionButton: _hasChanges()
+          ? TSaveButton(onPressed: _saveChanges)
+          : null,
+        children: <Widget>[
+          RoundedBorder(
+            color: TFormTitle.subtitleColor,
+            childPadding: const EdgeInsets.only(right: 15),
+            child: TForm(
+              title: const TFormTitle(
+                title: 'Log level',
+                subtitle: 'Specifies severity of information to be logged',
+              ),
+              field: TFormDropdownField(
+                hintText: 'Select a log level',
+                options: _options,
+                onChanged: _changeLogLevel,
+                value: _options[_editable.logLevel.index],
+                enabled: true,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

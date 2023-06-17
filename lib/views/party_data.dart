@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
-import 'package:thlaby2_save_editor/extensions/iterable_extension.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
-import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 import 'package:thlaby2_save_editor/views/character_select.dart';
-import 'package:thlaby2_save_editor/widgets/clickable.dart';
+import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
+import 'package:thlaby2_save_editor/widgets/party_row.dart';
+import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 class PartyDataWidget extends StatefulWidget {
   const PartyDataWidget({super.key});
@@ -20,11 +20,7 @@ class PartyDataState extends CommonState<PartyDataWidget> {
   late List<PartySlot> _editable;
   late List<PartySlot> _original;
   PartySlot? _hover;
-  PartySlot? _hoverRemove;
-
-  //
-  // Properly check for and validate changes, save/commit them
-  //
+  PartySlot? _hoverRm;
 
   bool _hasChanges() {
     for (int i = 0; i < _editable.length; i++) {
@@ -125,118 +121,8 @@ class PartyDataState extends CommonState<PartyDataWidget> {
     await logger.log(LogLevel.debug, 'Removed ${slot.character.name}');
     setState(() {
       slot.isUsed = false;
-      _hoverRemove = null;
+      _hoverRm = null;
     });
-  }
-
-  //
-  // Helper functions to draw stuff on screen, helps declutter the build method
-  //
-
-  Widget _drawCharacter(PartySlot slot) {
-    bool highlighted = _hover == slot;
-    bool highlightedRemove = _hoverRemove == slot;
-    bool isUsed = slot.isUsed;
-    // Character name acts as a title for the box
-    String name = slot.toString();
-    Widget title = Text(
-      name.upperCaseFirstChar(),
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: highlighted ? Colors.green : null,
-      ),
-    );
-    // Main image using S variant
-    String filename;
-    if (isUsed) {
-      String characterFilename = getCharacterFilename(slot.character);
-      filename = 'img/character/${characterFilename}_S.png';
-    } else {
-      filename = 'img/character/Empty_S.png';
-    }
-    Widget image = Image.asset(
-      filename,
-      fit: BoxFit.contain,
-    );
-    // Put it in a DecoratedBox to give it a border - hides the portrait cutoffs
-    image = DecoratedBox(
-      position: DecorationPosition.foreground,
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: highlighted ? 2 : 1,
-          color: highlighted ? Colors.green : Colors.grey.shade700,
-        ),
-      ),
-      child: image,
-    );
-    List<Widget> elements = <Widget>[title, image];
-    // Wrap it in a GestureDetector and a MouseRegion for interaction
-    Widget slotPortrait = TClickable(
-      onTap: () async => _changePartyMember(slot),
-      onEnter: (PointerEvent e) => setState((){_hover = slot;}),
-      onExit: (PointerEvent e) => setState((){_hover = null;}),
-      child: Column(
-        children: elements,
-      ),
-    );
-    // A remove button is added, greyed out if the slot is already empty
-    FontWeight weight = FontWeight.normal;
-    if (highlightedRemove && isUsed) {
-      weight = FontWeight.bold;
-    }
-    Widget removeRow = Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        const Icon(
-          Icons.cancel_outlined,
-          color: Colors.white,
-          size: 20,
-        ),
-        const SizedBox(width: 5),
-        Flexible(
-          child: Text(
-            'Remove',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: weight,
-            ),
-          ),
-        ),
-      ],
-    );
-    Color removeColor = isUsed ? Colors.red.shade700 : Colors.grey;
-    double opacity = 0.7;
-    if (highlightedRemove) {
-      opacity = 1.0;
-    }
-    Widget removeButton = DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: removeColor.withOpacity(opacity),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-        child: removeRow,
-      ),
-    );
-    // Only interactable if slot isn't already empty
-    if (isUsed) {
-      removeButton = TClickable(
-        onTap: () async => _removePartyMember(slot),
-        onEnter: (PointerEvent e) => setState((){_hoverRemove = slot;}),
-        onExit: (PointerEvent e) => setState((){_hoverRemove = null;}),
-        child: removeButton,
-      );
-    }
-    return Column(
-      children: <Widget>[
-        slotPortrait,
-        const SizedBox(height: 2),
-        removeButton,
-      ],
-    );
   }
 
   @override
@@ -249,53 +135,26 @@ class PartyDataState extends CommonState<PartyDataWidget> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> characters = _editable.map(_drawCharacter).toList();
-    List<Widget> rows = <Widget>[];
-    for (int i = 0; i < 3; i++) {
-      int index = (2 - i) * 4;
-      List<Widget> children = characters.sublist(index, index+4);
-      Iterable<Widget> flexibleChildren = children.map(
-        (Widget w)=>Flexible(child: w),
-      );
-      rows.add(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: flexibleChildren.separateWith(const SizedBox(width: 20)),
-        ),
-      );
-    }
-    Widget? floatingActionButton;
-    bool shouldSave = _hasChanges();
-    if (shouldSave) {
-      floatingActionButton = FloatingActionButton(
-        onPressed: _saveChanges,
-        child: const Icon(Icons.save),
-      );
-    }
-    Widget mainColumn = Column(
-      children: rows.separateWith(const SizedBox(height: 10)),
-    );
     return WillPopScope(
       onWillPop: _checkChangesAndConfirm,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Edit which characters are in the party'),
-        ),
-        floatingActionButton: floatingActionButton,
-        body: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: <Widget>[mainColumn].separateWith(
-                  const SizedBox(height: 20),
-                  separatorOnEnds: true,
-                ),
-              ),
-            ),
-          ],
-        ),
+      child: CommonScaffold(
+        title: 'Edit which characters are in the party',
+        floatingActionButton: _hasChanges()
+          ? TSaveButton(onPressed: _saveChanges)
+          : null,
+        children: <int>[8, 4, 0].map<Widget>(
+          (int index) => PartyRow(
+            slots: _editable.sublist(index, index + 4),
+            characterOnTap: _changePartyMember,
+            removeOnTap: _removePartyMember,
+            characterHighlight: _hover,
+            removeHighlight: _hoverRm,
+            characterOnEnter: (PartySlot slot) => setState((){_hover = slot;}),
+            removeOnEnter: (PartySlot slot) => setState((){_hoverRm = slot;}),
+            characterOnExit: (PartySlot slot) => setState((){_hover = null;}),
+            removeOnExit: (PartySlot slot) => setState((){_hoverRm = null;}),
+          ),
+        ).toList()..insert(2, const Divider()),
       ),
     );
   }

@@ -10,6 +10,7 @@ import 'package:thlaby2_save_editor/save/tome.dart';
 
 enum Character {
   reimu(
+    'Reimu',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
     <Skill>[
       CommonSkill.mainReimu, CommonSkill.grandIncantation,
@@ -25,6 +26,7 @@ enum Character {
     <Skill>[],
   ),
   marisa(
+    'Marisa',
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
     <Skill>[
       CommonSkill.maliceMarisa, CommonSkill.mainMarisa, CommonSkill.sheerForce,
@@ -39,6 +41,7 @@ enum Character {
     <Skill>[],
   ),
   rinnosuke(
+    'Kourin',
     <TomeStat>[
       TomeStat.mp, TomeStat.tp, TomeStat.atk,
       TomeStat.def, TomeStat.mag, TomeStat.mnd,
@@ -53,6 +56,7 @@ enum Character {
     <Skill>[Spell.preciseDiagnosis],
   ),
   keine(
+    'Keine',
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
     <Skill>[
       CommonSkill.withMokou, CommonSkill.organizedFormation,
@@ -68,6 +72,7 @@ enum Character {
     <Skill>[],
   ),
   momiji(
+    'Momiji',
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def],
     <Skill>[
       CommonSkill.seeFarDistances, CommonSkill.tenguWatchful,
@@ -79,6 +84,7 @@ enum Character {
     <Skill>[],
   ),
   youmu(
+    'Youmu',
     <TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mnd],
     <Skill>[
       CommonSkill.regenerationAbility, CommonSkill.liveUnderworld,
@@ -94,6 +100,7 @@ enum Character {
     <Skill>[],
   ),
   kogasa(
+    'Kogasa',
     <TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.eva],
     <Skill>[
       CommonSkill.surpriseHumans, CommonSkill.easygoing, CommonSkill.sheerForce,
@@ -108,6 +115,7 @@ enum Character {
     <Skill>[],
   ),
   rumia(
+    'Rumia',
     <TomeStat>[TomeStat.mag, TomeStat.spd, TomeStat.aff],
     <Skill>[
       CommonSkill.team9, CommonSkill.realmDarkness, CommonSkill.youkaiKnowledge,
@@ -120,6 +128,7 @@ enum Character {
     <Skill>[],
   ),
   cirno(
+    'Cirno',
     <TomeStat>[TomeStat.tp, TomeStat.spd, TomeStat.aff],
     <Skill>[
       CommonSkill.team9, CommonSkill.risingFalling, CommonSkill.tomboyishLove,
@@ -135,6 +144,7 @@ enum Character {
     <Skill>[],
   ),
   minoriko(
+    'Minoriko',
     <TomeStat>[TomeStat.mag, TomeStat.spd, TomeStat.res],
     <Skill>[
       CommonSkill.symbolHarvest, CommonSkill.desireRest,
@@ -150,6 +160,7 @@ enum Character {
     <Skill>[],
   ),
   komachi(
+    'Komachi',
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.mnd],
     <Skill>[
       CommonSkill.shinigamiWork, CommonSkill.ferryWages,
@@ -164,6 +175,7 @@ enum Character {
     <Skill>[],
   ),
   chen(
+    'Chen',
     <TomeStat>[TomeStat.atk, TomeStat.spd, TomeStat.eva],
     <Skill>[
       CommonSkill.yakumoClan, CommonSkill.instantAttack, CommonSkill.beatDown,
@@ -175,6 +187,7 @@ enum Character {
     <Skill>[],
   ),
   nitori(
+    'Nitori',
     <TomeStat>[TomeStat.def, TomeStat.mnd, TomeStat.aff],
     <Skill>[
       CommonSkill.maintenance, CommonSkill.manipulateWater,
@@ -189,6 +202,7 @@ enum Character {
     <Skill>[],
   ),
   parsee(
+    'Parsee',
     <TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.res],
     <Skill>[
       CommonSkill.twoWayCurse, CommonSkill.finalBlow,
@@ -203,6 +217,7 @@ enum Character {
     <Skill>[],
   ),
   wriggle(
+    'Wriggle',
     <TomeStat>[TomeStat.def, TomeStat.mnd, TomeStat.eva],
     <Skill>[
       CommonSkill.team9, CommonSkill.inhalePoison, CommonSkill.kodokuQueen,
@@ -215,6 +230,7 @@ enum Character {
     <Skill>[],
   ),
   kaguya(
+    'Kaguya',
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.mnd],
     <Skill>[
       CommonSkill.residentsEientei, CommonSkill.royalPeopleMoon,
@@ -230,6 +246,7 @@ enum Character {
     <Skill>[],
   ),
   mokou(
+    'Mokou',
     <TomeStat>[TomeStat.hp, TomeStat.tp, TomeStat.atk],
     <Skill>[
       CommonSkill.withKeine, CommonSkill.regeneration, CommonSkill.resurrection,
@@ -241,6 +258,7 @@ enum Character {
     <Skill>[],
   ),
   aya(
+    'Aya',
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.eva],
     <Skill>[
       CommonSkill.quickwitted, CommonSkill.fastestLessons,
@@ -255,6 +273,7 @@ enum Character {
     <Skill>[],
   ),
   mystia(
+    'Mystia',
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd],
     <Skill>[
       CommonSkill.team9, CommonSkill.divaDarkness, CommonSkill.singingSilence,
@@ -269,6 +288,7 @@ enum Character {
     <Skill>[],
   ),
   kasen(
+    'Kasen',
     <TomeStat>[TomeStat.hp, TomeStat.tp, TomeStat.spd],
     <Skill>[
       CommonSkill.guideAnimals, CommonSkill.guts, CommonSkill.fightingSpirit,
@@ -283,6 +303,7 @@ enum Character {
     <Skill>[Spell.summonDragonTiger],
   ),
   nazrin(
+    'Nazrin',
     <TomeStat>[TomeStat.mnd, TomeStat.spd, TomeStat.eva],
     <Skill>[
       CommonSkill.myourenPersonnel, CommonSkill.bishamontenBlessing,
@@ -295,6 +316,7 @@ enum Character {
     <Skill>[],
   ),
   hina(
+    'Hina',
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd],
     <Skill>[
       CommonSkill.wardingAwayLuck, CommonSkill.twoWayCurse,
@@ -307,6 +329,7 @@ enum Character {
     <Skill>[],
   ),
   rin(
+    'Rin',
     <TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.spd],
     <Skill>[
       CommonSkill.earthSpiritsParty, CommonSkill.hellNecromancer,
@@ -322,6 +345,7 @@ enum Character {
     <Skill>[],
   ),
   utsuho(
+    'Utsuho',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
     <Skill>[
       CommonSkill.earthSpiritsParty, CommonSkill.blazing,
@@ -333,6 +357,7 @@ enum Character {
     <Skill>[],
   ),
   satori(
+    'Satori',
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
     <Skill>[
       CommonSkill.earthSpiritsParty, CommonSkill.perceiveReality,
@@ -344,6 +369,7 @@ enum Character {
     <Skill>[],
   ),
   yuugi(
+    'Yuugi',
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.def],
     <Skill>[
       CommonSkill.physicalCounter, CommonSkill.lastFortress,
@@ -359,6 +385,7 @@ enum Character {
     <Skill>[],
   ),
   meiling(
+    'Meirin',
     <TomeStat>[TomeStat.tp, TomeStat.def, TomeStat.mnd],
     <Skill>[
       CommonSkill.sdmResidents, CommonSkill.gatekeeperDuty, CommonSkill.guts,
@@ -373,6 +400,7 @@ enum Character {
     <Skill>[],
   ),
   alice(
+    'Alice',
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.mnd],
     <Skill>[
       CommonSkill.manipulationDolls, CommonSkill.dollGuard,
@@ -387,6 +415,7 @@ enum Character {
     <Skill>[],
   ),
   patchouli(
+    'Patchouli',
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.aff],
     <Skill>[
       CommonSkill.girlKnowledgeShade,
@@ -403,6 +432,7 @@ enum Character {
     <Skill>[],
   ),
   eirin(
+    'Eirin',
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.res],
     <Skill>[
       CommonSkill.peopleMoon,
@@ -419,6 +449,7 @@ enum Character {
     <Skill>[],
   ),
   reisen(
+    'Reisen',
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
     <Skill>[
       CommonSkill.mindModulation,
@@ -435,6 +466,7 @@ enum Character {
     <Skill>[],
   ),
   sanae(
+    'Sanae',
     <TomeStat>[TomeStat.def, TomeStat.mag, TomeStat.mnd],
     <Skill>[
       CommonSkill.believersMoriya,
@@ -453,6 +485,7 @@ enum Character {
     <Skill>[],
   ),
   iku(
+    'Iku',
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
     <Skill>[
       CommonSkill.magicCounter,
@@ -471,6 +504,7 @@ enum Character {
     <Skill>[],
   ),
   suika(
+    'Suika',
     <TomeStat>[TomeStat.atk, TomeStat.mnd, TomeStat.res],
     <Skill>[
       CommonSkill.ibukiGourd,
@@ -487,6 +521,7 @@ enum Character {
     <Skill>[],
   ),
   ran(
+    'Ran',
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
     <Skill>[
       CommonSkill.abilityShikigamis,
@@ -503,6 +538,7 @@ enum Character {
     <Skill>[],
   ),
   remilia(
+    'Remilia',
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.spd],
     <Skill>[
     ],
@@ -511,6 +547,7 @@ enum Character {
     <Skill>[],
   ),
   sakuya(
+    'Sakuya',
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd],
     <Skill>[
     ],
@@ -519,6 +556,7 @@ enum Character {
     <Skill>[],
   ),
   kanako(
+    'Kanako',
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
     <Skill>[
     ],
@@ -527,6 +565,7 @@ enum Character {
     <Skill>[],
   ),
   suwako(
+    'Suwako',
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
     <Skill>[
     ],
@@ -535,6 +574,7 @@ enum Character {
     <Skill>[],
   ),
   tenshi(
+    'Tensi',
     <TomeStat>[TomeStat.tp, TomeStat.aff, TomeStat.res],
     <Skill>[
     ],
@@ -543,6 +583,7 @@ enum Character {
     <Skill>[],
   ),
   flandre(
+    'Flandre',
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
     <Skill>[
     ],
@@ -551,6 +592,7 @@ enum Character {
     <Skill>[],
   ),
   yuyuko(
+    'Yuyuko',
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
     <Skill>[
     ],
@@ -559,6 +601,7 @@ enum Character {
     <Skill>[],
   ),
   yuuka(
+    'Yuuka',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
     <Skill>[
     ],
@@ -567,6 +610,7 @@ enum Character {
     <Skill>[],
   ),
   yukari(
+    'Yukari',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mnd],
     <Skill>[
     ],
@@ -575,6 +619,7 @@ enum Character {
     <Skill>[],
   ),
   byakuren(
+    'Hijiri',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.spd],
     <Skill>[
     ],
@@ -583,6 +628,7 @@ enum Character {
     <Skill>[],
   ),
   eiki(
+    'Eiki',
     <TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.mnd],
     <Skill>[
     ],
@@ -591,6 +637,7 @@ enum Character {
     <Skill>[],
   ),
   renko(
+    'Renko',
     <TomeStat>[TomeStat.spd, TomeStat.eva, TomeStat.res],
     <Skill>[
     ],
@@ -599,6 +646,7 @@ enum Character {
     <Skill>[],
   ),
   maribel(
+    'Maribel',
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
     <Skill>[
     ],
@@ -607,6 +655,7 @@ enum Character {
     <Skill>[],
   ),
   shou(
+    'Toramaru',
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd],
     <Skill>[
     ],
@@ -615,6 +664,7 @@ enum Character {
     <Skill>[],
   ),
   mamizou(
+    'Mamizou',
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.eva],
     <Skill>[
     ],
@@ -623,6 +673,7 @@ enum Character {
     <Skill>[],
   ),
   futo(
+    'Futo',
     <TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.res],
     <Skill>[
     ],
@@ -631,6 +682,7 @@ enum Character {
     <Skill>[],
   ),
   miko(
+    'Miko',
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.aff],
     <Skill>[
     ],
@@ -639,6 +691,7 @@ enum Character {
     <Skill>[],
   ),
   kokoro(
+    'Kokoro',
     <TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd],
     <Skill>[
     ],
@@ -647,6 +700,7 @@ enum Character {
     <Skill>[],
   ),
   tokiko(
+    'Tokiko',
     <TomeStat>[
       TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd, TomeStat.spd,
     ],
@@ -657,6 +711,7 @@ enum Character {
     <Skill>[],
   ),
   koishi(
+    'Koisi',
     <TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.eva],
     <Skill>[
     ],
@@ -665,6 +720,7 @@ enum Character {
     <Skill>[],
   ),
   akyuu(
+    'Akyuu',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp],
     <Skill>[
     ],
@@ -673,13 +729,18 @@ enum Character {
     <Skill>[],
   );
 
+  final String filename;
   final List<TomeStat> naturalTomeStats;
   final List<Skill> skills;
   final List<Skill> spells;
   final List<Skill> awakeningSpells;
 
   const Character(
-    this.naturalTomeStats, this.skills, this.spells, this.awakeningSpells,
+    this.filename,
+    this.naturalTomeStats,
+    this.skills,
+    this.spells,
+    this.awakeningSpells,
   );
 
   bool isNaturalTomeStat(TomeStat stat) => naturalTomeStats.contains(stat);
