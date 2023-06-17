@@ -4,6 +4,7 @@ import 'package:thlaby2_save_editor/widgets/clickable.dart';
 
 class CharacterBox extends StatelessWidget {
   final String title;
+  final double? titleFontSize;
   final String filename;
   final bool highlighted;
   final void Function() onTap;
@@ -16,6 +17,7 @@ class CharacterBox extends StatelessWidget {
     required this.onTap,
     this.onEnter,
     this.onExit,
+    this.titleFontSize,
     this.highlighted = false,
     super.key,
   });
@@ -31,7 +33,7 @@ class CharacterBox extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: titleFontSize,
               fontWeight: FontWeight.bold,
               color: highlighted ? Colors.green : null,
             ),

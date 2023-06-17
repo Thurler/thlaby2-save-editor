@@ -39,6 +39,7 @@ class PartyRow extends StatelessWidget {
           children: <Widget>[
             CharacterBox(
               title: slot.toString().upperCaseFirstChar(),
+              titleFontSize: 20,
               filename: slot.isUsed ? slot.character.filename : 'Empty',
               onTap: () async => characterOnTap(slot),
               onEnter: (PointerEvent e) => characterOnEnter(slot),
