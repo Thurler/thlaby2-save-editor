@@ -7,7 +7,10 @@ import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
-import 'package:thlaby2_save_editor/widgets/characterselect.dart';
+import 'package:thlaby2_save_editor/widgets/character_box_title_unlock.dart';
+import 'package:thlaby2_save_editor/widgets/character_roster.dart';
+import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
+import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 class CharacterUnlockWidget extends StatefulWidget {
   const CharacterUnlockWidget({super.key});
@@ -19,11 +22,7 @@ class CharacterUnlockWidget extends StatefulWidget {
 class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   late List<CharacterUnlockFlag> _flags;
   late List<CharacterUnlockFlag> _original;
-  late Widget _toggleButtons;
-
-  //
-  // Properly check for and validate changes, save/commit them
-  //
+  Character? _hover;
 
   bool _hasChanges() {
     for (int i = 0; i < _flags.length; i++) {
@@ -113,17 +112,11 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     });
   }
 
-  //
-  // Functions to manipulate unlocked state - be that for individual characters
-  // or for entire groups from the preset buttons
-  //
-
-  void _characterTap(Character character) {
+  Future<void> _characterTap(Character character) async {
     CharacterUnlockFlag flag = _flags.firstWhere(
       (CharacterUnlockFlag f) => f.character == character,
     );
-    // ignore: discarded_futures
-    _toggleUnlockedData(flag);
+    await _toggleUnlockedData(flag);
   }
 
   Future<void> _toggleUnlockedData(CharacterUnlockFlag flag) async {
@@ -189,73 +182,63 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     // Make a reference and a deep copy of the list we're changing
     _original = saveFileWrapper.saveFile.characterUnlockFlags;
     _flags = _original.deepCopyElements(CharacterUnlockFlag.from);
-    // This widget is always the same, no matter the state we're building
-    _toggleButtons = Wrap(
-      spacing: 20,
-      runSpacing: 10,
-      alignment: WrapAlignment.center,
-      children: <Widget>[
-        TButton(
-          text: 'Only starting characters',
-          icon: Icons.person,
-          onPressed: _pressOnlyStartingCharacters,
-          usesMaxWidth: false,
-        ),
-        TButton(
-          text: 'Only 48 base characters',
-          icon: Icons.group,
-          onPressed: _pressOnlyBase48Characters,
-          usesMaxWidth: false,
-        ),
-        TButton(
-          text: 'All 56 characters',
-          icon: Icons.group_add,
-          onPressed: _pressAllCharacters,
-          usesMaxWidth: false,
-        ),
-      ],
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> columnChildren = <Widget>[
-      _toggleButtons,
-      TCharacterSelect(
-        characterTapFunction: _characterTap,
-        highlightIfLocked: true,
-        unlockFlags: _flags,
-        titleAppend: _drawLockedHeader,
-      ),
-    ];
-    bool shouldSave = _hasChanges();
-    Widget? floatingActionButton;
-    if (shouldSave) {
-      floatingActionButton = FloatingActionButton(
-        onPressed: _saveChanges,
-        child: const Icon(Icons.save),
-      );
-    }
     return WillPopScope(
       onWillPop: _checkChangesAndConfirm,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Edit which characters are unlocked'),
-        ),
-        floatingActionButton: floatingActionButton,
-        body: ListView(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: columnChildren.separateWith(
-                  const SizedBox(height: 20),
-                  separatorOnEnds: true,
+      child: CommonScaffold(
+        title: 'Edit which characters are unlocked',
+        floatingActionButton: _hasChanges()
+          ? TSaveButton(onPressed: _saveChanges)
+          : null,
+        children: <Widget>[
+          Wrap(
+            spacing: 20,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            children: <Widget>[
+              TButton(
+                text: 'Only starting characters',
+                icon: Icons.person,
+                onPressed: _pressOnlyStartingCharacters,
+                usesMaxWidth: false,
+              ),
+              TButton(
+                text: 'Only 48 base characters',
+                icon: Icons.group,
+                onPressed: _pressOnlyBase48Characters,
+                usesMaxWidth: false,
+              ),
+              TButton(
+                text: 'All 56 characters',
+                icon: Icons.group_add,
+                onPressed: _pressAllCharacters,
+                usesMaxWidth: false,
+              ),
+            ],
+          ),
+          CharacterRoster(
+            interactWhenLocked: true,
+            highlight: _hover,
+            onTap: _characterTap,
+            onEnter: (Character character) => setState((){_hover = character;}),
+            onExit: (Character character) => setState((){_hover = null;}),
+            unlockFlags: _flags,
+            titleAppendMap: Map<Character, Widget>.fromEntries(
+              Character.values.map(
+                (Character character) => MapEntry<Character, Widget>(
+                  character,
+                  CharacterBoxTitleUnlockAppend(
+                    isHighlighted: character == _hover,
+                    isUnlocked: _flags[character.index].isUnlocked,
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

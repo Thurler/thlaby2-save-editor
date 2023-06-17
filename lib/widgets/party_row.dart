@@ -45,6 +45,7 @@ class PartyRow extends StatelessWidget {
               onEnter: (PointerEvent e) => characterOnEnter(slot),
               onExit: (PointerEvent e) => characterOnExit(slot),
               highlighted: slot == characterHighlight,
+              unlocked: true,
             ),
             const SizedBox(height: 2),
             PartyRemoveButton(

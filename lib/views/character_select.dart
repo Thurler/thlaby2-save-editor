@@ -25,6 +25,7 @@ class CharacterSelectState extends CommonState<CharacterSelectWidget> {
       children: <Widget>[
         CharacterRoster(
           highlight: _hover,
+          unlockFlags: saveFileWrapper.saveFile.characterUnlockFlags,
           onTap: _selectCharacter,
           onEnter: (Character character) => setState((){_hover = character;}),
           onExit: (Character character) => setState((){_hover = null;}),
