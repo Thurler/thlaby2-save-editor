@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/views/menu.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
-import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
+import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 class MainWidget extends StatefulWidget {
   const MainWidget({super.key});
@@ -121,45 +121,25 @@ class MainState extends CommonState<MainWidget> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> buttons = <Widget>[
-      const TButton(
-        text: 'Open DLSite save file',
-        icon: Icons.upload_file,
-      ),
-      TButton(
-        text: 'Open Steam save file',
-        onPressed: _loadSteamSaveFile,
-        icon: Icons.upload_file,
-      ),
-    ];
-    List<Widget> columnChildren = <Widget>[
-      Image.asset('img/title.png'),
-      makeRowFromWidgets(buttons),
-    ];
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Touhou Labyrinth 2 Save Editor'),
-        actions: <Widget>[
-          TAppBarButton(
-            text: 'Settings',
-            icon: Icons.settings,
-            onTap: _navigateToSettings,
-          ),
-        ],
-      ),
-      body: ListView(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: columnChildren.separateWith(
-                const SizedBox(height: 20),
-                separatorOnEnds: true,
-              ),
+    return CommonScaffold(
+      title: 'Touhou Labyrinth 2 Save Editor',
+      settingsLink: _navigateToSettings,
+      children: <Widget>[
+        Image.asset('img/title.png'),
+        SpacedRow(
+          children: <Widget>[
+            const TButton(
+              text: 'Open DLSite save file',
+              icon: Icons.upload_file,
             ),
-          ),
-        ],
-      ),
+            TButton(
+              text: 'Open Steam save file',
+              icon: Icons.upload_file,
+              onPressed: _loadSteamSaveFile,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

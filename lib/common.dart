@@ -30,6 +30,7 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
     return characterFilenames[c.index];
   }
 
+  // MARKED FOR DELETION
   Row makeRowFromWidgets(List<Widget> widgets, {bool expanded = false}) {
     if (expanded) {
       widgets = widgets.map((Widget w)=>Expanded(child: w)).toList();
@@ -87,26 +88,26 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
   }
 
   Future<bool> showUnsavedChangesDialog() {
-    TBoolDialog dialog = const TBoolDialog(
-      title: 'You have unsaved changes!',
-      body: 'Are you sure you want to go back and discard your changes?',
-      confirmText: 'Yes, discard them',
-      cancelText: 'No, keep me here',
+    return showBoolDialog(
+      const TBoolDialog(
+        title: 'You have unsaved changes!',
+        body: 'Are you sure you want to go back and discard your changes?',
+        confirmText: 'Yes, discard them',
+        cancelText: 'No, keep me here',
+      ),
     );
-    return showBoolDialog(dialog);
   }
 
   Future<bool> showSaveWarningDialog(String warning, {bool breaking = true}) {
-    String title = 'Your changes will have side effects!';
-    if (breaking) {
-      title = 'Your changes might break the game!';
-    }
-    TBoolDialog dialog = TBoolDialog(
-      title: title,
-      body: '$warning. Are you sure you want to save these changes?',
-      confirmText: 'Yes, save them',
-      cancelText: 'No, take me back',
+    return showBoolDialog(
+      TBoolDialog(
+        title: breaking
+          ? 'Your changes might break the game!'
+          : 'Your changes will have side effects!',
+        body: '$warning. Are you sure you want to save these changes?',
+        confirmText: 'Yes, save them',
+        cancelText: 'No, take me back',
+      ),
     );
-    return showBoolDialog(dialog);
   }
 }

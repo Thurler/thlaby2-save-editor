@@ -9,7 +9,7 @@ import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/views/character_data.dart';
 import 'package:thlaby2_save_editor/views/party_data.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
-import 'package:thlaby2_save_editor/widgets/appbarbutton.dart';
+import 'package:thlaby2_save_editor/widgets/appbar_button.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
