@@ -6,7 +6,10 @@ extension ListExtension<T> on List<T> {
     return map((T t)=>f(t)).toList();
   }
 
-  List<T> separateWith(T separator, {bool separatorOnEnds = false}) {
+  List<T> separateWith(T? separator, {bool separatorOnEnds = false}) {
+    if (separator == null) {
+      return this;
+    }
     List<T> result = <T>[];
     if (separatorOnEnds) {
       result.add(separator);
