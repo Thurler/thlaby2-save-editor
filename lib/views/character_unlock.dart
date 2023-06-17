@@ -153,29 +153,6 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     _unlockCharactersUpToIndex(_flags.length);
   }
 
-  //
-  // Function to draw specific widget on screen, helps declutter build()
-  //
-
-  Widget _drawLockedHeader(bool isUnlocked, bool isHighlighted) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Text(
-          isUnlocked ? 'Unlocked' : 'Locked',
-          style: TextStyle(
-            color: isHighlighted ? Colors.green : Colors.grey.shade700,
-          ),
-        ),
-        Icon(
-          isUnlocked ? Icons.lock_open : Icons.lock,
-          size: 14,
-          color: isHighlighted ? Colors.green : Colors.grey.shade700,
-        ),
-      ],
-    );
-  }
-
   @override
   void initState() {
     super.initState();
