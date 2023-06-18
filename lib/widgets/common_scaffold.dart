@@ -6,13 +6,17 @@ class CommonScaffold extends StatelessWidget {
   final String title;
   final List<Widget> children;
   final void Function()? settingsLink;
+  final Widget? background;
   final FloatingActionButton? floatingActionButton;
+  final EdgeInsets padding;
 
   const CommonScaffold({
     required this.title,
     required this.children,
     this.settingsLink,
+    this.background,
     this.floatingActionButton,
+    this.padding = const EdgeInsets.symmetric(horizontal: 20),
     super.key,
   });
 
@@ -32,15 +36,23 @@ class CommonScaffold extends StatelessWidget {
         ],
       ),
       floatingActionButton: floatingActionButton,
-      body: ListView(
+      body: Stack(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: children.separateWith(
-                const SizedBox(height: 20),
-                separatorOnEnds: true,
-              ),
+          if (background != null)
+            background!,
+          Positioned.fill(
+            child: ListView(
+              children: <Widget>[
+                Padding(
+                  padding: padding,
+                  child: Column(
+                    children: children.separateWith(
+                      const SizedBox(height: 20),
+                      separatorOnEnds: true,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

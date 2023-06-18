@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 extension IntExtension on int {
-  String toCommaSeparatedNotation() {
+  String commaSeparate() {
     bool negative = this < 0;
     String raw = toString();
     if (negative) {
@@ -62,7 +62,7 @@ extension IntExtension on int {
 }
 
 extension BigIntExtension on BigInt {
-  String toCommaSeparatedNotation() {
+  String commaSeparate() {
     bool negative = this < BigInt.from(0);
     String raw = toString();
     if (negative) {

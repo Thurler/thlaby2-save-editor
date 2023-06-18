@@ -50,15 +50,15 @@ class SettingsState extends CommonState<SettingsWidget> {
     'None (nothing is logged)',
   ];
 
-  late Settings _original;
-  late Settings _editable;
+  late Settings _settings;
 
-  bool _hasChanges() {
-    return _editable.logLevel != _original.logLevel;
-  }
+  late TFormDropdownField _logLevelForm;
+  final DropdownFormKey _logLevelFormKey = DropdownFormKey();
+
+  bool get _hasChanges => _logLevelFormKey.currentState?.hasChanges ?? false;
 
   Future<bool> _checkChangesAndConfirm() async {
-    if (!_hasChanges()) {
+    if (!_hasChanges) {
       return true;
     }
     bool canDiscard = await showUnsavedChangesDialog();
@@ -78,9 +78,11 @@ class SettingsState extends CommonState<SettingsWidget> {
   }
 
   Future<void> _saveChanges() async {
+    String chosenOption = _logLevelFormKey.currentState!.value;
+    _settings.logLevel = LogLevel.values[_options.indexOf(chosenOption)];
     try {
       File settingsFile = File('./settings.json');
-      settingsFile.writeAsStringSync('${_editable.toJson()}\n');
+      settingsFile.writeAsStringSync('${_settings.toJson()}\n');
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);
       return;
@@ -90,13 +92,13 @@ class SettingsState extends CommonState<SettingsWidget> {
     }
     await logger.log(
       LogLevel.info,
-      'Applying log level ${_editable.logLevel.name}',
+      'Applying log level ${_settings.logLevel.name}',
     );
     await logger.log(LogLevel.info, 'Saved changes');
-    setState(() {
-      _original = Settings.from(_editable);
-      logger.logLevel = _editable.logLevel;
-    });
+    logger.logLevel = _settings.logLevel;
+    // Reset initial value to remove the has changes flag
+    _logLevelFormKey.currentState!.resetInitialValue();
+    setState((){});
   }
 
   Future<void> _changeLogLevel(String? chosen) async {
@@ -108,24 +110,30 @@ class SettingsState extends CommonState<SettingsWidget> {
       LogLevel.debug,
       'Log level changed to ${chosenLevel.name}',
     );
-    setState(() {
-      _editable.logLevel = chosenLevel;
-    });
+    // Refresh has changes flag
+    setState((){});
   }
 
   @override
   void initState() {
     super.initState();
-    _original = Settings.fromDefault();
+    _settings = Settings.fromDefault();
     try {
       File settingsFile = File('./settings.json');
       if (settingsFile.existsSync()) {
-        _original = Settings.fromJson(settingsFile.readAsStringSync());
+        _settings = Settings.fromJson(settingsFile.readAsStringSync());
       }
     } catch (e) {
       // If we fail to load the settings file, keep going with default settings
     }
-    _editable = Settings.from(_original);
+    _logLevelForm = TFormDropdownField(
+      enabled: true,
+      options: _options,
+      hintText: 'Select a log level',
+      initialValue: _options[_settings.logLevel.index],
+      onValueChanged: _changeLogLevel,
+      key: _logLevelFormKey,
+    );
   }
 
   @override
@@ -134,7 +142,7 @@ class SettingsState extends CommonState<SettingsWidget> {
       onWillPop: _checkChangesAndConfirm,
       child: CommonScaffold(
         title: 'Touhou Labyrinth 2 Save Editor - Settings',
-        floatingActionButton: _hasChanges()
+        floatingActionButton: _hasChanges
           ? TSaveButton(onPressed: _saveChanges)
           : null,
         children: <Widget>[
@@ -146,13 +154,7 @@ class SettingsState extends CommonState<SettingsWidget> {
                 title: 'Log level',
                 subtitle: 'Specifies severity of information to be logged',
               ),
-              field: TFormDropdownField(
-                hintText: 'Select a log level',
-                options: _options,
-                onChanged: _changeLogLevel,
-                value: _options[_editable.logLevel.index],
-                enabled: true,
-              ),
+              field: _logLevelForm,
             ),
           ),
         ],
