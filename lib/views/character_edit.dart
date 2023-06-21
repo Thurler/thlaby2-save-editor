@@ -75,6 +75,9 @@ import 'package:thlaby2_save_editor/widgets/save_button.dart';
 //   );
 // }
 
+typedef NumberFieldMap = Map<String, TFormNumberField>;
+typedef NumberFormKeyMap = Map<String, NumberFormKey>;
+
 class CharacterEditWidget extends StatefulWidget {
   final Character character;
   const CharacterEditWidget({required this.character, super.key});
@@ -103,6 +106,11 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const int libraryElementCap = 100; // Hard cap at library
   static const int gemCap = 20; // Hard cap at shrine
 
+  static final String librarySubtitle = 'Must be at most '
+    '${libraryCap.commaSeparate()}';
+  static final String libraryElementSubtitle = 'Must be at most '
+    '${libraryElementCap.commaSeparate()}';
+
   static String skillSubtitle(Skill skill) => 'Must be at most '
     '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
 
@@ -111,17 +119,43 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
   Character get character => widget.character;
 
-  late TFormNumberField _levelForm;
+  late final TFormNumberField _levelForm;
   final NumberFormKey _levelFormKey = NumberFormKey();
 
-  late TFormNumberField _expForm;
+  late final TFormNumberField _expForm;
   final NumberFormKey _expFormKey = NumberFormKey();
 
-  late TFormNumberField _bpForm;
+  late final TFormNumberField _bpForm;
   final NumberFormKey _bpFormKey = NumberFormKey();
 
-  late TFormDropdownField _subclassForm;
+  late final TFormDropdownField _subclassForm;
   final DropdownFormKey _subclassFormKey = DropdownFormKey();
+
+  late final NumberFieldMap _libraryForms = <String, TFormNumberField>{};
+  final NumberFormKeyMap _libraryFormsKeys = NumberFormKeyMap.fromEntries(
+    (stats + elements).map(
+      (String stat) => MapEntry<String, NumberFormKey>(stat, NumberFormKey()),
+    ),
+  );
+
+  Iterable<MapEntry<FormKey, TFormData>> _formMapEntriesFromList({
+    required Map<String, FormKey> keys,
+    required Map<String, TFormField> forms,
+    required List<String> names,
+    required String Function(String) titleBuilder,
+    required String Function(String) subtitleBuilder,
+  }) {
+    return names.map(
+      (String name) => MapEntry<FormKey, TFormData>(
+        keys[name]!,
+        TFormData(
+          title: titleBuilder(name),
+          subtitle: subtitleBuilder(name),
+          field: forms[name]!,
+        ),
+      ),
+    );
+  }
 
   late final List<TFormGroup> _expansionGroups = <TFormGroup>[
     TFormGroup(
@@ -149,10 +183,26 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         ),
       },
     ),
-    // TFormGroup(
-    //   title: 'Library points',
-    //   forms: libraryForms + libraryElementForms,
-    // ),
+    TFormGroup(
+      title: 'Library points',
+      forms: Map<FormKey, TFormData>.fromEntries(
+        _formMapEntriesFromList(
+          names: stats,
+          keys: _libraryFormsKeys,
+          forms: _libraryForms,
+          titleBuilder: (String stat) => '$stat Level',
+          subtitleBuilder: (String stat) => librarySubtitle,
+        ).followedBy(
+          _formMapEntriesFromList(
+            names: elements,
+            keys: _libraryFormsKeys,
+            forms: _libraryForms,
+            titleBuilder: (String element) => '$element Level',
+            subtitleBuilder: (String element) => libraryElementSubtitle,
+          ),
+        ),
+      ),
+    ),
     // TFormGroup(
     //   title: 'Level up bonuses',
     //   forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
@@ -173,20 +223,6 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     //   forms: <TFormWrapper>[mainEquipForm] + subEquipForms,
     // ),
   ];
-
-  // late final List<TNumberFormWrapper> libraryForms = stats.map(
-  //   (String stat) => TCharacterNumberForm.library(
-  //     title: '$stat Level',
-  //     setStateCallback: setState,
-  //   ),
-  // ).toList();
-
-  // late final List<TNumberFormWrapper> libraryElementForms = elements.map(
-  //   (String element) => TCharacterNumberForm.libraryElement(
-  //     title: '$element Level',
-  //     setStateCallback: setState,
-  //   ),
-  // ).toList();
 
   // late final TNumberFormWrapper unusedLevelForm = TNumberFormWrapper(
   //   title: 'Unused points',
@@ -451,14 +487,18 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       (Subclass s) => s.prettyName == chosenSubclass,
     );
 
-    // // Library data + Level bonus data
-    // for (int i = 0; i < stats.length; i++) {
-    //   data.libraryLevels.setStatData(i, libraryForms[i].saveValue());
-    //   data.levelBonus.setStatData(i, levelBonusForms[i].saveValue());
-    // }
-    // for (int i = 0; i < elements.length; i++) {
-    //   data.libraryLevels.setElementData(i, libraryElementForms[i].saveValue());
-    // }
+    // Library data + Level bonus data
+    for (int i = 0; i < stats.length; i++) {
+      data.libraryLevels.setStatData(
+        i, _libraryFormsKeys[stats[i]]!.currentState!.saveIntValue(),
+      );
+      // data.levelBonus.setStatData(i, levelBonusForms[i].saveValue());
+    }
+    for (int i = 0; i < elements.length; i++) {
+      data.libraryLevels.setElementData(
+        i, _libraryFormsKeys[stats[i]]!.currentState!.saveIntValue(),
+      );
+    }
     // data.unusedBonusPoints = int.parse(unusedLevelForm.saveValue());
 
     // // Common skills data
@@ -526,7 +566,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     // Basic info - level, exp, bp, subclass
     _levelForm = TFormNumberField(
       enabled: true,
-      initialValue: BigInt.from(data.level).commaSeparate(),
+      initialValue: data.level.commaSeparate(),
       minValue: BigInt.from(1),
       maxValue: BigInt.from(levelCap),
       onValueChanged: _onLevelChange,
@@ -542,7 +582,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     );
     _bpForm = TFormNumberField(
       enabled: true,
-      initialValue: BigInt.from(data.bp).commaSeparate(),
+      initialValue: data.bp.commaSeparate(),
       minValue: BigInt.from(0),
       maxValue: BigInt.from(bpCap),
       onValueChanged: (String? value) => setState((){}),
@@ -558,20 +598,30 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       key: _subclassFormKey,
     );
 
-    // // Library info + Level up info
-    // for (int i = 0; i < stats.length; i++) {
-    //   libraryForms[i].initNumberForm(
-    //     BigInt.from(data.libraryLevels.getStatData(i)),
-    //   );
-    //   levelBonusForms[i].initNumberForm(
-    //     BigInt.from(data.levelBonus.getStatData(i)),
-    //   );
-    // }
-    // for (int i = 0; i < elements.length; i++) {
-    //   libraryElementForms[i].initNumberForm(
-    //     BigInt.from(data.libraryLevels.getElementData(i)),
-    //   );
-    // }
+    // Library info + Level up info
+    for (int i = 0; i < stats.length; i++) {
+      _libraryForms[stats[i]] = TFormNumberField(
+        enabled: true,
+        initialValue: data.libraryLevels.getStatData(i).commaSeparate(),
+        minValue: BigInt.from(0),
+        maxValue: BigInt.from(libraryCap),
+        onValueChanged: (String? value) => setState((){}),
+        key: _libraryFormsKeys[stats[i]],
+      );
+      // levelBonusForms[i].initNumberForm(
+      //   BigInt.from(data.levelBonus.getStatData(i)),
+      // );
+    }
+    for (int i = 0; i < elements.length; i++) {
+      _libraryForms[elements[i]] = TFormNumberField(
+        enabled: true,
+        initialValue: data.libraryLevels.getElementData(i).commaSeparate(),
+        minValue: BigInt.from(0),
+        maxValue: BigInt.from(libraryElementCap),
+        onValueChanged: (String? value) => setState((){}),
+        key: _libraryFormsKeys[elements[i]],
+      );
+    }
 
     // // Common skills info
     // for (int i = 0; i < BoostSkill.values.length; i++) {
