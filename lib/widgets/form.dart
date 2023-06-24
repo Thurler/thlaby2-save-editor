@@ -191,7 +191,7 @@ abstract class TFormState<T extends TForm> extends State<T> {
   String _title = '';
   String get title => _title;
   set title(String newValue) {
-    setState((){
+    setState(() {
       _title = newValue;
     });
   }
@@ -199,7 +199,7 @@ abstract class TFormState<T extends TForm> extends State<T> {
   String _subtitle = '';
   String get subtitle => _subtitle;
   set subtitle(String newValue) {
-    setState((){
+    setState(() {
       _subtitle = newValue;
     });
   }
@@ -220,7 +220,9 @@ abstract class TFormState<T extends TForm> extends State<T> {
   BigInt get bigIntValue => BigInt.parse(_value.replaceAll(',', ''));
 
   void validate() {
-    errorMessage = widget.validationCallback(value);
+    setState(() {
+      errorMessage = widget.validationCallback(value);
+    });
   }
 
   void resetInitialValue() {
@@ -249,6 +251,7 @@ abstract class TFormState<T extends TForm> extends State<T> {
     _subtitle = widget.subtitle;
     value = widget.initialValue;
     initialValue = widget.initialValue;
+    validate();
   }
 
   @override
@@ -258,7 +261,7 @@ abstract class TFormState<T extends TForm> extends State<T> {
         TFormTitle(
           title: _title,
           subtitle: _subtitle,
-          errorMessage: widget.errorMessage,
+          errorMessage: errorMessage,
         ),
         field,
       ],
