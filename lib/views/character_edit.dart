@@ -138,6 +138,16 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
   );
 
+  late final TFormNumberField _unusedLevelForm;
+  final NumberFormKey _unusedLevelFormKey = NumberFormKey();
+
+  late final NumberFieldMap _levelBonusForms = <String, TFormNumberField>{};
+  final NumberFormKeyMap _levelBonusFormsKeys = NumberFormKeyMap.fromEntries(
+    stats.map(
+      (String stat) => MapEntry<String, NumberFormKey>(stat, NumberFormKey()),
+    ),
+  );
+
   Iterable<MapEntry<FormKey, TFormData>> _formMapEntriesFromList({
     required Map<String, FormKey> keys,
     required Map<String, TFormField> forms,
@@ -203,6 +213,24 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         ),
       ),
     ),
+    TFormGroup(
+      title: 'Level up bonuses',
+      forms: <FormKey, TFormData>{
+        _unusedLevelFormKey: TFormData(
+          title: 'Unused points',
+          subtitle: 'Updated automatically with level and used points',
+          field: _unusedLevelForm,
+        ),
+      }..addEntries(
+        _formMapEntriesFromList(
+          names: stats,
+          keys: _levelBonusFormsKeys,
+          forms: _levelBonusForms,
+          titleBuilder: (String stat) => 'Points in $stat',
+          subtitleBuilder: (String stat) => '',
+        ),
+      ),
+    ),
     // TFormGroup(
     //   title: 'Level up bonuses',
     //   forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
@@ -223,15 +251,6 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     //   forms: <TFormWrapper>[mainEquipForm] + subEquipForms,
     // ),
   ];
-
-  // late final TNumberFormWrapper unusedLevelForm = TNumberFormWrapper(
-  //   title: 'Unused points',
-  //   subtitle: 'Updated automatically with level and used points',
-  //   minValue: BigInt.from(-levelBonusCap),
-  //   maxValue: BigInt.from(levelBonusCap),
-  //   setStateCallback: setState,
-  //   readOnly: true,
-  // );
 
   // late final List<TNumberFormWrapper> levelBonusForms = stats.map(
   //   (String stat) => TCharacterNumberForm.levelBonus(
@@ -338,26 +357,31 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     int remainingCap = levelBonusCap;
     // The available points are always 1 less than current level
     int available = points - 1;
-    // for (TNumberFormWrapper form in levelBonusForms) {
-    //   // For each point allocated, we decrease the global cap and how many
-    //   // points are left over - this second one can go into the negatives
-    //   int value = form.getIntValue().toInt();
-    //   remainingCap -= value;
-    //   available -= value;
-    // }
+    for (String stat in stats) {
+      // For each point allocated, we decrease the global cap and how many
+      // points are left over - this second one can go into the negatives
+      int value = _levelBonusFormsKeys[stat]!.currentState!.intValue;
+      remainingCap -= value;
+      available -= value;
+    }
     setState((){
       // The cap for each individual stat becomes whatever has been allocated,
       // plus whatever is left from the global cap
-      // for (TNumberFormWrapper form in levelBonusForms) {
-      //   form.updateMaxValue(BigInt.from(remainingCap) + form.getIntValue());
-      // }
+      for (String stat in stats) {
+        TFormNumberFieldState state = _levelBonusFormsKeys[stat]!.currentState!;
+        state.maxValue = BigInt.from(remainingCap + state.intValue);
+      }
       // The unused level up points form should be updated automatically
-      // unusedLevelForm.controller.text = available.toCommaSeparatedNotation();
+      _unusedLevelFormKey.currentState!.value = available.commaSeparate();
     });
   }
 
   void _onLevelChange(String? value) => _updateLevelPoints(
     int.parse(value!.replaceAll(',', '')),
+  );
+
+  void _onLevelBonusChange(String? value) => _updateLevelPoints(
+    _levelFormKey.currentState!.intValue,
   );
 
   // void _updateTomeSkills() {
@@ -492,14 +516,16 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       data.libraryLevels.setStatData(
         i, _libraryFormsKeys[stats[i]]!.currentState!.saveIntValue(),
       );
-      // data.levelBonus.setStatData(i, levelBonusForms[i].saveValue());
+      data.levelBonus.setStatData(
+        i, _levelBonusFormsKeys[stats[i]]!.currentState!.saveIntValue(),
+      );
     }
     for (int i = 0; i < elements.length; i++) {
       data.libraryLevels.setElementData(
-        i, _libraryFormsKeys[stats[i]]!.currentState!.saveIntValue(),
+        i, _libraryFormsKeys[elements[i]]!.currentState!.saveIntValue(),
       );
     }
-    // data.unusedBonusPoints = int.parse(unusedLevelForm.saveValue());
+    data.unusedBonusPoints = _unusedLevelFormKey.currentState!.saveIntValue();
 
     // // Common skills data
     // for (int i = 0; i < BoostSkill.values.length; i++) {
@@ -608,9 +634,14 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         onValueChanged: (String? value) => setState((){}),
         key: _libraryFormsKeys[stats[i]],
       );
-      // levelBonusForms[i].initNumberForm(
-      //   BigInt.from(data.levelBonus.getStatData(i)),
-      // );
+      _levelBonusForms[stats[i]] = TFormNumberField(
+        enabled: true,
+        initialValue: data.levelBonus.getStatData(i).commaSeparate(),
+        minValue: BigInt.from(0),
+        maxValue: BigInt.from(0),
+        onValueChanged: _onLevelBonusChange,
+        key: _levelBonusFormsKeys[stats[i]],
+      );
     }
     for (int i = 0; i < elements.length; i++) {
       _libraryForms[elements[i]] = TFormNumberField(
@@ -671,15 +702,20 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     //   subEquipForms[i].initForm(data.subEquips[i].name);
     // }
 
-    // // Set and update unused level up bonus info
-    // unusedLevelForm.initNumberForm(
-    //   BigInt.from(data.unusedBonusPoints),
-    // );
-    _updateLevelPoints(data.level);
+    // Set and update unused level up bonus info
+    _unusedLevelForm = TFormNumberField(
+      enabled: false,
+      initialValue: data.unusedBonusPoints.commaSeparate(),
+      minValue: BigInt.from(-levelBonusCap),
+      maxValue: BigInt.from(levelBonusCap),
+      key: _unusedLevelFormKey,
+    );
 
     // Call setState one last time after build runs for the first time
     // This causes the hasChanges and hasErrors to show up from initState
-    WidgetsBinding.instance.addPostFrameCallback((Duration d)=>setState((){}));
+    WidgetsBinding.instance.addPostFrameCallback(
+      (Duration d) => _updateLevelPoints(data.level),
+    );
   }
 
   @override
