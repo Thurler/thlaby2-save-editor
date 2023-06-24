@@ -150,16 +150,15 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
   );
 
-  late final SkillFieldMap _boostSkillsForms = <Skill, TFormNumberField>{};
-  final SkillFormKeyMap _boostSkillsFormsKeys = SkillFormKeyMap.fromEntries(
-    boostSkills.map(
-      (Skill skill) => MapEntry<Skill, NumberFormKey>(skill, NumberFormKey()),
-    ),
-  );
-
-  late final SkillFieldMap _expSkillsForms = <Skill, TFormNumberField>{};
-  final SkillFormKeyMap _expSkillsFormsKeys = SkillFormKeyMap.fromEntries(
-    expSkills.map(
+  late final SkillFieldMap _skillsForms = <Skill, TFormNumberField>{};
+  late final SkillFormKeyMap _skillsFormsKeys = SkillFormKeyMap.fromEntries(
+    boostSkills
+    .cast<Skill>()
+    .followedBy(expSkills)
+    .followedBy(character.skills)
+    .followedBy(character.spells)
+    .followedBy(character.awakeningSpells)
+    .map(
       (Skill skill) => MapEntry<Skill, NumberFormKey>(skill, NumberFormKey()),
     ),
   );
@@ -233,21 +232,39 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       forms: Map<FormKey, TFormData>.fromEntries(
         _formMapEntriesFromSkillList(
           skills: boostSkills,
-          keys: _boostSkillsFormsKeys,
-          forms: _boostSkillsForms,
+          keys: _skillsFormsKeys,
+          forms: _skillsForms,
         ).followedBy(
           _formMapEntriesFromSkillList(
             skills: expSkills,
-            keys: _expSkillsFormsKeys,
-            forms: _expSkillsForms,
+            keys: _skillsFormsKeys,
+            forms: _skillsForms,
           ),
         ),
       ),
     ),
-    // TFormGroup(
-    //   title: 'Skill points (Personal)',
-    //   forms: personalSkillForms + personalSpellForms + awakeningSpellForms,
-    // ),
+    TFormGroup(
+      title: 'Skill points (Personal)',
+      forms: Map<FormKey, TFormData>.fromEntries(
+        _formMapEntriesFromSkillList(
+          skills: character.skills,
+          keys: _skillsFormsKeys,
+          forms: _skillsForms,
+        ).followedBy(
+          _formMapEntriesFromSpellList(
+            spells: character.spells,
+            keys: _skillsFormsKeys,
+            forms: _skillsForms,
+          ),
+        ).followedBy(
+          _formMapEntriesFromSkillList(
+            skills: character.awakeningSpells,
+            keys: _skillsFormsKeys,
+            forms: _skillsForms,
+          ),
+        ),
+      ),
+    ),
     // TFormGroup(title: 'Skill points (Subclass)', forms: <TFormWrapper>[]),
     // TFormGroup(title: 'Tomes', forms: tomeForms),
     // TFormGroup(title: 'Gems', forms: gemForms),
@@ -293,6 +310,23 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     );
   }
 
+  Iterable<MapEntry<FormKey, TFormData>> _formMapEntriesFromSpellList({
+    required Map<Skill, FormKey> keys,
+    required Map<Skill, TFormField> forms,
+    required List<Skill> spells,
+  }) {
+    return spells.map(
+      (Skill spell) => MapEntry<FormKey, TFormData>(
+        keys[spell]!,
+        TFormData(
+          title: spell.name,
+          subtitle: spellSubtitle(spell),
+          field: forms[spell]!,
+        ),
+      ),
+    );
+  }
+
   TFormNumberField _skillFormNumberField({
     required int initialValue,
     required Skill skill,
@@ -308,27 +342,20 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     );
   }
 
-  // late final List<TNumberFormWrapper> personalSkillForms = character.skills.map(
-  //   (Skill skill) => TCharacterNumberForm.skill(
-  //     skill: skill,
-  //     setStateCallback: setState,
-  //   ),
-  // ).toList();
-
-  // late final List<TNumberFormWrapper> personalSpellForms = character.spells.map(
-  //   (Skill skill) => TCharacterNumberForm.spell(
-  //     skill: skill,
-  //     setStateCallback: setState,
-  //   ),
-  // ).toList();
-
-  // late final List<TNumberFormWrapper> awakeningSpellForms =
-  // character.awakeningSpells.map(
-  //   (Skill skill) => TCharacterNumberForm.skill(
-  //     skill: skill,
-  //     setStateCallback: setState,
-  //   ),
-  // ).toList();
+  TFormNumberField _spellFormNumberField({
+    required int initialValue,
+    required Skill skill,
+    required NumberFormKey key,
+  }) {
+    return TFormNumberField(
+      enabled: true,
+      initialValue: initialValue.commaSeparate(),
+      minValue: BigInt.from(1),
+      maxValue: BigInt.from(skill.maxLevel),
+      onValueChanged: (String? value) => setState((){}),
+      key: key,
+    );
+  }
 
   // late final List<TDropdownFormWrapper> tomeForms = TomeStat.values.map(
   //   (TomeStat stat) => TDropdownFormWrapper(
@@ -564,27 +591,25 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     // Common skills data
     for (int i = 0; i < boostSkills.length; i++) {
       data.skills.setBoostData(
-        i, _boostSkillsFormsKeys[boostSkills[i]]!.currentState!.saveIntValue(),
+        i, _skillsFormsKeys[boostSkills[i]]!.currentState!.saveIntValue(),
       );
     }
     for (int i = 0; i < expSkills.length; i++) {
       data.skills.setExpData(
-        i, _expSkillsFormsKeys[expSkills[i]]!.currentState!.saveIntValue(),
+        i, _skillsFormsKeys[expSkills[i]]!.currentState!.saveIntValue(),
       );
     }
 
-    // // Personal skills and spells data
-    // for (int i = 0; i < character.skills.length; i++) {
-    //   data.skills.personalSkills[i] = int.parse(
-    //     personalSkillForms[i].saveValue(),
-    //   );
-    // }
-    // int spellLength = (character.spells + character.awakeningSpells).length;
-    // for (int i = 0; i < spellLength; i++) {
-    //   data.skills.personalSpells[i] = int.parse(
-    //     (personalSpellForms + awakeningSpellForms)[i].saveValue(),
-    //   );
-    // }
+    // Personal skills and spells data
+    for (int i = 0; i < character.skills.length; i++) {
+      NumberFormKey key = _skillsFormsKeys[character.skills[i]]!;
+      data.skills.personalSkills[i] = key.currentState!.saveIntValue();
+    }
+    List<Skill> spells = character.spells + character.awakeningSpells;
+    for (int i = 0; i < spells.length; i++) {
+      NumberFormKey key = _skillsFormsKeys[spells[i]]!;
+      data.skills.personalSpells[i] = key.currentState!.saveIntValue();
+    }
 
     // // Tome data
     // for (TomeStat stat in TomeStat.values) {
@@ -694,36 +719,42 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
     // Common skills info
     for (int i = 0; i < boostSkills.length; i++) {
-      _boostSkillsForms[boostSkills[i]] = _skillFormNumberField(
+      _skillsForms[boostSkills[i]] = _skillFormNumberField(
         initialValue: data.skills.getBoostData(i),
         skill: boostSkills[i],
-        key: _boostSkillsFormsKeys[boostSkills[i]]!,
+        key: _skillsFormsKeys[boostSkills[i]]!,
       );
     }
     for (int i = 0; i < expSkills.length; i++) {
-      _expSkillsForms[expSkills[i]] = _skillFormNumberField(
+      _skillsForms[expSkills[i]] = _skillFormNumberField(
         initialValue: data.skills.getExpData(i),
         skill: expSkills[i],
-        key: _expSkillsFormsKeys[expSkills[i]]!,
+        key: _skillsFormsKeys[expSkills[i]]!,
       );
     }
 
-    // // Personal skills and spells info
-    // for (int i = 0; i < character.skills.length; i++) {
-    //   personalSkillForms[i].initNumberForm(
-    //     BigInt.from(data.skills.personalSkills[i]),
-    //   );
-    // }
-    // for (int i = 0; i < character.spells.length; i++) {
-    //   personalSpellForms[i].initNumberForm(
-    //     BigInt.from(data.skills.personalSpells[i]),
-    //   );
-    // }
-    // for (int i = 0; i < character.awakeningSpells.length; i++) {
-    //   awakeningSpellForms[i].initNumberForm(
-    //     BigInt.from(data.skills.personalSpells[i + character.spells.length]),
-    //   );
-    // }
+    // Personal skills and spells info
+    for (int i = 0; i < character.skills.length; i++) {
+      _skillsForms[character.skills[i]] = _skillFormNumberField(
+        initialValue: data.skills.personalSkills[i],
+        skill: character.skills[i],
+        key: _skillsFormsKeys[character.skills[i]]!,
+      );
+    }
+    for (int i = 0; i < character.spells.length; i++) {
+      _skillsForms[character.spells[i]] = _spellFormNumberField(
+        initialValue: data.skills.personalSpells[i],
+        skill: character.spells[i],
+        key: _skillsFormsKeys[character.spells[i]]!,
+      );
+    }
+    for (int i = 0; i < character.awakeningSpells.length; i++) {
+      _skillsForms[character.awakeningSpells[i]] = _skillFormNumberField(
+        initialValue: data.skills.personalSpells[character.spells.length + i],
+        skill: character.awakeningSpells[i],
+        key: _skillsFormsKeys[character.awakeningSpells[i]]!,
+      );
+    }
 
     // // Tomes info
     // for (int i = 0; i < TomeStat.values.length; i++) {
