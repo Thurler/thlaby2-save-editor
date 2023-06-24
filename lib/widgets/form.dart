@@ -235,7 +235,7 @@ class TFormNumberField extends TFormStringField {
 
   static NumberInputFormatter makeFormatter(BigInt? min, BigInt? max) {
     return NumberInputFormatter(
-      maxLength: max?.toString().length,
+      maxLength: max != null ? max.toString().length + 1 : null,
       validationCallback: (String v) => _forceMinMax(min, max, v),
     );
   }
