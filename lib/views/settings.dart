@@ -52,7 +52,7 @@ class SettingsState extends CommonState<SettingsWidget> {
 
   late Settings _settings;
 
-  late TFormDropdownField _logLevelForm;
+  late TFormDropdown _logLevelForm;
   final DropdownFormKey _logLevelFormKey = DropdownFormKey();
 
   bool get _hasChanges => _logLevelFormKey.currentState?.hasChanges ?? false;
@@ -126,10 +126,12 @@ class SettingsState extends CommonState<SettingsWidget> {
     } catch (e) {
       // If we fail to load the settings file, keep going with default settings
     }
-    _logLevelForm = TFormDropdownField(
+    _logLevelForm = TFormDropdown(
       enabled: true,
-      options: _options,
+      title: 'Log level',
+      subtitle: 'Specifies severity of information to be logged',
       hintText: 'Select a log level',
+      options: _options,
       initialValue: _options[_settings.logLevel.index],
       onValueChanged: _changeLogLevel,
       key: _logLevelFormKey,
@@ -149,13 +151,7 @@ class SettingsState extends CommonState<SettingsWidget> {
           RoundedBorder(
             color: TFormTitle.subtitleColor,
             childPadding: const EdgeInsets.only(right: 15),
-            child: TForm(
-              title: const TFormTitle(
-                title: 'Log level',
-                subtitle: 'Specifies severity of information to be logged',
-              ),
-              field: _logLevelForm,
-            ),
+            child: _logLevelForm,
           ),
         ],
       ),

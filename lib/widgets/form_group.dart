@@ -4,7 +4,7 @@ import 'package:thlaby2_save_editor/widgets/form.dart';
 
 class TFormGroup {
   final String title;
-  final Map<FormKey, TFormData> forms;
+  final Map<FormKey, TForm> forms;
   bool expanded;
 
   TFormGroup({
@@ -54,16 +54,7 @@ class TFormGroup {
     body: Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 20, 20),
       child: Column(
-        children: forms.entries.map(
-          (MapEntry<FormKey, TFormData> entry) => TForm(
-            title: TFormTitle(
-              title: entry.value.title,
-              subtitle: entry.value.subtitle,
-              errorMessage: entry.key.currentState?.errorMessage ?? '',
-            ),
-            field: entry.value.field,
-          ),
-        ).toList(),
+        children: forms.values.toList(),
       ),
     ),
   );

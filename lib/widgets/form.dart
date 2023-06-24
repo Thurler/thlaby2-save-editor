@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:thlaby2_save_editor/text_formatter.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
-typedef FormKey = GlobalKey<TFormFieldState<TFormField>>;
-typedef DropdownFormKey = GlobalKey<TFormDropdownFieldState>;
-typedef StringFormKey = GlobalKey<TFormStringFieldState<TFormStringField>>;
-typedef NumberFormKey = GlobalKey<TFormNumberFieldState>;
-typedef FixedFormKey = GlobalKey<TFormFixedFieldState>;
+typedef FormKey = GlobalKey<TFormState<TForm>>;
+typedef DropdownFormKey = GlobalKey<TFormDropdownState>;
+typedef StringFormKey = GlobalKey<TFormStringState<TFormString>>;
+typedef NumberFormKey = GlobalKey<TFormNumberState>;
+typedef FixedFormKey = GlobalKey<TFormFixedState>;
 
 class TFormTitle extends StatelessWidget {
   static const Color subtitleColor = Colors.grey;
@@ -19,7 +19,7 @@ class TFormTitle extends StatelessWidget {
   const TFormTitle({
     required this.title,
     required this.subtitle,
-    this.errorMessage = '',
+    required this.errorMessage,
     super.key,
   });
 
@@ -43,43 +43,181 @@ class TFormTitle extends StatelessWidget {
   }
 }
 
-abstract class TFormField extends StatefulWidget {
+abstract class TFormField extends StatelessWidget {
+  const TFormField({super.key});
+}
+
+class TFormDropdownField extends TFormField {
+  final bool enabled;
+  final String value;
+  final String hintText;
+  final List<String> options;
+  final void Function(String? value) updateValue;
+
+  const TFormDropdownField({
+    required this.enabled,
+    required this.value,
+    required this.hintText,
+    required this.options,
+    required this.updateValue,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      isExpanded: true,
+      hint: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 0, 15),
+        child: Text(hintText),
+      ),
+      value: (value != '') ? value : null,
+      onChanged: enabled ? updateValue : null,
+      items: options.map((String option) {
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Text(option),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class TFormStringField extends TFormField {
+  final bool enabled;
+  final String hintText;
+  final TextEditingController controller;
+  final List<TextInputFormatter> formatters;
+
+  const TFormStringField({
+    required this.enabled,
+    required this.hintText,
+    required this.controller,
+    required this.formatters,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      enabled: enabled,
+      controller: controller,
+      style: const TextStyle(fontSize: 18),
+      inputFormatters: formatters,
+      decoration: InputDecoration(
+        hintText: hintText,
+        contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+      ),
+    );
+  }
+}
+
+class TFormFixedField extends TFormField {
+  final String text;
+  final List<Widget> icons;
+
+  const TFormFixedField({
+    required this.text,
+    required this.icons,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: TFormTitle.subtitleColor.withOpacity(0.5),
+            width: 2,
+          ),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Row(
+          children: <Widget>[
+            const SizedBox(width: 20),
+            Expanded(
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+            const SizedBox(width: 10),
+            if (icons.isNotEmpty)
+              SpacedRow(
+                mainAxisSize: MainAxisSize.min,
+                spacer: const SizedBox(width: 2),
+                children: icons,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+abstract class TForm extends StatefulWidget {
   static String _alwaysValid(String value) => '';
 
   final bool enabled;
+  final String title;
+  final String subtitle;
+  final String errorMessage;
   final String initialValue;
   final String Function(String) validationCallback;
   final ValueChanged<String?>? onValueChanged;
 
-  const TFormField({
+  const TForm({
     required this.enabled,
+    required this.title,
+    required this.subtitle,
     required this.initialValue,
     this.validationCallback = _alwaysValid,
+    this.errorMessage = '',
     this.onValueChanged,
     super.key,
-  });
+  });  
 }
 
-abstract class TFormFieldState<T extends TFormField> extends State<T> {
-  late bool enabled;
+abstract class TFormState<T extends TForm> extends State<T> {
   String errorMessage = '';
   String initialValue = '';
-  String _value = '';
+
+  String _title = '';
+  String get title => _title;
+  set title(String newValue) {
+    setState((){
+      _title = newValue;
+    });
+  }
+
+  String _subtitle = '';
+  String get subtitle => _subtitle;
+  set subtitle(String newValue) {
+    setState((){
+      _subtitle = newValue;
+    });
+  }
+
+  TFormField get field;
 
   bool get hasChanges => value != initialValue;
-
   bool get hasErrors => errorMessage != '';
 
+  String _value = '';
   String get value => _value;
-
-  int get intValue => int.parse(_value.replaceAll(',', ''));
-
-  BigInt get bigIntValue => BigInt.parse(_value.replaceAll(',', ''));
-
   set value(String newValue) {
     _value = newValue;
     validate();
   }
+
+  int get intValue => int.parse(_value.replaceAll(',', ''));
+  BigInt get bigIntValue => BigInt.parse(_value.replaceAll(',', ''));
 
   void validate() {
     errorMessage = widget.validationCallback(value);
@@ -107,31 +245,49 @@ abstract class TFormFieldState<T extends TFormField> extends State<T> {
   @override
   void initState() {
     super.initState();
-    enabled = widget.enabled;
+    _title = widget.title;
+    _subtitle = widget.subtitle;
     value = widget.initialValue;
     initialValue = widget.initialValue;
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return SpacedRow(
+      children: <Widget>[
+        TFormTitle(
+          title: _title,
+          subtitle: _subtitle,
+          errorMessage: widget.errorMessage,
+        ),
+        field,
+      ],
+    );
+  }
 }
 
-class TFormDropdownField extends TFormField {
+class TFormDropdown extends TForm {
   final List<String> options;
   final String hintText;
 
-  const TFormDropdownField({
+  const TFormDropdown({
     required this.hintText,
     required this.options,
     required super.enabled,
+    required super.title,
+    required super.subtitle,
     required super.initialValue,
     super.validationCallback,
     super.onValueChanged,
+    super.errorMessage,
     super.key,
   });
 
   @override
-  State<TFormDropdownField> createState() => TFormDropdownFieldState();
+  State<TFormDropdown> createState() => TFormDropdownState();
 }
 
-class TFormDropdownFieldState extends TFormFieldState<TFormDropdownField> {
+class TFormDropdownState extends TFormState<TFormDropdown> {
   void _updateValue(String? value) {
     if (value == null) {
       return;
@@ -143,49 +299,37 @@ class TFormDropdownFieldState extends TFormFieldState<TFormDropdownField> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      isExpanded: true,
-      hint: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 0, 15),
-        child: Text(widget.hintText),
-      ),
-      value: (super.value != '') ? super.value : null,
-      onChanged: enabled ? _updateValue : null,
-      items: widget.options.map((String option) {
-        return DropdownMenuItem<String>(
-          value: option,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20),
-            child: Text(option),
-          ),
-        );
-      }).toList(),
-    );
-  }
+  TFormField get field => TFormDropdownField(
+    enabled: widget.enabled,
+    value: super.value,
+    hintText: widget.hintText,
+    options: widget.options,
+    updateValue: _updateValue,
+  );
 }
 
-class TFormStringField extends TFormField {
+class TFormString extends TForm {
   final List<TextInputFormatter> formatters;
   final String hintText;
 
-  const TFormStringField({
+  const TFormString({
     required super.enabled,
+    required super.title,
+    required super.subtitle,
     required super.initialValue,
     this.hintText = '',
     this.formatters = const <TextInputFormatter>[],
+    super.errorMessage = '',
     super.validationCallback,
     super.onValueChanged,
     super.key,
   });
 
   @override
-  State<TFormStringField> createState() =>
-    TFormStringFieldState<TFormStringField>();
+  State<TFormString> createState() => TFormStringState<TFormString>();
 }
 
-class TFormStringFieldState<T extends TFormStringField>
-    extends TFormFieldState<T> {
+class TFormStringState<T extends TFormString> extends TFormState<T> {
   final TextEditingController controller = TextEditingController();
   late List<TextInputFormatter> formatters;
 
@@ -207,21 +351,15 @@ class TFormStringFieldState<T extends TFormStringField>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      enabled: enabled,
-      controller: controller,
-      style: const TextStyle(fontSize: 18),
-      inputFormatters: formatters,
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-      ),
-    );
-  }
+  TFormField get field => TFormStringField(
+    enabled: widget.enabled,
+    hintText: widget.hintText,
+    controller: controller,
+    formatters: formatters,
+  );
 }
 
-class TFormNumberField extends TFormStringField {
+class TFormNumber extends TFormString {
   static String _forceMinMax(BigInt? min, BigInt? max, String current) {
     BigInt value = BigInt.parse(current);
     if (min != null && value < min!) {
@@ -243,11 +381,14 @@ class TFormNumberField extends TFormStringField {
   final BigInt? minValue;
   final BigInt? maxValue;
 
-  TFormNumberField({
+  TFormNumber({
     required super.enabled,
+    required super.title,
+    required super.subtitle,
     required super.initialValue,
     this.minValue,
     this.maxValue,
+    super.errorMessage = '',
     super.validationCallback,
     super.onValueChanged,
     super.key,
@@ -259,22 +400,23 @@ class TFormNumberField extends TFormStringField {
   );
 
   @override
-  State<TFormNumberField> createState() => TFormNumberFieldState();
+  State<TFormNumber> createState() => TFormNumberState();
 }
-class TFormNumberFieldState extends TFormStringFieldState<TFormNumberField> {
+
+class TFormNumberState extends TFormStringState<TFormNumber> {
   BigInt? _minValue;
   BigInt? _maxValue;
 
   BigInt? get minValue => _minValue;
   set minValue(BigInt? newValue) {
     _minValue = newValue;
-    formatters[1] = TFormNumberField.makeFormatter(newValue, maxValue);
+    formatters[1] = TFormNumber.makeFormatter(newValue, maxValue);
   }
 
   BigInt? get maxValue => _maxValue;
   set maxValue(BigInt? newValue) {
     _maxValue = newValue;
-    formatters[1] = TFormNumberField.makeFormatter(minValue, newValue);
+    formatters[1] = TFormNumber.makeFormatter(minValue, newValue);
   }
 
   @override
@@ -285,79 +427,28 @@ class TFormNumberFieldState extends TFormStringFieldState<TFormNumberField> {
   }
 }
 
-class TFormFixedField extends TFormStringField {
+class TFormFixed extends TFormString {
   final List<Widget> icons;
 
-  const TFormFixedField({
+  const TFormFixed({
     required super.initialValue,
+    required super.title,
+    required super.subtitle,
     this.icons = const <Widget>[],
+    super.errorMessage = '',
     super.validationCallback,
     super.onValueChanged,
     super.key,
   }) : super(enabled: false);
 
   @override
-  State<TFormFixedField> createState() => TFormFixedFieldState();
+  State<TFormFixed> createState() => TFormFixedState();
 }
 
-class TFormFixedFieldState extends TFormStringFieldState<TFormFixedField> {
+class TFormFixedState extends TFormStringState<TFormFixed> {
   @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: TFormTitle.subtitleColor.withOpacity(0.5),
-            width: 2,
-          ),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
-        child: Row(
-          children: <Widget>[
-            const SizedBox(width: 20),
-            Expanded(
-              child: Text(
-                controller.text,
-                style: const TextStyle(fontSize: 16),
-              ),
-            ),
-            const SizedBox(width: 10),
-            if (widget.icons.isNotEmpty)
-              SpacedRow(
-                mainAxisSize: MainAxisSize.min,
-                spacer: const SizedBox(width: 2),
-                children: widget.icons,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-@immutable
-class TFormData {
-  final String title;
-  final String subtitle;
-  final TFormField field;
-
-  const TFormData({
-    required this.title,
-    required this.subtitle,
-    required this.field,
-  });
-}
-
-class TForm extends StatelessWidget {
-  final TFormTitle title;
-  final TFormField field;
-
-  const TForm({required this.title, required this.field, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SpacedRow(children: <Widget>[title, field]);
-  }
+  TFormField get field => TFormFixedField(
+    text: controller.text,
+    icons: widget.icons,
+  );
 }
