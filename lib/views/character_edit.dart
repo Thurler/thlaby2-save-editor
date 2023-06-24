@@ -77,6 +77,8 @@ import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 typedef NumberFieldMap = Map<String, TFormNumberField>;
 typedef NumberFormKeyMap = Map<String, NumberFormKey>;
+typedef SkillFieldMap = Map<Skill, TFormNumberField>;
+typedef SkillFormKeyMap = Map<Skill, NumberFormKey>;
 
 class CharacterEditWidget extends StatefulWidget {
   final Character character;
@@ -148,24 +150,19 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
   );
 
-  Iterable<MapEntry<FormKey, TFormData>> _formMapEntriesFromList({
-    required Map<String, FormKey> keys,
-    required Map<String, TFormField> forms,
-    required List<String> names,
-    required String Function(String) titleBuilder,
-    required String Function(String) subtitleBuilder,
-  }) {
-    return names.map(
-      (String name) => MapEntry<FormKey, TFormData>(
-        keys[name]!,
-        TFormData(
-          title: titleBuilder(name),
-          subtitle: subtitleBuilder(name),
-          field: forms[name]!,
-        ),
-      ),
-    );
-  }
+  late final SkillFieldMap _boostSkillsForms = <Skill, TFormNumberField>{};
+  final SkillFormKeyMap _boostSkillsFormsKeys = SkillFormKeyMap.fromEntries(
+    boostSkills.map(
+      (Skill skill) => MapEntry<Skill, NumberFormKey>(skill, NumberFormKey()),
+    ),
+  );
+
+  late final SkillFieldMap _expSkillsForms = <Skill, TFormNumberField>{};
+  final SkillFormKeyMap _expSkillsFormsKeys = SkillFormKeyMap.fromEntries(
+    expSkills.map(
+      (Skill skill) => MapEntry<Skill, NumberFormKey>(skill, NumberFormKey()),
+    ),
+  );
 
   late final List<TFormGroup> _expansionGroups = <TFormGroup>[
     TFormGroup(
@@ -231,14 +228,22 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
         ),
       ),
     ),
-    // TFormGroup(
-    //   title: 'Level up bonuses',
-    //   forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
-    // ),
-    // TFormGroup(
-    //   title: 'Skill points (Common)',
-    //   forms: boostSkillForms + expSkillForms,
-    // ),
+    TFormGroup(
+      title: 'Skill points (Common)',
+      forms: Map<FormKey, TFormData>.fromEntries(
+        _formMapEntriesFromSkillList(
+          skills: boostSkills,
+          keys: _boostSkillsFormsKeys,
+          forms: _boostSkillsForms,
+        ).followedBy(
+          _formMapEntriesFromSkillList(
+            skills: expSkills,
+            keys: _expSkillsFormsKeys,
+            forms: _expSkillsForms,
+          ),
+        ),
+      ),
+    ),
     // TFormGroup(
     //   title: 'Skill points (Personal)',
     //   forms: personalSkillForms + personalSpellForms + awakeningSpellForms,
@@ -252,27 +257,56 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     // ),
   ];
 
-  // late final List<TNumberFormWrapper> levelBonusForms = stats.map(
-  //   (String stat) => TCharacterNumberForm.levelBonus(
-  //     title: 'Points in $stat',
-  //     setStateCallback: setState,
-  //     onValueUpdate: _updateLevelPoints,
-  //   ),
-  // ).toList();
+  Iterable<MapEntry<FormKey, TFormData>> _formMapEntriesFromList({
+    required Map<String, FormKey> keys,
+    required Map<String, TFormField> forms,
+    required List<String> names,
+    required String Function(String) titleBuilder,
+    required String Function(String) subtitleBuilder,
+  }) {
+    return names.map(
+      (String name) => MapEntry<FormKey, TFormData>(
+        keys[name]!,
+        TFormData(
+          title: titleBuilder(name),
+          subtitle: subtitleBuilder(name),
+          field: forms[name]!,
+        ),
+      ),
+    );
+  }
 
-  // late final List<TNumberFormWrapper> boostSkillForms = boostSkills.map(
-  //   (Skill skill) => TCharacterNumberForm.skill(
-  //     skill: skill,
-  //     setStateCallback: setState,
-  //   ),
-  // ).toList();
+  Iterable<MapEntry<FormKey, TFormData>> _formMapEntriesFromSkillList({
+    required Map<Skill, FormKey> keys,
+    required Map<Skill, TFormField> forms,
+    required List<Skill> skills,
+  }) {
+    return skills.map(
+      (Skill skill) => MapEntry<FormKey, TFormData>(
+        keys[skill]!,
+        TFormData(
+          title: skill.name,
+          subtitle: skillSubtitle(skill),
+          field: forms[skill]!,
+        ),
+      ),
+    );
+  }
 
-  // late final List<TNumberFormWrapper> expSkillForms = expSkills.map(
-  //   (Skill skill) => TCharacterNumberForm.skill(
-  //     skill: skill,
-  //     setStateCallback: setState,
-  //   ),
-  // ).toList();
+  TFormNumberField _skillFormNumberField({
+    required int initialValue,
+    required Skill skill,
+    required NumberFormKey key,
+  }) {
+    return TFormNumberField(
+      enabled: true,
+      initialValue: initialValue.commaSeparate(),
+      minValue: BigInt.from(0),
+      maxValue: BigInt.from(skill.maxLevel),
+      onValueChanged: (String? value) => setState((){}),
+      key: key,
+    );
+  }
 
   // late final List<TNumberFormWrapper> personalSkillForms = character.skills.map(
   //   (Skill skill) => TCharacterNumberForm.skill(
@@ -527,13 +561,17 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
     data.unusedBonusPoints = _unusedLevelFormKey.currentState!.saveIntValue();
 
-    // // Common skills data
-    // for (int i = 0; i < BoostSkill.values.length; i++) {
-    //   data.skills.setBoostData(i, boostSkillForms[i].saveValue());
-    // }
-    // for (int i = 0; i < ExpSkill.values.length; i++) {
-    //   data.skills.setExpData(i, expSkillForms[i].saveValue());
-    // }
+    // Common skills data
+    for (int i = 0; i < boostSkills.length; i++) {
+      data.skills.setBoostData(
+        i, _boostSkillsFormsKeys[boostSkills[i]]!.currentState!.saveIntValue(),
+      );
+    }
+    for (int i = 0; i < expSkills.length; i++) {
+      data.skills.setExpData(
+        i, _expSkillsFormsKeys[expSkills[i]]!.currentState!.saveIntValue(),
+      );
+    }
 
     // // Personal skills and spells data
     // for (int i = 0; i < character.skills.length; i++) {
@@ -654,17 +692,21 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       );
     }
 
-    // // Common skills info
-    // for (int i = 0; i < BoostSkill.values.length; i++) {
-    //   boostSkillForms[i].initNumberForm(
-    //     BigInt.from(data.skills.getBoostData(i)),
-    //   );
-    // }
-    // for (int i = 0; i < ExpSkill.values.length; i++) {
-    //   expSkillForms[i].initNumberForm(
-    //     BigInt.from(data.skills.getExpData(i)),
-    //   );
-    // }
+    // Common skills info
+    for (int i = 0; i < boostSkills.length; i++) {
+      _boostSkillsForms[boostSkills[i]] = _skillFormNumberField(
+        initialValue: data.skills.getBoostData(i),
+        skill: boostSkills[i],
+        key: _boostSkillsFormsKeys[boostSkills[i]]!,
+      );
+    }
+    for (int i = 0; i < expSkills.length; i++) {
+      _expSkillsForms[expSkills[i]] = _skillFormNumberField(
+        initialValue: data.skills.getExpData(i),
+        skill: expSkills[i],
+        key: _expSkillsFormsKeys[expSkills[i]]!,
+      );
+    }
 
     // // Personal skills and spells info
     // for (int i = 0; i < character.skills.length; i++) {

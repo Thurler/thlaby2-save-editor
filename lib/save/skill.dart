@@ -567,8 +567,7 @@ class SkillData {
     return <int>[motivatedHeart, handsOnExperience][index];
   }
 
-  void setBoostData(int index, String raw) {
-    int value = int.parse(raw);
+  void setBoostData(int index, int value) {
     switch (index) {
       case 0: hpBoost = value; break;
       case 1: mpBoost = value; break;
@@ -585,8 +584,7 @@ class SkillData {
     }
   }
 
-  void setExpData(int index, String raw) {
-    int value = int.parse(raw);
+  void setExpData(int index, int value) {
     switch (index) {
       case 0: motivatedHeart = value; break;
       case 1: handsOnExperience = value; break;
