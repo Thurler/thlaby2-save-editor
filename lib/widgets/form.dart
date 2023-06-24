@@ -6,7 +6,7 @@ import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 typedef FormKey = GlobalKey<TFormFieldState<TFormField>>;
 typedef DropdownFormKey = GlobalKey<TFormDropdownFieldState>;
 typedef StringFormKey = GlobalKey<TFormStringFieldState<TFormStringField>>;
-typedef NumberFormKey = GlobalKey<TFormStringFieldState<TFormStringField>>;
+typedef NumberFormKey = GlobalKey<TFormNumberFieldState>;
 typedef FixedFormKey = GlobalKey<TFormFixedFieldState>;
 
 class TFormTitle extends StatelessWidget {
@@ -72,6 +72,10 @@ abstract class TFormFieldState<T extends TFormField> extends State<T> {
 
   String get value => _value;
 
+  int get intValue => int.parse(_value.replaceAll(',', ''));
+
+  BigInt get bigIntValue => BigInt.parse(_value.replaceAll(',', ''));
+
   set value(String newValue) {
     _value = newValue;
     validate();
@@ -92,12 +96,12 @@ abstract class TFormFieldState<T extends TFormField> extends State<T> {
 
   int saveIntValue() {
     resetInitialValue();
-    return int.parse(value.replaceAll(',', ''));
+    return intValue;
   }
 
   BigInt saveBigIntValue() {
     resetInitialValue();
-    return BigInt.parse(value.replaceAll(',', ''));
+    return bigIntValue;
   }
 
   @override
@@ -183,10 +187,12 @@ class TFormStringField extends TFormField {
 class TFormStringFieldState<T extends TFormStringField>
     extends TFormFieldState<T> {
   final TextEditingController controller = TextEditingController();
+  late List<TextInputFormatter> formatters;
 
   @override
   set value(String newValue) {
     controller.text = newValue;
+    formatters = widget.formatters;
     super.value = newValue;
   }
 
@@ -206,7 +212,7 @@ class TFormStringFieldState<T extends TFormStringField>
       enabled: enabled,
       controller: controller,
       style: const TextStyle(fontSize: 18),
-      inputFormatters: widget.formatters,
+      inputFormatters: formatters,
       decoration: InputDecoration(
         hintText: widget.hintText,
         contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -227,6 +233,13 @@ class TFormNumberField extends TFormStringField {
     return current;
   }
 
+  static NumberInputFormatter makeFormatter(BigInt? min, BigInt? max) {
+    return NumberInputFormatter(
+      maxLength: max?.toString().length,
+      validationCallback: (String v) => _forceMinMax(min, max, v),
+    );
+  }
+
   final BigInt? minValue;
   final BigInt? maxValue;
 
@@ -241,12 +254,35 @@ class TFormNumberField extends TFormStringField {
   }) : super(
     formatters: <TextInputFormatter>[
       FilteringTextInputFormatter.allow(RegExp('[0-9]')),
-      NumberInputFormatter(
-        maxLength: maxValue?.toString().length,
-        validationCallback: (String v) => _forceMinMax(minValue, maxValue, v),
-      ),
+      makeFormatter(minValue, maxValue),
     ],
   );
+
+  @override
+  State<TFormNumberField> createState() => TFormNumberFieldState();
+}
+class TFormNumberFieldState extends TFormStringFieldState<TFormNumberField> {
+  BigInt? _minValue;
+  BigInt? _maxValue;
+
+  BigInt? get minValue => _minValue;
+  set minValue(BigInt? newValue) {
+    _minValue = newValue;
+    formatters[1] = TFormNumberField.makeFormatter(newValue, maxValue);
+  }
+
+  BigInt? get maxValue => _maxValue;
+  set maxValue(BigInt? newValue) {
+    _maxValue = newValue;
+    formatters[1] = TFormNumberField.makeFormatter(minValue, newValue);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    minValue = widget.minValue;
+    maxValue = widget.maxValue;
+  }
 }
 
 class TFormFixedField extends TFormStringField {
