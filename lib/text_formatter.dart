@@ -41,7 +41,7 @@ class NumberInputFormatter extends TextInputFormatter {
     int finalOffset = oldValue.selection.baseOffset + cursorShift + textDiff;
     // Snap back to text end if mass deletion caused negative offset
     // Or if for some reason we ever go overboard, snap back to text end
-    if (finalOffset < 0 || finalOffset > finalText.length) {
+    if (finalOffset < 1 || finalOffset > finalText.length) {
       finalOffset = finalText.length;
     }
     // Finally, return with the new values
