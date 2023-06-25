@@ -13,19 +13,10 @@ import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/form_group.dart';
 import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
-//   TCharacterNumberForm.gem({
-//     required super.title,
-//     required super.setStateCallback,
-//   }) : super(
-//     minValue: BigInt.from(0),
-//     maxValue: BigInt.from(CharacterEditState.gemCap),
-//     subtitle: 'Must be at most '
-//       '${CharacterEditState.gemCap.toCommaSeparatedNotation()}',
-//   );
-
 typedef DropdownFormKeyMap = Map<String, DropdownFormKey>;
 typedef NumberFormKeyMap = Map<String, NumberFormKey>;
 typedef SkillFormKeyMap = Map<Skill, NumberFormKey>;
+typedef FixedFormKeyMap = Map<String, FixedFormKey>;
 
 class CharacterEditWidget extends StatefulWidget {
   final Character character;
@@ -107,6 +98,17 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     ),
   );
 
+  final NumberFormKeyMap _gemFormsKeys = NumberFormKeyMap.fromEntries(
+    gemStats.map(
+      (String stat) => MapEntry<String, NumberFormKey>(stat, NumberFormKey()),
+    ),
+  );
+
+  final FixedFormKey _mainEquipFormKey = FixedFormKey();
+  final List<FixedFormKey> _subEquipFormKeys = <FixedFormKey>[
+    FixedFormKey(), FixedFormKey(), FixedFormKey(),
+  ];
+
   late final List<TFormGroup> _expansionGroups;
 
   Iterable<MapEntry<FormKey, TForm>> _formMapEntriesFromList({
@@ -160,35 +162,6 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     );
   }
 
-  // late final List<TNumberFormWrapper> gemForms = gemStats.map(
-  //   (String stat) => TCharacterNumberForm.gem(
-  //     title: 'Gems used in $stat',
-  //     setStateCallback: setState,
-  //   ),
-  // ).toList();
-
-  // late final TFixedStringFormWrapper mainEquipForm = TFixedStringFormWrapper(
-  //   title: 'Main equipment',
-  //   subtitle: 'Item occupying main slot',
-  //   setStateCallback: setState,
-  //   addCallback: ()=>_editMainEquipment(mainEquipForm),
-  //   editCallback: ()=>_editMainEquipment(mainEquipForm),
-  //   removeCallback: ()=>_removeEquipment(mainEquipForm),
-  //   emptyValue: MainEquip.slot0.name,
-  // );
-
-  // late final List<TFixedStringFormWrapper> subEquipForms = <int>[1, 2, 3].map(
-  //   (int i) => TFixedStringFormWrapper(
-  //     title: 'Sub equipment $i',
-  //     subtitle: 'Item occupying sub slot $i',
-  //     setStateCallback: setState,
-  //     addCallback: ()=>_editSubEquipment(subEquipForms[i-1]),
-  //     editCallback: ()=>_editSubEquipment(subEquipForms[i-1]),
-  //     removeCallback: ()=>_removeEquipment(subEquipForms[i-1]),
-  //     emptyValue: 'Empty',
-  //   ),
-  // ).toList();
-
   CharacterData get characterData => saveFileWrapper.saveFile.characterData[
     character.index
   ];
@@ -196,16 +169,6 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   //
   // Helper methods to handle state changes when forms get altered
   //
-
-  // void _editMainEquipment(TFixedStringFormWrapper form) {}
-
-  // void _editSubEquipment(TFixedStringFormWrapper form) {}
-
-  // void _removeEquipment(TFixedStringFormWrapper form) {
-  //   setState((){
-  //     form.controller.text = form.emptyValue;
-  //   });
-  // }
 
   void _updateLevelPoints(int points) {
     int remainingCap = levelBonusCap;
@@ -420,22 +383,26 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       );
     }
 
-    // // Gem data
-    // for (int i = 0; i < gemStats.length; i++) {
-    //   data.gems.setStatData(i, gemForms[i].saveValue());
-    // }
+    // Gem data
+    for (int i = 0; i < gemStats.length; i++) {
+      data.gems.setStatData(
+        i, _gemFormsKeys[gemStats[i]]!.currentState!.saveIntValue(),
+      );
+    }
 
-    // // Equipment data
-    // MainEquip chosenMain = MainEquip.values.firstWhere(
-    //   (MainEquip e) => e.name == mainEquipForm.saveValue(),
-    // );
-    // data.mainEquip = chosenMain;
-    // for (int i = 0; i < 3; i++) {
-    //   SubEquip chosenSub = SubEquip.values.firstWhere(
-    //     (SubEquip e) => e.name == subEquipForms[i].saveValue(),
-    //   );
-    //   data.subEquips[i] = chosenSub;
-    // }
+    // Equipment data
+    String chosenName = _mainEquipFormKey.currentState!.saveValue();
+    MainEquip chosenMain = MainEquip.values.firstWhere(
+      (MainEquip e) => e.name == chosenName,
+    );
+    data.mainEquip = chosenMain;
+    for (int i = 0; i < 3; i++) {
+      chosenName = _subEquipFormKeys[i].currentState!.saveValue();
+      SubEquip chosenSub = SubEquip.values.firstWhere(
+        (SubEquip e) => e.name == chosenName,
+      );
+      data.subEquips[i] = chosenSub;
+    }
 
     // Refresh widget to get rid of the save symbol
     setState((){});
@@ -620,25 +587,51 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
           ),
         ),
       ),
-      // TFormGroup(title: 'Gems', forms: gemForms),
-      // TFormGroup(
-      //   title: 'Equipment',
-      //   forms: <TFormWrapper>[mainEquipForm] + subEquipForms,
-      // ),
+      // Gem level data
+      TFormGroup(
+        title: 'Gems',
+        forms: Map<FormKey, TForm>.fromEntries(
+          _formMapEntriesFromList(
+            names: gemStats,
+            keys: _gemFormsKeys,
+            titleBuilder: (String name) => 'Gems used in $name',
+            subtitleBuilder: (String name) => '',
+            initialValueBuilder: (int i) => data.gems.getStatData(i),
+            maxValue: BigInt.from(gemCap),
+          ),
+        ),
+      ),
+      // Equipment data
+      TFormGroup(
+        title: 'Equipment',
+        forms: <FormKey, TForm>{
+          _mainEquipFormKey: TFormFixed(
+            title: 'Main equipment',
+            subtitle: 'Item occupying the main slot',
+            initialValue: data.mainEquip.name,
+            setCallback: (){},
+            onValueChanged: (String? value) => setState((){}),
+            emptyValue: MainEquip.slot0.name,
+            key: _mainEquipFormKey,
+          ),
+        }..addEntries(
+          <int>[1, 2, 3].map(
+            (int i) => MapEntry<FormKey, TForm>(
+              _subEquipFormKeys[i-1],
+              TFormFixed(
+                title: 'Sub equipment $i',
+                subtitle: 'Item occupying sub slot $i',
+                initialValue: data.subEquips[i-1].name,
+                setCallback: (){},
+                onValueChanged: (String? value) => setState((){}),
+                emptyValue: SubEquip.slot0.name,
+                key: _subEquipFormKeys[i-1],
+              ),
+            ),
+          ),
+        ),
+      ),
     ];
-
-    // // Gems info
-    // for (int i = 0; i < gemStats.length; i++) {
-    //   gemForms[i].initNumberForm(
-    //     BigInt.from(data.gems.getStatData(i)),
-    //   );
-    // }
-
-    // // Equipment info
-    // mainEquipForm.initForm(data.mainEquip.name);
-    // for (int i = 0; i < 3; i++) {
-    //   subEquipForms[i].initForm(data.subEquips[i].name);
-    // }
 
     // Call setState one last time after build runs for the first time
     // This causes the hasChanges and hasErrors to show up from initState

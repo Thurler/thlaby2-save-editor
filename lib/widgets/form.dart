@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:thlaby2_save_editor/text_formatter.dart';
+import 'package:thlaby2_save_editor/widgets/clickable.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 typedef FormKey = GlobalKey<TFormState<TForm>>;
@@ -431,13 +432,15 @@ class TFormNumberState extends TFormStringState<TFormNumber> {
 }
 
 class TFormFixed extends TFormString {
-  final List<Widget> icons;
+  final void Function() setCallback;
+  final String emptyValue;
 
   const TFormFixed({
     required super.initialValue,
     required super.title,
     required super.subtitle,
-    this.icons = const <Widget>[],
+    required this.setCallback,
+    required this.emptyValue,
     super.errorMessage = '',
     super.validationCallback,
     super.onValueChanged,
@@ -449,9 +452,30 @@ class TFormFixed extends TFormString {
 }
 
 class TFormFixedState extends TFormStringState<TFormFixed> {
+  void _removeCallback() => value = widget.emptyValue;
+
   @override
-  TFormField get field => TFormFixedField(
-    text: controller.text,
-    icons: widget.icons,
-  );
+  TFormField get field {
+    bool isEmpty = controller.text == widget.emptyValue;
+    return TFormFixedField(
+      text: controller.text,
+      icons: <Widget>[
+        TClickable(
+          onTap: widget.setCallback,
+          child: Icon(
+            isEmpty ? Icons.add_circle : Icons.edit,
+            color: isEmpty ? Colors.green.shade300 : Colors.grey,
+          ),
+        ),
+        if (!isEmpty)
+          TClickable(
+            onTap: _removeCallback,
+            child: Icon(
+              Icons.cancel,
+              color: Colors.red.shade300,
+            ),
+          ),
+      ],
+    );
+  }
 }
