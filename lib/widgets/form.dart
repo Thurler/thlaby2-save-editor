@@ -366,10 +366,10 @@ class TFormStringState<T extends TFormString> extends TFormState<T> {
 class TFormNumber extends TFormString {
   static String _forceMinMax(BigInt? min, BigInt? max, String current) {
     BigInt value = BigInt.parse(current);
-    if (min != null && value < min!) {
+    if (min != null && value < min) {
       return min.toString();
     }
-    if (max != null && value > max!) {
+    if (max != null && value > max) {
       return max.toString();
     }
     return current;
