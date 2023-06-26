@@ -541,17 +541,27 @@ enum Character {
     'Remilia',
     <TomeStat>[TomeStat.hp, TomeStat.atk, TomeStat.spd],
     <Skill>[
+      CommonSkill.sdmResidents, CommonSkill.majesty, CommonSkill.beatDown,
+      CommonSkill.lastFortress, CommonSkill.impactAttack, CommonSkill.adversity,
+      CommonSkill.mentalConcentration, CommonSkill.bloodsuck,
+      CommonSkill.proofKinship, CommonSkill.piercingAttack,
     ],
-    <Skill>[
-    ],
-    <Skill>[],
+    <Skill>[Spell.spearGungnir, Spell.curseVladTepes],
+    <Skill>[Spell.badLadyScramble],
   ),
   sakuya(
     'Sakuya',
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.spd],
     <Skill>[
+      CommonSkill.sdmResidents, CommonSkill.eyeForEye,
+      CommonSkill.flashingMurder, CommonSkill.piercingAttack,
+      CommonSkill.dexterity, CommonSkill.extraAttack, CommonSkill.jackLudoBile,
+      CommonSkill.jackSilverKnife, CommonSkill.sakuyaWorld,
+      CommonSkill.proofKinship,
     ],
     <Skill>[
+      Spell.misdirection, Spell.killingDoll, Spell.soulSculpture,
+      Spell.lunarClock, Spell.privateSquare,
     ],
     <Skill>[],
   ),
@@ -559,8 +569,14 @@ enum Character {
     'Kanako',
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mag],
     <Skill>[
+      CommonSkill.believersMoriya, CommonSkill.majesty, CommonSkill.strongFaith,
+      CommonSkill.skyCreation, CommonSkill.desperation,
+      CommonSkill.sacredAuthorityGods, CommonSkill.majestyPlus,
+      CommonSkill.proofKinship,
     ],
     <Skill>[
+      Spell.madDanceMedoteko, Spell.misayamaRitual,
+      Spell.beautifulSuiga, Spell.virtueWindGod,
     ],
     <Skill>[],
   ),
@@ -568,8 +584,14 @@ enum Character {
     'Suwako',
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
     <Skill>[
+      CommonSkill.believersMoriya, CommonSkill.earthCreation,
+      CommonSkill.froggyPower, CommonSkill.nativeGodEarth,
+      CommonSkill.quickwitted, CommonSkill.froggyHibernation,
+      CommonSkill.chytridiomycosisResistance, CommonSkill.proofKinship,
     ],
     <Skill>[
+      Spell.moriyaIronRing, Spell.longArmLeg,
+      Spell.froggyBravesElements, Spell.mishagujiSama,
     ],
     <Skill>[],
   ),
@@ -577,8 +599,15 @@ enum Character {
     'Tensi',
     <TomeStat>[TomeStat.tp, TomeStat.aff, TomeStat.res],
     <Skill>[
+      CommonSkill.girlBhavaAgra, CommonSkill.risingFalling,
+      CommonSkill.keystoneFormation, CommonSkill.swordHisouOwner,
+      CommonSkill.murakumoFormerOwner, CommonSkill.freeWorldlyThoughts,
+      CommonSkill.enduringCelestial, CommonSkill.highSpiritedSword,
+      CommonSkill.hugeTemperamentKeystone, CommonSkill.peachesImmortality,
     ],
     <Skill>[
+      Spell.worldCreationPress, Spell.violentMotherland,
+      Spell.swordHisou, Spell.stateEnlightenment,
     ],
     <Skill>[],
   ),
@@ -586,9 +615,18 @@ enum Character {
     'Flandre',
     <TomeStat>[TomeStat.mp, TomeStat.atk, TomeStat.mag],
     <Skill>[
+      CommonSkill.sdmResidents,
+      CommonSkill.smolderingMadness,
+      CommonSkill.impactAttack,
+      CommonSkill.beatDown,
+      CommonSkill.vampiricWrath,
+      CommonSkill.controlMadness,
+      CommonSkill.bloodsuck,
+      CommonSkill.propagatingMadness,
+      CommonSkill.proofKinship,
+      CommonSkill.destructionRoulette,
     ],
-    <Skill>[
-    ],
+    <Skill>[Spell.starbowBreak, Spell.forbiddenFruit, Spell.laveatein],
     <Skill>[],
   ),
   yuyuko(
