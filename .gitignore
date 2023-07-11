@@ -3,6 +3,7 @@ __pycache__/*
 applicationlog.txt
 settings.json
 .flutter-plugins-dependencies
+.vscode
 
 # Miscellaneous
 *.class
