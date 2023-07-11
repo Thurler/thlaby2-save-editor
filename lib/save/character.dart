@@ -637,10 +637,12 @@ enum Character {
     'Yuuka',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mag],
     <Skill>[
+      CommonSkill.extraAttack, CommonSkill.majesty, CommonSkill.encounterFoe,
+      CommonSkill.gensokyoFlower, CommonSkill.tormentingNature,
+      CommonSkill.perilousSpring, CommonSkill.plantationBlessing,
     ],
-    <Skill>[
-    ],
-    <Skill>[],
+    <Skill>[Spell.flowerShot, Spell.gensokyoReflowering, Spell.beautyNature],
+    <Skill>[Spell.masterSparkYuuka],
   ),
   yukari(
     'Yukari',

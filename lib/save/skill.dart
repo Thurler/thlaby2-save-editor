@@ -415,6 +415,9 @@ enum CommonSkill implements Skill {
   ticketAgelessLand(1, 10, 'Ticket to the Ageless Land'),
   saigyouSeal(4, 30, 'Saigyou Ayakashi Seal'),
   mistressSerious(1, 40, 'The Mistress Gets Serious'),
+  gensokyoFlower(2, 5, "Gensokyo's Eternal Flower"),
+  tormentingNature(2, 5, 'Tormenting Nature'),
+  perilousSpring(2, 5, 'Perilous Blossom Spring'),
   other(5, 5, 'a');
 
   @override
@@ -585,6 +588,10 @@ enum Spell implements Skill {
   swallowtailLance(5, 5, 'Deadly Swallowtail Lance'),
   ghastlyDream(5, 5, 'Ghastly Dream'),
   flawlessNirvana(5, 5, 'Saigyouji Flawless Nirvana'),
+  flowerShot(5, 5, 'Flower Shot'),
+  gensokyoReflowering(5, 5, "Gensokyo's Reflowering"),
+  beautyNature(5, 5, 'Beauty of Nature'),
+  masterSparkYuuka(5, 25, 'Master Spark'),
   other(5, 5, 'a');
 
   @override
