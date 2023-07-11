@@ -6,24 +6,6 @@ extension ListExtension<T> on List<T> {
     return map((T t)=>f(t)).toList();
   }
 
-  List<T> separateWith(T? separator, {bool separatorOnEnds = false}) {
-    if (separator == null) {
-      return this;
-    }
-    List<T> result = <T>[];
-    if (separatorOnEnds) {
-      result.add(separator);
-    }
-    for (int i = 0; i < length - 1; i++) {
-      result.addAll(<T>[elementAt(i), separator]);
-    }
-    result.add(elementAt(length - 1));
-    if (separatorOnEnds) {
-      result.add(separator);
-    }
-    return result;
-  }
-
   T? elementAtSafe(int index) => index < length ? elementAt(index) : null;
 
   int getU16(Endian endianness, {int offset = 0}) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/iterable_extension.dart';
 import 'package:thlaby2_save_editor/widgets/appbar_button.dart';
 
 class CommonScaffold extends StatelessWidget {
