@@ -664,8 +664,15 @@ enum Character {
     'Hijiri',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.spd],
     <Skill>[
+      CommonSkill.sutraStrength, CommonSkill.sutraShield,
+      CommonSkill.sutraChant, CommonSkill.sutraFocus, CommonSkill.sutraDrang,
+      CommonSkill.sutraRecovery, CommonSkill.sutraMana,
+      CommonSkill.sutraResistance, CommonSkill.sutraImmunity,
+      CommonSkill.superhumanLineage,
     ],
     <Skill>[
+      Spell.skandaLegs, Spell.masterTrichilocosm, Spell.magicMilkyWay,
+      Spell.starSwordApologetics, Spell.sutraDuplicatingChant,
     ],
     <Skill>[],
   ),
@@ -673,26 +680,40 @@ enum Character {
     'Eiki',
     <TomeStat>[TomeStat.atk, TomeStat.mag, TomeStat.mnd],
     <Skill>[
+      CommonSkill.cleansedMirror, CommonSkill.majesty,
+      CommonSkill.supremeJudgeParadise, CommonSkill.thankfulPreaching,
+      CommonSkill.rodRemorse, CommonSkill.strongFaith,
+      CommonSkill.abilityJudgeMorality, CommonSkill.enmaShinigami,
+      CommonSkill.moralInversion, CommonSkill.superThankfulPreaching,
     ],
-    <Skill>[
-    ],
+    <Skill>[Spell.lastJudgement, Spell.trialTenKings, Spell.wanderingSin],
     <Skill>[],
   ),
   renko(
     'Renko',
     <TomeStat>[TomeStat.spd, TomeStat.eva, TomeStat.res],
     <Skill>[
+      CommonSkill.sealingClub, CommonSkill.starReading, CommonSkill.moonReading,
+      CommonSkill.maintenance, CommonSkill.astronomicalObservation,
+      CommonSkill.easygoing, CommonSkill.assaultPoint,
+      CommonSkill.readMoreStars, CommonSkill.readMoreMoons,
     ],
-    <Skill>[
-    ],
+    <Skill>[Spell.galaxyStop, Spell.charge],
     <Skill>[],
   ),
   maribel(
     'Maribel',
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.mag],
     <Skill>[
+      CommonSkill.sealingClub, CommonSkill.manipulationBoundaries,
+      CommonSkill.abilitySeeBoundaries, CommonSkill.meddlingWithBorders,
+      CommonSkill.rapidCharge, CommonSkill.grandIncantation,
+      CommonSkill.shareVision, CommonSkill.controlLiberation,
+      CommonSkill.controlUnnatural,
     ],
     <Skill>[
+      Spell.liberatedAbilities, Spell.chaoticQuadrupleBarrier,
+      Spell.overflowingPower, Spell.mariDYIBorder,
     ],
     <Skill>[],
   ),
