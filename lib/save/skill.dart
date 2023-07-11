@@ -410,6 +410,11 @@ enum CommonSkill implements Skill {
   controlMadness(1, 60, 'Control of Madness'),
   propagatingMadness(2, 40, 'Propagating Madness'),
   destructionRoulette(1, 66, 'Destruction Roulette'),
+  hakugyokurouMistress(2, 5, "Hakugyokurou's Mistress"),
+  banquetRegrets(1, 12, 'Banquet of Regrets'),
+  ticketAgelessLand(1, 10, 'Ticket to the Ageless Land'),
+  saigyouSeal(4, 30, 'Saigyou Ayakashi Seal'),
+  mistressSerious(1, 40, 'The Mistress Gets Serious'),
   other(5, 5, 'a');
 
   @override
@@ -576,6 +581,10 @@ enum Spell implements Skill {
   starbowBreak(5, 5, 'Starbow Break'),
   forbiddenFruit(5, 5, 'Forbidden Fruit'),
   laveatein(5, 5, 'Laveatein'),
+  dreamButterfly(5, 5, "Ghostly Dream's Butterfly"),
+  swallowtailLance(5, 5, 'Deadly Swallowtail Lance'),
+  ghastlyDream(5, 5, 'Ghastly Dream'),
+  flawlessNirvana(5, 5, 'Saigyouji Flawless Nirvana'),
   other(5, 5, 'a');
 
   @override
