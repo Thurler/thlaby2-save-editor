@@ -648,8 +648,15 @@ enum Character {
     'Yukari',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.mnd],
     <Skill>[
+      CommonSkill.yakumoClan, CommonSkill.manipulationBoundaries,
+      CommonSkill.borderPowerMagic, CommonSkill.borderWoundsCures,
+      CommonSkill.phenomenalForceWill, CommonSkill.majesty,
+      CommonSkill.perpetualMotionDevice, CommonSkill.enhancedShikigamiControl,
+      CommonSkill.enhancedBoundaryControl, CommonSkill.proofKinship,
     ],
     <Skill>[
+      Spell.meshLightDarkness, Spell.hyperactiveFlyingObject,
+      Spell.shikigamiRanPlus, Spell.spiritingAway, Spell.quadrupleBarrier,
     ],
     <Skill>[],
   ),

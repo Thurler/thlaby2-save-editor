@@ -418,6 +418,13 @@ enum CommonSkill implements Skill {
   gensokyoFlower(2, 5, "Gensokyo's Eternal Flower"),
   tormentingNature(2, 5, 'Tormenting Nature'),
   perilousSpring(2, 5, 'Perilous Blossom Spring'),
+  manipulationBoundaries(2, 5, 'Manipulation of Boundaries'),
+  borderPowerMagic(2, 5, 'Border of Power and Magic'),
+  borderWoundsCures(2, 5, 'Border of Wounds and Cures'),
+  phenomenalForceWill(2, 5, 'Phenomenal Force of Will'),
+  perpetualMotionDevice(2, 5, 'Perpetual Motion Device'),
+  enhancedShikigamiControl(2, 5, 'Enhanced Shikigami Control'),
+  enhancedBoundaryControl(2, 5, 'Enhanced Boundary Control'),
   other(5, 5, 'a');
 
   @override
@@ -592,6 +599,11 @@ enum Spell implements Skill {
   gensokyoReflowering(5, 5, "Gensokyo's Reflowering"),
   beautyNature(5, 5, 'Beauty of Nature'),
   masterSparkYuuka(5, 25, 'Master Spark'),
+  meshLightDarkness(5, 5, 'Mesh of Light and Darkness'),
+  hyperactiveFlyingObject(5, 5, 'Hyperactive Flying Object'),
+  shikigamiRanPlus(5, 5, 'Shikigami "Ran Yakumo +"'),
+  spiritingAway(5, 5, "Yukari's Spiriting Away"),
+  quadrupleBarrier(5, 5, 'IN Quadruple Barrier'),
   other(5, 5, 'a');
 
   @override
