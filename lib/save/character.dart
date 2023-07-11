@@ -621,14 +621,10 @@ enum Character {
     'Yuyuko',
     <TomeStat>[TomeStat.mp, TomeStat.mag, TomeStat.spd],
     <Skill>[
-      CommonSkill.hakugyokurouMistress,
-      CommonSkill.liveUnderworld,
-      CommonSkill.majesty,
-      CommonSkill.banquetRegrets,
-      CommonSkill.ticketAgelessLand,
-      CommonSkill.saigyouSeal,
-      CommonSkill.mistressSerious,
-      CommonSkill.majestyPlus,
+      CommonSkill.hakugyokurouMistress, CommonSkill.liveUnderworld,
+      CommonSkill.majesty, CommonSkill.banquetRegrets,
+      CommonSkill.ticketAgelessLand, CommonSkill.saigyouSeal,
+      CommonSkill.mistressSerious, CommonSkill.majestyPlus,
       CommonSkill.mistressServant,
     ],
     <Skill>[
