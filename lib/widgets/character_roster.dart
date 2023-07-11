@@ -24,6 +24,15 @@ class CharacterRoster extends StatelessWidget {
     super.key,
   });
 
+  static Future<void> precachePortraits(BuildContext context) async {
+    for (Character character in Character.values) {
+      await precacheImage(
+        CharacterBox.imageFromName(character.filename).image,
+        context,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
