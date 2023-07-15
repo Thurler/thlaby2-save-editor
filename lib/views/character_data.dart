@@ -61,7 +61,7 @@ class CharacterUnlockState extends CommonState<CharacterDataWidget> {
         ),
         CharacterRoster(
           highlight: _hover,
-          unlockFlags: saveFileWrapper.saveFile.characterUnlockFlags,
+          unlockFlags: saveFile.characterUnlockFlags,
           onTap: _navigateToCharacterData,
           onEnter: (Character character) => setState((){_hover = character;}),
           onExit: (Character character) => setState((){_hover = null;}),

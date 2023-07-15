@@ -3,9 +3,7 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
-abstract class CommonState<T extends StatefulWidget> extends State<T> with Loggable {
-  final SaveFileWrapper saveFileWrapper = SaveFileWrapper();
-
+abstract class CommonState<T extends StatefulWidget> extends State<T> with Loggable, SaveReader {
   Future<void> handleException({
     required String logMessage,
     required String dialogTitle,

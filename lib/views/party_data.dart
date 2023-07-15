@@ -89,7 +89,7 @@ class PartyDataState extends CommonState<PartyDataWidget> {
     await log(LogLevel.info, 'Saved changes');
     setState(() {
       _original = _editable.deepCopyElements(PartySlot.from);
-      saveFileWrapper.saveFile.partyData = _original;
+      saveFile.partyData = _original;
     });
   }
 
@@ -123,7 +123,7 @@ class PartyDataState extends CommonState<PartyDataWidget> {
   void initState() {
     super.initState();
     // Make a reference and a deep copy of the list we're changing
-    _original = saveFileWrapper.saveFile.partyData;
+    _original = saveFile.partyData;
     _editable = _original.deepCopyElements(PartySlot.from);
   }
 

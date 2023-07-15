@@ -162,9 +162,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     );
   }
 
-  CharacterData get characterData => saveFileWrapper.saveFile.characterData[
-    character.index
-  ];
+  CharacterData get characterData => saveFile.characterData[character.index];
 
   //
   // Helper methods to handle state changes when forms get altered
@@ -255,7 +253,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
       return '';
     }
     // Otherwise, no other character must have his subclass
-    List<CharacterData> original = saveFileWrapper.saveFile.characterData;
+    List<CharacterData> original = saveFile.characterData;
     Iterable<CharacterData> overlap = original.where((CharacterData data) {
       return data.character != character && data.subclass == chosen;
     });

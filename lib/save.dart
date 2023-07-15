@@ -237,3 +237,13 @@ class SaveFile with Loggable {
   // ignore: use_setters_to_change_properties
   void _setUndergroundMapData(List<int> bytes) => undergroundMapData = bytes;
 }
+
+mixin SaveReader {
+  final SaveFileWrapper _saveFileWrapper = SaveFileWrapper();
+
+  SaveFile get saveFile => _saveFileWrapper.saveFile;
+}
+
+mixin SaveWriter on SaveReader {
+  set saveFile(SaveFile file) => _saveFileWrapper.saveFile = file;
+}

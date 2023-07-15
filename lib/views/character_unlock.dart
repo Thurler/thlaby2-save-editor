@@ -46,7 +46,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
 
   Future<void> _saveChanges() async {
     // Display a warning if trying to lock characters that are in the party
-    List<PartySlot> party = saveFileWrapper.saveFile.partyData;
+    List<PartySlot> party = saveFile.partyData;
     List<CharacterUnlockFlag> lockedPartyCharacters = _flags.where(
       (CharacterUnlockFlag f) => !f.isUnlocked && party.any(
         (PartySlot s) => s.isUsed && s.character == f.character,
@@ -102,7 +102,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     await log(LogLevel.info, 'Saved changes');
     setState(() {
       _original = _flags.deepCopyElements(CharacterUnlockFlag.from);
-      saveFileWrapper.saveFile.characterUnlockFlags = _original;
+      saveFile.characterUnlockFlags = _original;
     });
   }
 
@@ -151,7 +151,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   void initState() {
     super.initState();
     // Make a reference and a deep copy of the list we're changing
-    _original = saveFileWrapper.saveFile.characterUnlockFlags;
+    _original = saveFile.characterUnlockFlags;
     _flags = _original.deepCopyElements(CharacterUnlockFlag.from);
   }
 

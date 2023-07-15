@@ -18,7 +18,7 @@ class MainWidget extends StatefulWidget {
   State<MainWidget> createState() => MainState();
 }
 
-class MainState extends CommonState<MainWidget> {
+class MainState extends CommonState<MainWidget> with SaveWriter {
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(
       logMessage: 'FileSystem Exception when loading file: ${e.message}',
@@ -55,7 +55,7 @@ class MainState extends CommonState<MainWidget> {
       await log(LogLevel.debug, 'File selected: $name');
       File rawFile = File(path);
       List<int> bytes = await rawFile.readAsBytes();
-      saveFileWrapper.saveFile = SaveFile.fromSteamBytes(bytes);
+      saveFile = SaveFile.fromSteamBytes(bytes);
       await logFlush();
       await log(LogLevel.info, 'Steam save file loaded successfully');
     } on FileSystemException catch (e) {
@@ -75,7 +75,7 @@ class MainState extends CommonState<MainWidget> {
       await handleUnexpectedException(e, s);
       return;
     }
-    if (saveFileWrapper.saveFile.loadedWithErrors) {
+    if (saveFile.loadedWithErrors) {
       await showCommonDialog(
         const TWarningDialog(
           title: 'The loaded save file had errors',

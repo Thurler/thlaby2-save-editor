@@ -99,7 +99,7 @@ class MenuState extends CommonState<MenuWidget> {
     await log(LogLevel.debug, 'Exporting save file in Steam format');
     try {
       File rawFile = File(result);
-      List<int> contents = saveFileWrapper.saveFile.exportSteam();
+      List<int> contents = saveFile.exportSteam();
       await logFlush();
       await rawFile.writeAsBytes(contents);
     } on FileSystemException catch (e) {
