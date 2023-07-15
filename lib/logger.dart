@@ -36,8 +36,9 @@ class Logger {
     sink.writeln('$_currentTimestamp | Save Editor v$version opened');
   }
 
-  String _buildLogLine(LogLevel level, dynamic message) =>
-    '$_currentTimestamp | ${level.name.toUpperCase()} | $message';
+  String _buildLogLine(LogLevel level, dynamic message) {
+    return '$_currentTimestamp | ${level.name.toUpperCase()} | $message';
+  }
 
   void logBuffer(LogLevel level, dynamic message) {
     if (level.index >= logLevel.index) {
@@ -66,11 +67,13 @@ class Logger {
 mixin Loggable {
   final Logger _logger = Logger();
 
-  Future<void> log(LogLevel level, dynamic message) =>
-    _logger.log(level, message);
+  Future<void> log(LogLevel level, dynamic message) {
+    return _logger.log(level, message);
+  }
 
-  void logBuffer(LogLevel level, dynamic message) =>
+  void logBuffer(LogLevel level, dynamic message) {
     _logger.logBuffer(level, message);
+  }
 
   Future<void> logFlush() => _logger.flush();
 
