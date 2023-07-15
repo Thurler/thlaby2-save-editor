@@ -26,8 +26,7 @@ class LibraryData {
     return <int>[fir, cld, wnd, ntr, mys, spi, drk, phy][index];
   }
 
-  void setStatData(int index, String raw) {
-    int value = int.parse(raw);
+  void setStatData(int index, int value) {
     switch (index) {
       case 0: hp = value; break;
       case 1: atk = value; break;
@@ -38,8 +37,7 @@ class LibraryData {
     }
   }
 
-  void setElementData(int index, String raw) {
-    int value = int.parse(raw);
+  void setElementData(int index, int value) {
     switch (index) {
       case 0: fir = value; break;
       case 1: cld = value; break;

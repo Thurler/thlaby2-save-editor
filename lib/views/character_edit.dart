@@ -1,77 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/equip.dart';
+import 'package:thlaby2_save_editor/save/library.dart';
 import 'package:thlaby2_save_editor/save/skill.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
-import 'package:thlaby2_save_editor/widgets/form_wrapper.dart';
+import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
+import 'package:thlaby2_save_editor/widgets/form.dart';
+import 'package:thlaby2_save_editor/widgets/form_group.dart';
+import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
-class TCharacterNumberForm extends TNumberFormWrapper {
-  TCharacterNumberForm.library({
-    required super.title,
-    required super.setStateCallback,
-  }) : super(
-    minValue: BigInt.from(0),
-    maxValue: BigInt.from(CharacterEditState.libraryCap),
-    subtitle: 'Must be at most '
-      '${CharacterEditState.libraryCap.toCommaSeparatedNotation()}',
-  );
-
-  TCharacterNumberForm.libraryElement({
-    required super.title,
-    required super.setStateCallback,
-  }) : super(
-    minValue: BigInt.from(0),
-    maxValue: BigInt.from(CharacterEditState.libraryElementCap),
-    subtitle: 'Must be at most '
-      '${CharacterEditState.libraryElementCap.toCommaSeparatedNotation()}',
-  );
-
-  TCharacterNumberForm.levelBonus({
-    required super.title,
-    required super.onValueUpdate,
-    required super.setStateCallback,
-  }) : super(
-    minValue: BigInt.from(0),
-    maxValue: BigInt.from(CharacterEditState.levelBonusCap),
-    subtitle: 'Sum of all points must be at most '
-      '${CharacterEditState.levelBonusCap.toCommaSeparatedNotation()}\n',
-  );
-
-  TCharacterNumberForm.gem({
-    required super.title,
-    required super.setStateCallback,
-  }) : super(
-    minValue: BigInt.from(0),
-    maxValue: BigInt.from(CharacterEditState.gemCap),
-    subtitle: 'Must be at most '
-      '${CharacterEditState.gemCap.toCommaSeparatedNotation()}',
-  );
-
-  TCharacterNumberForm.skill({
-    required Skill skill,
-    required super.setStateCallback,
-  }) : super(
-    minValue: BigInt.from(0),
-    maxValue: BigInt.from(skill.maxLevel),
-    title: skill.name,
-    subtitle: CharacterEditState.skillSubtitle(skill),
-  );
-
-  TCharacterNumberForm.spell({
-    required Skill skill,
-    required super.setStateCallback,
-  }) : super(
-    minValue: BigInt.from(1),
-    maxValue: BigInt.from(skill.maxLevel),
-    title: skill.name,
-    subtitle: CharacterEditState.spellSubtitle(skill),
-  );
-}
+typedef DropdownFormKeyMap = Map<String, DropdownFormKey>;
+typedef NumberFormKeyMap = Map<String, NumberFormKey>;
+typedef SkillFormKeyMap = Map<Skill, NumberFormKey>;
+typedef FixedFormKeyMap = Map<String, FixedFormKey>;
 
 class CharacterEditWidget extends StatefulWidget {
   final Character character;
@@ -93,6 +38,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   ];
   static const List<Skill> boostSkills = BoostSkill.values;
   static const List<Skill> expSkills = ExpSkill.values;
+  static const List<TomeStat> tomeStats = TomeStat.values;
   static const String expCap = '999999999999999999'; // Can go higher, but why
   static const int levelCap = 9999999; // Save load sets it to this if higher
   static const int levelBonusCap = levelCap - 1;
@@ -101,242 +47,181 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   static const int libraryElementCap = 100; // Hard cap at library
   static const int gemCap = 20; // Hard cap at shrine
 
+  static final String librarySubtitle = 'Must be at most '
+    '${libraryCap.commaSeparate()}';
+  static final String libraryElementSubtitle = 'Must be at most '
+    '${libraryElementCap.commaSeparate()}';
+
   static String skillSubtitle(Skill skill) => 'Must be at most '
-    '${skill.maxLevel}\n${skill.levelCost} skill points used per level';
+    '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
 
   static String spellSubtitle(Skill skill) => 'Must be between 1 and '
-    '${skill.maxLevel}\n${skill.levelCost} skill points used per level';
+    '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
 
   Character get character => widget.character;
 
-  late final Widget _backgroundPortrait = Opacity(
-    opacity: 0.8,
-    child: Image.asset(
-      'img/character/${getCharacterFilename(character)}.png',
-      alignment: Alignment.bottomRight,
-      fit: BoxFit.fitHeight,
-      width: double.infinity,
-      height: double.infinity,
+  final NumberFormKey _levelFormKey = NumberFormKey();
+  final NumberFormKey _expFormKey = NumberFormKey();
+  final NumberFormKey _bpFormKey = NumberFormKey();
+  final DropdownFormKey _subclassFormKey = DropdownFormKey();
+
+  final NumberFormKeyMap _libraryFormsKeys = NumberFormKeyMap.fromEntries(
+    (stats + elements).map(
+      (String stat) => MapEntry<String, NumberFormKey>(stat, NumberFormKey()),
     ),
   );
 
-  late final List<TFormGroup> expansionGroups = <TFormGroup>[
-    TFormGroup(
-      title: 'Level, EXP, BP, Subclass',
-      forms: <TFormWrapper>[levelForm, expForm, bpForm, subclassForm],
+  final NumberFormKey _unusedLevelFormKey = NumberFormKey();
+  final NumberFormKeyMap _levelBonusFormsKeys = NumberFormKeyMap.fromEntries(
+    stats.map(
+      (String stat) => MapEntry<String, NumberFormKey>(stat, NumberFormKey()),
     ),
-    TFormGroup(
-      title: 'Library points',
-      forms: libraryForms + libraryElementForms,
+  );
+
+  late final SkillFormKeyMap _skillsFormsKeys = SkillFormKeyMap.fromEntries(
+    boostSkills
+    .cast<Skill>()
+    .followedBy(expSkills)
+    .followedBy(character.skills)
+    .followedBy(character.spells)
+    .followedBy(character.awakeningSpells)
+    .map(
+      (Skill skill) => MapEntry<Skill, NumberFormKey>(skill, NumberFormKey()),
     ),
-    TFormGroup(
-      title: 'Level up bonuses',
-      forms: <TFormWrapper>[unusedLevelForm] + levelBonusForms,
+  );
+
+  final DropdownFormKeyMap _tomeFormsKeys = DropdownFormKeyMap.fromEntries(
+    tomeStats.map(
+      (TomeStat stat) => MapEntry<String, DropdownFormKey>(
+        stat.name, DropdownFormKey(),
+      ),
     ),
-    TFormGroup(
-      title: 'Skill points (Common)',
-      forms: boostSkillForms + expSkillForms,
+  );
+
+  final NumberFormKeyMap _gemFormsKeys = NumberFormKeyMap.fromEntries(
+    gemStats.map(
+      (String stat) => MapEntry<String, NumberFormKey>(stat, NumberFormKey()),
     ),
-    TFormGroup(
-      title: 'Skill points (Personal)',
-      forms: personalSkillForms + personalSpellForms,
-    ),
-    TFormGroup(title: 'Skill points (Subclass)', forms: <TFormWrapper>[]),
-    TFormGroup(title: 'Tomes', forms: tomeForms),
-    TFormGroup(title: 'Gems', forms: gemForms),
-    TFormGroup(
-      title: 'Equipment',
-      forms: <TFormWrapper>[mainEquipForm] + subEquipForms,
-    ),
+  );
+
+  final FixedFormKey _mainEquipFormKey = FixedFormKey();
+  final List<FixedFormKey> _subEquipFormKeys = <FixedFormKey>[
+    FixedFormKey(), FixedFormKey(), FixedFormKey(),
   ];
 
-  late final TNumberFormWrapper levelForm = TNumberFormWrapper(
-    title: 'Level',
-    subtitle: 'Must be between 1 and ${levelCap.toCommaSeparatedNotation()}',
-    minValue: BigInt.from(1),
-    maxValue: BigInt.from(levelCap),
-    setStateCallback: setState,
-    onValueUpdate: _updateLevelPoints,
-  );
+  late final List<TFormGroup> _expansionGroups;
 
-  late final TNumberFormWrapper expForm = TNumberFormWrapper(
-    title: 'Experience',
-    subtitle: 'Must be below 1 quintillion',
-    minValue: BigInt.from(0),
-    maxValue: BigInt.parse(expCap),
-    setStateCallback: setState,
-  );
+  Iterable<MapEntry<FormKey, TForm>> _formMapEntriesFromList({
+    required List<String> names,
+    required Map<String, FormKey> keys,
+    required String Function(String) titleBuilder,
+    required String Function(String) subtitleBuilder,
+    required int Function(int) initialValueBuilder,
+    required BigInt maxValue,
+    BigInt? minValue,
+    void Function(String?)? onValueChanged,
+  }) {
+    return names.asMap().keys.map(
+      (int i) => MapEntry<FormKey, TForm>(
+        keys[names[i]]!,
+        TFormNumber(
+          enabled: true,
+          title: titleBuilder(names[i]),
+          subtitle: subtitleBuilder(names[i]),
+          initialValue: initialValueBuilder(i).commaSeparate(),
+          minValue: minValue ?? BigInt.from(0),
+          maxValue: maxValue,
+          onValueChanged: onValueChanged ?? (String? value) => setState((){}),
+          key: keys[names[i]],
+        ),
+      ),
+    );
+  }
 
-  late final TNumberFormWrapper bpForm = TNumberFormWrapper(
-    title: 'Battle Points',
-    subtitle: 'Must be at most ${bpCap.toCommaSeparatedNotation()}',
-    minValue: BigInt.from(0),
-    maxValue: BigInt.from(bpCap),
-    setStateCallback: setState,
-  );
-
-  late final TDropdownFormWrapper subclassForm = TDropdownFormWrapper(
-    title: 'Subclass',
-    subtitle: 'Changing this will affect skills data',
-    setStateCallback: setState,
-    validateFunction: _checkForDuplicateUniqueSubclasses,
-    options: Subclass.values.map((Subclass s)=>s.prettyName).toList(),
-  );
-
-  late final List<TNumberFormWrapper> libraryForms = stats.map(
-    (String stat) => TCharacterNumberForm.library(
-      title: '$stat Level',
-      setStateCallback: setState,
-    ),
-  ).toList();
-
-  late final List<TNumberFormWrapper> libraryElementForms = elements.map(
-    (String element) => TCharacterNumberForm.libraryElement(
-      title: '$element Level',
-      setStateCallback: setState,
-    ),
-  ).toList();
-
-  late final TNumberFormWrapper unusedLevelForm = TNumberFormWrapper(
-    title: 'Unused points',
-    subtitle: 'Updated automatically with level and used points',
-    minValue: BigInt.from(-levelBonusCap),
-    maxValue: BigInt.from(levelBonusCap),
-    setStateCallback: setState,
-    readOnly: true,
-  );
-
-  late final List<TNumberFormWrapper> levelBonusForms = stats.map(
-    (String stat) => TCharacterNumberForm.levelBonus(
-      title: 'Points in $stat',
-      setStateCallback: setState,
-      onValueUpdate: _updateLevelPoints,
-    ),
-  ).toList();
-
-  late final List<TNumberFormWrapper> boostSkillForms = boostSkills.map(
-    (Skill skill) => TCharacterNumberForm.skill(
-      skill: skill,
-      setStateCallback: setState,
-    ),
-  ).toList();
-
-  late final List<TNumberFormWrapper> expSkillForms = expSkills.map(
-    (Skill skill) => TCharacterNumberForm.skill(
-      skill: skill,
-      setStateCallback: setState,
-    ),
-  ).toList();
-
-  late final List<TNumberFormWrapper> personalSkillForms = character.skills.map(
-    (Skill skill) => TCharacterNumberForm.skill(
-      skill: skill,
-      setStateCallback: setState,
-    ),
-  ).toList();
-
-  late final List<TNumberFormWrapper> personalSpellForms = character.spells.map(
-    (Skill skill) => TCharacterNumberForm.spell(
-      skill: skill,
-      setStateCallback: setState,
-    ),
-  ).toList();
-
-  late final List<TDropdownFormWrapper> tomeForms = TomeStat.values.map(
-    (TomeStat stat) => TDropdownFormWrapper(
-      title: 'Tomes used in ${stat.name}',
-      subtitle: 'Changing this will affect skills data',
-      setStateCallback: setState,
-      options: character.tomeDropdownOptions(stat),
-      onValueUpdate: _updateTomeSkills,
-    ),
-  ).toList();
-
-  late final List<TNumberFormWrapper> gemForms = gemStats.map(
-    (String stat) => TCharacterNumberForm.gem(
-      title: 'Gems used in $stat',
-      setStateCallback: setState,
-    ),
-  ).toList();
-
-  late final TFixedStringFormWrapper mainEquipForm = TFixedStringFormWrapper(
-    title: 'Main equipment',
-    subtitle: 'Item occupying main slot',
-    setStateCallback: setState,
-    addCallback: ()=>_editMainEquipment(mainEquipForm),
-    editCallback: ()=>_editMainEquipment(mainEquipForm),
-    removeCallback: ()=>_removeEquipment(mainEquipForm),
-    emptyValue: MainEquip.slot0.name,
-  );
-
-  late final List<TFixedStringFormWrapper> subEquipForms = <int>[1, 2, 3].map(
-    (int i) => TFixedStringFormWrapper(
-      title: 'Sub equipment $i',
-      subtitle: 'Item occupying sub slot $i',
-      setStateCallback: setState,
-      addCallback: ()=>_editSubEquipment(subEquipForms[i-1]),
-      editCallback: ()=>_editSubEquipment(subEquipForms[i-1]),
-      removeCallback: ()=>_removeEquipment(subEquipForms[i-1]),
-      emptyValue: 'Empty',
-    ),
-  ).toList();
+  Iterable<MapEntry<FormKey, TForm>> _formMapEntriesFromSkillList({
+    required List<Skill> skills,
+    required Map<Skill, FormKey> keys,
+    required String Function(Skill) subtitleBuilder,
+    required int Function(int) initialValueBuilder,
+    BigInt? minValue,
+  }) {
+    return skills.asMap().keys.map(
+      (int i) => MapEntry<FormKey, TForm>(
+        keys[skills[i]]!,
+        TFormNumber(
+          enabled: true,
+          title: skills[i].name,
+          subtitle: subtitleBuilder(skills[i]),
+          initialValue: initialValueBuilder(i).commaSeparate(),
+          minValue: minValue ?? BigInt.from(0),
+          maxValue: BigInt.from(skills[i].maxLevel),
+          onValueChanged: (String? value) => setState((){}),
+          key: keys[skills[i]],
+        ),
+      ),
+    );
+  }
 
   CharacterData get characterData => saveFileWrapper.saveFile.characterData[
     character.index
   ];
 
   //
-  // Helped methods to handle state changes when forms get altered
+  // Helper methods to handle state changes when forms get altered
   //
 
-  void _editMainEquipment(TFixedStringFormWrapper form) {}
-
-  void _editSubEquipment(TFixedStringFormWrapper form) {}
-
-  void _removeEquipment(TFixedStringFormWrapper form) {
-    setState((){
-      form.controller.text = form.emptyValue;
-    });
-  }
-
-  void _updateLevelPoints() {
+  void _updateLevelPoints(int points) {
     int remainingCap = levelBonusCap;
     // The available points are always 1 less than current level
-    int points = levelForm.getIntValue().toInt() - 1;
-    for (TNumberFormWrapper form in levelBonusForms) {
+    int available = points - 1;
+    for (String stat in stats) {
       // For each point allocated, we decrease the global cap and how many
       // points are left over - this second one can go into the negatives
-      int value = form.getIntValue().toInt();
+      int value = _levelBonusFormsKeys[stat]!.currentState!.intValue;
       remainingCap -= value;
-      points -= value;
+      available -= value;
     }
     setState((){
       // The cap for each individual stat becomes whatever has been allocated,
       // plus whatever is left from the global cap
-      for (TNumberFormWrapper form in levelBonusForms) {
-        form.updateMaxValue(BigInt.from(remainingCap) + form.getIntValue());
+      for (String stat in stats) {
+        TFormNumberState state = _levelBonusFormsKeys[stat]!.currentState!;
+        state.maxValue = BigInt.from(remainingCap + state.intValue);
       }
       // The unused level up points form should be updated automatically
-      unusedLevelForm.controller.text = points.toCommaSeparatedNotation();
+      _unusedLevelFormKey.currentState!.value = available.commaSeparate();
     });
   }
 
-  void _updateTomeSkills() {
+  void _onLevelChange(String? value) => _updateLevelPoints(
+    int.parse(value!.replaceAll(',', '')),
+  );
+
+  void _onLevelBonusChange(String? value) => _updateLevelPoints(
+    _levelFormKey.currentState!.intValue,
+  );
+
+  void _updateTomeSkills(String? value) {
     // First we map out what the skill names and attributes will be for our
     // current tome configuration
     List<Skill> commonSkills = characterData.getCommonSkills(
-      tomeForms.map((TDropdownFormWrapper f) => f.getValue()),
+      _tomeFormsKeys.values.map(
+        (DropdownFormKey key) => key.currentState!.value,
+      ),
     );
     setState((){
-      for (int i = 0; i < BoostSkill.values.length; i++) {
+      for (int i = 0; i < boostSkills.length; i++) {
+        Skill base = boostSkills[i];
         Skill skill = commonSkills[i];
+        TomeStat stat = TomeStat.values.elementAt(i);
+        TFormNumberState boostSkill = _skillsFormsKeys[base]!.currentState!;
         // The title is always updated to match the skill name
-        boostSkillForms[i].title = skill.name;
+        boostSkill.title = skill.name;
         // If the stat has no tomes attached to it and it is not a natural stat
         // for this character, we must zero out the corresponding skill and
         // update the subtitle to convey this new information
-        bool isUnused = tomeForms[i].getValue() == TomeLevel.unused.name;
-        TomeStat stat = TomeStat.values.elementAt(i);
+        String value = _tomeFormsKeys[stat.name]!.currentState!.value;
+        bool isUnused = value == TomeLevel.unused.name;
         bool isNatural = character.isNaturalTomeStat(stat);
         BigInt maxValue;
         String subtitle;
@@ -344,13 +229,15 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
           // Zero out the skill and hint at the need for a tome of insight
           maxValue = BigInt.from(0);
           subtitle = 'Needs a Tome of Insight to unlock';
+          // Also zero the value, since a locked skill can't have points
+          boostSkill.value = '0';
         } else {
           // Unlock the skill from the zero cap and return to regular subtitle
           maxValue = BigInt.from(skill.maxLevel);
           subtitle = skillSubtitle(skill);
         }
-        boostSkillForms[i].updateMaxValue(maxValue);
-        boostSkillForms[i].subtitle = subtitle;
+        boostSkill.subtitle = subtitle;
+        boostSkill.maxValue = maxValue;
       }
     });
   }
@@ -380,27 +267,20 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     return '$overlapName already has this subclass';
   }
 
-  bool _hasChanges() {
-    bool ret = false;
-    for (TFormGroup group in expansionGroups) {
-      ret |= group.checkChanges();
-    }
-    return ret;
-  }
+  bool get _hasChanges => _expansionGroups.any(
+    (TFormGroup group) => group.hasChanges,
+  );
 
-  bool _validateFields() {
-    bool ret = false;
-    for (TFormGroup group in expansionGroups) {
-      ret |= group.checkErrors();
-    }
-    return !ret;
-  }
+  bool get _hasErrors => _expansionGroups.any(
+    (TFormGroup group) => group.hasErrors,
+  );
 
   List<String> _validateMessages() {
     List<String> messages = <String>[];
     // Subclass validation - do nothing, simply warn
-    if (subclassForm.error != '') {
-      messages.add('${subclassForm.error} - no action will be taken');
+    String subclassError = _subclassFormKey.currentState!.errorMessage;
+    if (subclassError != '') {
+      messages.add('$subclassError - no action will be taken');
     }
     return messages;
   }
@@ -408,7 +288,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   void _fixValidationErrors() {}
 
   Future<bool> _checkChangesAndConfirm() async {
-    if (!_hasChanges()) {
+    if (!_hasChanges) {
       return true;
     }
     bool canDiscard = await showUnsavedChangesDialog();
@@ -423,7 +303,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
 
   Future<void> _saveChanges() async {
     // Check if there are invalid fields, properly show them to user
-    if (!_validateFields()) {
+    if (_hasErrors) {
       await logger.log(
         LogLevel.warning,
         'Attempting to save invalid data',
@@ -447,66 +327,79 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     CharacterData data = characterData;
 
     // Basic info - level, exp, bp, subclass
-    data.level = int.parse(levelForm.saveValue());
-    data.experience = BigInt.parse(expForm.saveValue());
-    data.bp = int.parse(bpForm.saveValue());
-    Subclass chosen = Subclass.values.firstWhere(
-      (Subclass s) => s.prettyName == subclassForm.saveValue(),
+    data.level = _levelFormKey.currentState!.saveIntValue();
+    data.experience = _expFormKey.currentState!.saveBigIntValue();
+    data.bp = _bpFormKey.currentState!.saveIntValue();
+    String chosenSubclass = _subclassFormKey.currentState!.saveValue();
+    data.subclass = Subclass.values.firstWhere(
+      (Subclass s) => s.prettyName == chosenSubclass,
     );
-    data.subclass = chosen;
 
     // Library data + Level bonus data
     for (int i = 0; i < stats.length; i++) {
-      data.libraryLevels.setStatData(i, libraryForms[i].saveValue());
-      data.levelBonus.setStatData(i, levelBonusForms[i].saveValue());
+      data.libraryLevels.setStatData(
+        i, _libraryFormsKeys[stats[i]]!.currentState!.saveIntValue(),
+      );
+      data.levelBonus.setStatData(
+        i, _levelBonusFormsKeys[stats[i]]!.currentState!.saveIntValue(),
+      );
     }
     for (int i = 0; i < elements.length; i++) {
-      data.libraryLevels.setElementData(i, libraryElementForms[i].saveValue());
+      data.libraryLevels.setElementData(
+        i, _libraryFormsKeys[elements[i]]!.currentState!.saveIntValue(),
+      );
     }
-    data.unusedBonusPoints = int.parse(unusedLevelForm.saveValue());
+    data.unusedBonusPoints = _unusedLevelFormKey.currentState!.saveIntValue();
 
     // Common skills data
-    for (int i = 0; i < BoostSkill.values.length; i++) {
-      data.skills.setBoostData(i, boostSkillForms[i].saveValue());
+    for (int i = 0; i < boostSkills.length; i++) {
+      data.skills.setBoostData(
+        i, _skillsFormsKeys[boostSkills[i]]!.currentState!.saveIntValue(),
+      );
     }
-    for (int i = 0; i < ExpSkill.values.length; i++) {
-      data.skills.setExpData(i, expSkillForms[i].saveValue());
+    for (int i = 0; i < expSkills.length; i++) {
+      data.skills.setExpData(
+        i, _skillsFormsKeys[expSkills[i]]!.currentState!.saveIntValue(),
+      );
     }
 
     // Personal skills and spells data
     for (int i = 0; i < character.skills.length; i++) {
-      data.skills.personalSkills[i] = int.parse(
-        personalSkillForms[i].saveValue(),
-      );
+      NumberFormKey key = _skillsFormsKeys[character.skills[i]]!;
+      data.skills.personalSkills[i] = key.currentState!.saveIntValue();
     }
-    for (int i = 0; i < character.spells.length; i++) {
-      data.skills.personalSpells[i] = int.parse(
-        personalSpellForms[i].saveValue(),
-      );
+    List<Skill> spells = character.spells + character.awakeningSpells;
+    for (int i = 0; i < spells.length; i++) {
+      NumberFormKey key = _skillsFormsKeys[spells[i]]!;
+      data.skills.personalSpells[i] = key.currentState!.saveIntValue();
     }
 
     // Tome data
-    for (TomeStat stat in TomeStat.values) {
+    for (TomeStat stat in tomeStats) {
       data.tomes.setStatData(
         stat.index,
-        tomeForms[stat.index].saveValue(),
+        _tomeFormsKeys[stat.name]!.currentState!.saveValue(),
         isNatural: character.isNaturalTomeStat(stat),
       );
     }
 
     // Gem data
     for (int i = 0; i < gemStats.length; i++) {
-      data.gems.setStatData(i, gemForms[i].saveValue());
+      data.gems.setStatData(
+        i, _gemFormsKeys[gemStats[i]]!.currentState!.saveIntValue(),
+      );
     }
 
     // Equipment data
+    String chosenName = _mainEquipFormKey.currentState!.saveValue();
     MainEquip chosenMain = MainEquip.values.firstWhere(
-      (MainEquip e) => e.name == mainEquipForm.saveValue(),
+      (MainEquip e) => e.name == chosenName,
     );
     data.mainEquip = chosenMain;
     for (int i = 0; i < 3; i++) {
+      chosenName = _subEquipFormKeys[i].currentState!.saveValue();
       SubEquip chosenSub = SubEquip.values.firstWhere(
-        (SubEquip e) => e.name == subEquipForms[i].saveValue(),
+        (SubEquip e) => e.name == chosenName,
       );
       data.subEquips[i] = chosenSub;
     }
@@ -515,136 +408,271 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     setState((){});
   }
 
+  //
+  // Init and build the state
+  //
+
   @override
   void initState() {
     super.initState();
 
     // Initialize form data based on save data
     CharacterData data = characterData;
+    LibraryData libraryData = data.libraryLevels;
 
-    // Basic info - level, exp, bp, subclass
-    levelForm.initNumberForm(BigInt.from(data.level));
-    expForm.initNumberForm(data.experience);
-    bpForm.initNumberForm(BigInt.from(data.bp));
-    subclassForm.initDropdownForm(data.subclass.prettyName);
+    _expansionGroups = <TFormGroup>[
+      // Basic info - level, exp, bp, subclass
+      TFormGroup(
+        title: 'Level, EXP, BP, Subclass',
+        forms: <FormKey, TForm>{
+          _levelFormKey: TFormNumber(
+            enabled: true,
+            title: 'Level',
+            subtitle: 'Must be between 1 and ${levelCap.commaSeparate()}',
+            initialValue: data.level.commaSeparate(),
+            minValue: BigInt.from(1),
+            maxValue: BigInt.from(levelCap),
+            onValueChanged: _onLevelChange,
+            key: _levelFormKey,
+          ),
+          _expFormKey: TFormNumber(
+            enabled: true,
+            title: 'Experience',
+            subtitle: 'Must be below 1 quintillion',
+            initialValue: data.experience.commaSeparate(),
+            minValue: BigInt.from(0),
+            maxValue: BigInt.parse(expCap),
+            onValueChanged: (String? value) => setState((){}),
+            key: _expFormKey,
+          ),
+          _bpFormKey: TFormNumber(
+            enabled: true,
+            title: 'Battle Points',
+            subtitle: 'Must be at most ${bpCap.commaSeparate()}',
+            initialValue: data.bp.commaSeparate(),
+            minValue: BigInt.from(0),
+            maxValue: BigInt.from(bpCap),
+            onValueChanged: (String? value) => setState((){}),
+            key: _bpFormKey,
+          ),
+          _subclassFormKey: TFormDropdown(
+            enabled: true,
+            title: 'Subclass',
+            subtitle: 'Changing this will affect skills data',
+            hintText: 'Select a subclass',
+            options: Subclass.values.map((Subclass s) => s.prettyName).toList(),
+            initialValue: data.subclass.prettyName,
+            validationCallback: _checkForDuplicateUniqueSubclasses,
+            onValueChanged: (String? value) => setState((){}),
+            key: _subclassFormKey,
+          ),
+        },
+      ),
+      // Library info
+      TFormGroup(
+        title: 'Library points',
+        forms: Map<FormKey, TForm>.fromEntries(
+          _formMapEntriesFromList(
+            names: stats,
+            keys: _libraryFormsKeys,
+            titleBuilder: (String name) => '$name Level',
+            subtitleBuilder: (String name) => librarySubtitle,
+            initialValueBuilder: (int i) => libraryData.getStatData(i),
+            maxValue: BigInt.from(libraryCap),
+          ).followedBy(
+            _formMapEntriesFromList(
+              names: elements,
+              keys: _libraryFormsKeys,
+              titleBuilder: (String name) => '$name Level',
+              subtitleBuilder: (String name) => libraryElementSubtitle,
+              initialValueBuilder: (int i) => libraryData.getElementData(i),
+              maxValue: BigInt.from(libraryElementCap),
+            ),
+          ),
+        ),
+      ),
+      // Level up info and unused level bonus
+      TFormGroup(
+        title: 'Level up bonuses',
+        forms: <FormKey, TForm>{
+          _unusedLevelFormKey: TFormNumber(
+            enabled: false,
+            title: 'Unused points',
+            subtitle: 'Updated automatically with level and used points',
+            initialValue: data.unusedBonusPoints.commaSeparate(),
+            minValue: BigInt.from(-levelBonusCap),
+            maxValue: BigInt.from(levelBonusCap),
+            key: _unusedLevelFormKey,
+          ),
+        }..addEntries(
+          _formMapEntriesFromList(
+            names: stats,
+            keys: _levelBonusFormsKeys,
+            titleBuilder: (String name) => 'Points in $name',
+            subtitleBuilder: (String name) => '',
+            initialValueBuilder: (int i) => data.levelBonus.getStatData(i),
+            maxValue: BigInt.from(levelCap - 1),
+            onValueChanged: _onLevelBonusChange,
+          ),
+        ),
+      ),
+      // Common skill data
+      TFormGroup(
+        title: 'Skill points (Common)',
+        forms: Map<FormKey, TForm>.fromEntries(
+          _formMapEntriesFromSkillList(
+            skills: boostSkills,
+            keys: _skillsFormsKeys,
+            subtitleBuilder: skillSubtitle,
+            initialValueBuilder: (int i) => data.skills.getBoostData(i),
+          ).followedBy(
+            _formMapEntriesFromSkillList(
+              skills: expSkills,
+              keys: _skillsFormsKeys,
+              subtitleBuilder: skillSubtitle,
+              initialValueBuilder: (int i) => data.skills.getExpData(i),
+            ),
+          ),
+        ),
+      ),
+      // Personal skill data
+      TFormGroup(
+        title: 'Skill points (Personal)',
+        forms: Map<FormKey, TForm>.fromEntries(
+          _formMapEntriesFromSkillList(
+            skills: character.skills,
+            keys: _skillsFormsKeys,
+            subtitleBuilder: skillSubtitle,
+            initialValueBuilder: (int i) => data.skills.personalSkills[i],
+          ).followedBy(
+            _formMapEntriesFromSkillList(
+              skills: character.spells,
+              keys: _skillsFormsKeys,
+              subtitleBuilder: spellSubtitle,
+              initialValueBuilder: (int i) => data.skills.personalSpells[i],
+              minValue: BigInt.from(1),
+            ),
+          ).followedBy(
+            _formMapEntriesFromSkillList(
+              skills: character.awakeningSpells,
+              keys: _skillsFormsKeys,
+              subtitleBuilder: skillSubtitle,
+              initialValueBuilder: (int i) => data.skills.personalSpells[
+                character.spells.length + i
+              ],
+            ),
+          ),
+        ),
+      ),
+      // Subclass skill data
+      TFormGroup(title: 'Skill points (Subclass)', forms: <FormKey, TForm>{}),
+      // Tome level data
+      TFormGroup(
+        title: 'Tomes',
+        forms: Map<FormKey, TForm>.fromEntries(
+          tomeStats.map(
+            (TomeStat stat) => MapEntry<FormKey, TForm>(
+              _tomeFormsKeys[stat.name]!,
+              TFormDropdown(
+                enabled: true,
+                title: 'Tomes used in ${stat.name}',
+                subtitle: 'Changing this will affect skills data',
+                hintText: 'Select a tome level',
+                options: character.tomeDropdownOptions(stat),
+                initialValue: data.tomes.getStatData(stat.index).name,
+                onValueChanged: _updateTomeSkills,
+                key: _tomeFormsKeys[stat.name],
+              ),
+            ),
+          ),
+        ),
+      ),
+      // Gem level data
+      TFormGroup(
+        title: 'Gems',
+        forms: Map<FormKey, TForm>.fromEntries(
+          _formMapEntriesFromList(
+            names: gemStats,
+            keys: _gemFormsKeys,
+            titleBuilder: (String name) => 'Gems used in $name',
+            subtitleBuilder: (String name) => '',
+            initialValueBuilder: (int i) => data.gems.getStatData(i),
+            maxValue: BigInt.from(gemCap),
+          ),
+        ),
+      ),
+      // Equipment data
+      TFormGroup(
+        title: 'Equipment',
+        forms: <FormKey, TForm>{
+          _mainEquipFormKey: TFormFixed(
+            title: 'Main equipment',
+            subtitle: 'Item occupying the main slot',
+            initialValue: data.mainEquip.name,
+            setCallback: (){},
+            onValueChanged: (String? value) => setState((){}),
+            emptyValue: MainEquip.slot0.name,
+            key: _mainEquipFormKey,
+          ),
+        }..addEntries(
+          <int>[1, 2, 3].map(
+            (int i) => MapEntry<FormKey, TForm>(
+              _subEquipFormKeys[i-1],
+              TFormFixed(
+                title: 'Sub equipment $i',
+                subtitle: 'Item occupying sub slot $i',
+                initialValue: data.subEquips[i-1].name,
+                setCallback: (){},
+                onValueChanged: (String? value) => setState((){}),
+                emptyValue: SubEquip.slot0.name,
+                key: _subEquipFormKeys[i-1],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ];
 
-    // Library info + Level up info
-    for (int i = 0; i < stats.length; i++) {
-      libraryForms[i].initNumberForm(
-        BigInt.from(data.libraryLevels.getStatData(i)),
-      );
-      levelBonusForms[i].initNumberForm(
-        BigInt.from(data.levelBonus.getStatData(i)),
-      );
-    }
-    for (int i = 0; i < elements.length; i++) {
-      libraryElementForms[i].initNumberForm(
-        BigInt.from(data.libraryLevels.getElementData(i)),
-      );
-    }
-
-    // Common skills info
-    for (int i = 0; i < BoostSkill.values.length; i++) {
-      boostSkillForms[i].initNumberForm(
-        BigInt.from(data.skills.getBoostData(i)),
-      );
-    }
-    for (int i = 0; i < ExpSkill.values.length; i++) {
-      expSkillForms[i].initNumberForm(
-        BigInt.from(data.skills.getExpData(i)),
-      );
-    }
-
-    // Personal skills and spells info
-    for (int i = 0; i < character.skills.length; i++) {
-      personalSkillForms[i].initNumberForm(
-        BigInt.from(data.skills.personalSkills[i]),
-      );
-    }
-    for (int i = 0; i < character.spells.length; i++) {
-      personalSpellForms[i].initNumberForm(
-        BigInt.from(data.skills.personalSpells[i]),
-      );
-    }
-
-    // Tomes info
-    for (int i = 0; i < TomeStat.values.length; i++) {
-      tomeForms[i].initDropdownForm(data.tomes.getStatData(i).name);
-    }
-    _updateTomeSkills();
-
-    // Gems info
-    for (int i = 0; i < gemStats.length; i++) {
-      gemForms[i].initNumberForm(
-        BigInt.from(data.gems.getStatData(i)),
-      );
-    }
-
-    // Equipment info
-    mainEquipForm.initForm(data.mainEquip.name);
-    for (int i = 0; i < 3; i++) {
-      subEquipForms[i].initForm(data.subEquips[i].name);
-    }
-
-    // Set and update unused level up bonus info
-    unusedLevelForm.initNumberForm(
-      BigInt.from(data.unusedBonusPoints),
-    );
-    _updateLevelPoints();
+    // Call setState one last time after build runs for the first time
+    // This causes the hasChanges and hasErrors to show up from initState
+    WidgetsBinding.instance.addPostFrameCallback((Duration d) {
+      _updateLevelPoints(data.level);
+      _updateTomeSkills(null);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    String characterName = character.name.upperCaseFirstChar();
-    List<Widget> columnChildren = <Widget>[
-      ExpansionPanelList(
-        expansionCallback: (int index, bool isExpanded) {
-          setState(() {
-            expansionGroups[index].toggleExpanded();
-          });
-        },
-        children: expansionGroups.map(
-          (TFormGroup group) => group.build(),
-        ).toList(),
-      ),
-    ];
-    _validateFields();
-    bool shouldSave = _hasChanges();
-    Widget? floatingActionButton;
-    if (shouldSave) {
-      floatingActionButton = FloatingActionButton(
-        onPressed: _saveChanges,
-        child: const Icon(Icons.save),
-      );
-    }
     return WillPopScope(
       onWillPop: _checkChangesAndConfirm,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Edit $characterName's data"),
+      child: CommonScaffold(
+        title: "Edit ${character.name.upperCaseFirstChar()}'s data",
+        floatingActionButton: _hasChanges
+          ? TSaveButton(onPressed: _saveChanges)
+          : null,
+        padding: const EdgeInsets.fromLTRB(20, 0, 250, 0),
+        background: Opacity(
+          opacity: 0.8,
+          child: Image.asset(
+            'img/character/${character.filename}.png',
+            alignment: Alignment.bottomRight,
+            fit: BoxFit.fitHeight,
+            width: double.infinity,
+            height: double.infinity,
+          ),
         ),
-        floatingActionButton: floatingActionButton,
-        backgroundColor: Colors.white.withOpacity(0.2),
-        body: Stack(
-          children: <Widget>[
-            _backgroundPortrait,
-            Positioned.fill(
-              child: ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 250, 0),
-                    child: Column(
-                      children: columnChildren.separateWith(
-                        const SizedBox(height: 20),
-                        separatorOnEnds: true,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        children: <Widget>[
+          ExpansionPanelList(
+            expansionCallback: (int index, bool isExpanded) {
+              setState(() {
+                _expansionGroups[index].toggleExpanded();
+              });
+            },
+            children: _expansionGroups.map(
+              (TFormGroup group) => group.expansionPanel,
+            ).toList(),
+          ),
+        ],
       ),
     );
   }

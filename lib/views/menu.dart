@@ -9,6 +9,7 @@ import 'package:thlaby2_save_editor/views/character_data.dart';
 import 'package:thlaby2_save_editor/views/party_data.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/widgets/character_roster.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
@@ -120,6 +121,12 @@ class MenuState extends CommonState<MenuWidget> {
     await showCommonDialog(
       const TSuccessDialog(title: 'Save file exported successfully'),
     );
+  }
+
+  @override
+  Future<void> didChangeDependencies() async {
+    super.didChangeDependencies();
+    await CharacterRoster.precachePortraits(context);
   }
 
   @override

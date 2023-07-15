@@ -41,6 +41,13 @@ class CharacterBox extends StatelessWidget {
     super.key,
   });
 
+  static Image imageFromName(String filename) {
+    return Image.asset(
+      'img/character/${filename}_S.png',
+      fit: BoxFit.contain,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     bool enabled = unlocked || interactWhenLocked;
@@ -80,10 +87,7 @@ class CharacterBox extends StatelessWidget {
             ),
             child: ColorFiltered(
               colorFilter: unlocked ? identity : greyscale,
-              child: Image.asset(
-                'img/character/${filename}_S.png',
-                fit: BoxFit.contain,
-              ),
+              child: imageFromName(filename),
             ),
           ),
         ],

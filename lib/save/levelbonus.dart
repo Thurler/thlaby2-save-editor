@@ -14,8 +14,7 @@ class LevelBonus {
     return <int>[hp, atk, def, mag, mnd, spd][index];
   }
 
-  void setStatData(int index, String raw) {
-    int value = int.parse(raw);
+  void setStatData(int index, int value) {
     switch (index) {
       case 0: hp = value; break;
       case 1: atk = value; break;
