@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/mixins/alert.dart';
+import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
+import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/equip.dart';
 import 'package:thlaby2_save_editor/save/library.dart';
@@ -26,7 +29,10 @@ class CharacterEditWidget extends StatefulWidget {
   State<CharacterEditWidget> createState() => CharacterEditState();
 }
 
-class CharacterEditState extends CommonState<CharacterEditWidget> {
+class CharacterEditState extends State<CharacterEditWidget> with Loggable,
+    SaveReader, AlertHandler<CharacterEditWidget>,
+    DiscardableChanges<CharacterEditWidget>,
+    BreakableChanges<CharacterEditWidget> {
   static const List<String> stats = <String>[
     'HP', 'ATK', 'DEF', 'MAG', 'MND', 'SPD',
   ];

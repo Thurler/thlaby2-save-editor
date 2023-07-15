@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/mixins/alert.dart';
+import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
+import 'package:thlaby2_save_editor/mixins/exception.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
@@ -41,7 +43,9 @@ class SettingsWidget extends StatefulWidget {
   State<SettingsWidget> createState() => SettingsState();
 }
 
-class SettingsState extends CommonState<SettingsWidget> {
+class SettingsState extends State<SettingsWidget> with Loggable,
+    AlertHandler<SettingsWidget>, ExceptionHandler<SettingsWidget>,
+    DiscardableChanges<SettingsWidget> {
   static const List<String> _options = <String>[
     'Debug (everything is logged)',
     'Info (major actions and higher are logged)',

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/common.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/widgets/character_roster.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
@@ -11,7 +11,8 @@ class CharacterSelectWidget extends StatefulWidget {
   State<CharacterSelectWidget> createState() => CharacterSelectState();
 }
 
-class CharacterSelectState extends CommonState<CharacterSelectWidget> {
+class CharacterSelectState extends State<CharacterSelectWidget> with
+    SaveReader {
   Character? _hover;
 
   Future<void> _selectCharacter(Character character) async {

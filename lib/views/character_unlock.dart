@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/mixins/alert.dart';
+import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
+import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
@@ -19,7 +22,10 @@ class CharacterUnlockWidget extends StatefulWidget {
   State<CharacterUnlockWidget> createState() => CharacterUnlockState();
 }
 
-class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
+class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
+    SaveReader, AlertHandler<CharacterUnlockWidget>,
+    DiscardableChanges<CharacterUnlockWidget>,
+    BreakableChanges<CharacterUnlockWidget> {
   late List<CharacterUnlockFlag> _flags;
   late List<CharacterUnlockFlag> _original;
   Character? _hover;

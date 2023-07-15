@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/mixins/alert.dart';
+import 'package:thlaby2_save_editor/mixins/exception.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/views/menu.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
@@ -18,7 +19,8 @@ class MainWidget extends StatefulWidget {
   State<MainWidget> createState() => MainState();
 }
 
-class MainState extends CommonState<MainWidget> with SaveWriter {
+class MainState extends State<MainWidget> with SaveReader, SaveWriter, Loggable,
+    AlertHandler<MainWidget>, ExceptionHandler<MainWidget> {
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(
       logMessage: 'FileSystem Exception when loading file: ${e.message}',

@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/mixins/alert.dart';
+import 'package:thlaby2_save_editor/mixins/exception.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/views/character_data.dart';
 import 'package:thlaby2_save_editor/views/party_data.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
@@ -19,7 +21,8 @@ class MenuWidget extends StatefulWidget {
   State<MenuWidget> createState() => MenuState();
 }
 
-class MenuState extends CommonState<MenuWidget> {
+class MenuState extends State<MenuWidget> with SaveReader, Loggable,
+    AlertHandler<MenuWidget>, ExceptionHandler<MenuWidget> {
   Future<bool> _alertUnexportedChanges() async {
     TBoolDialog dialog = const TBoolDialog(
       title: 'Did you export your changes?',

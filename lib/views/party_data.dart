@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/mixins/alert.dart';
+import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
+import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 import 'package:thlaby2_save_editor/views/character_select.dart';
@@ -16,7 +19,9 @@ class PartyDataWidget extends StatefulWidget {
   State<PartyDataWidget> createState() => PartyDataState();
 }
 
-class PartyDataState extends CommonState<PartyDataWidget> {
+class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
+    AlertHandler<PartyDataWidget>, DiscardableChanges<PartyDataWidget>,
+    BreakableChanges<PartyDataWidget> {
   late List<PartySlot> _editable;
   late List<PartySlot> _original;
   PartySlot? _hover;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/views/character_edit.dart';
 import 'package:thlaby2_save_editor/views/character_unlock.dart';
@@ -15,7 +15,8 @@ class CharacterDataWidget extends StatefulWidget {
   State<CharacterDataWidget> createState() => CharacterUnlockState();
 }
 
-class CharacterUnlockState extends CommonState<CharacterDataWidget> {
+class CharacterUnlockState extends State<CharacterDataWidget> with Loggable,
+    SaveReader {
   Character? _hover;
 
   Future<void> _navigateToCharacterUnlock() async {
