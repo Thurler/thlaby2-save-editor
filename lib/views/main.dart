@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/exception.dart';
+import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/views/menu.dart';
-import 'package:thlaby2_save_editor/views/settings.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
@@ -20,7 +19,8 @@ class MainWidget extends StatefulWidget {
 }
 
 class MainState extends State<MainWidget> with SaveReader, SaveWriter, Loggable,
-    AlertHandler<MainWidget>, ExceptionHandler<MainWidget> {
+    AlertHandler<MainWidget>, ExceptionHandler<MainWidget>,
+    Navigatable<MainWidget> {
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(
       logMessage: 'FileSystem Exception when loading file: ${e.message}',
@@ -40,7 +40,6 @@ class MainState extends State<MainWidget> with SaveReader, SaveWriter, Loggable,
   }
 
   Future<void> _loadSteamSaveFile() async {
-    NavigatorState state = Navigator.of(context);
     await log(LogLevel.debug, 'Load Steam Save File called');
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -92,32 +91,14 @@ class MainState extends State<MainWidget> with SaveReader, SaveWriter, Loggable,
       );
       return;
     }
-    if (!state.mounted) {
-      return;
-    }
-    await state.push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const MenuWidget(),
-      ),
-    );
-  }
-
-  Future<void> _navigateToSettings() async {
-    NavigatorState state = Navigator.of(context);
-    await log(LogLevel.info, 'Opening settings widget');
-    await state.push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const SettingsWidget(),
-      ),
-    );
-    await log(LogLevel.info, 'Closed settings widget');
+    return navigateToMainMenu();
   }
 
   @override
   Widget build(BuildContext context) {
     return CommonScaffold(
       title: 'Touhou Labyrinth 2 Save Editor',
-      settingsLink: _navigateToSettings,
+      settingsLink: navigateToSettings,
       children: <Widget>[
         Image.asset('img/title.png'),
         SpacedRow(

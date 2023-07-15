@@ -4,10 +4,10 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
+import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
-import 'package:thlaby2_save_editor/views/character_select.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/party_row.dart';
 import 'package:thlaby2_save_editor/widgets/save_button.dart';
@@ -21,7 +21,7 @@ class PartyDataWidget extends StatefulWidget {
 
 class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
     AlertHandler<PartyDataWidget>, DiscardableChanges<PartyDataWidget>,
-    BreakableChanges<PartyDataWidget> {
+    BreakableChanges<PartyDataWidget>, Navigatable<PartyDataWidget> {
   late List<PartySlot> _editable;
   late List<PartySlot> _original;
   PartySlot? _hover;
@@ -99,16 +99,8 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
   }
 
   Future<void> _changePartyMember(PartySlot slot) async {
-    NavigatorState state = Navigator.of(context);
-    await log(LogLevel.info, 'Opening character select widget');
-    Character? selected = await state.push(
-      MaterialPageRoute<Character>(
-        builder: (BuildContext context) => const CharacterSelectWidget(),
-      ),
-    );
-    await log(LogLevel.info, 'Closed character select widget');
+    Character? selected = await navigateToCharacterSelect();
     if (selected != null) {
-      await log(LogLevel.debug, 'Chosen character: ${selected.name}');
       setState(() {
         slot.isUsed = true;
         slot.character = selected;

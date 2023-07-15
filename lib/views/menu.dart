@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/exception.dart';
+import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/views/character_data.dart';
-import 'package:thlaby2_save_editor/views/party_data.dart';
-import 'package:thlaby2_save_editor/views/settings.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/character_roster.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
@@ -22,7 +20,8 @@ class MenuWidget extends StatefulWidget {
 }
 
 class MenuState extends State<MenuWidget> with SaveReader, Loggable,
-    AlertHandler<MenuWidget>, ExceptionHandler<MenuWidget> {
+    AlertHandler<MenuWidget>, ExceptionHandler<MenuWidget>,
+    Navigatable<MenuWidget> {
   Future<bool> _alertUnexportedChanges() async {
     TBoolDialog dialog = const TBoolDialog(
       title: 'Did you export your changes?',
@@ -48,45 +47,6 @@ class MenuState extends State<MenuWidget> with SaveReader, Loggable,
       dialogBody: 'Make sure your user has permission to write the file in '
         'the folder you chose.',
     );
-  }
-
-  Future<void> _navigateToSettings() async {
-    NavigatorState state = Navigator.of(context);
-    await log(LogLevel.info, 'Opening settings widget');
-    await state.push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const SettingsWidget(),
-      ),
-    );
-    await log(LogLevel.info, 'Closed settings widget');
-  }
-
-  Future<void> _editCharacterData() async {
-    NavigatorState state = Navigator.of(context);
-    await log(LogLevel.debug, 'Opening character data edit widget');
-    if (!state.mounted) {
-      return;
-    }
-    await state.push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const CharacterDataWidget(),
-      ),
-    );
-    await log(LogLevel.debug, 'Closed character data edit widget');
-  }
-
-  Future<void> _editPartyData() async {
-    NavigatorState state = Navigator.of(context);
-    await log(LogLevel.debug, 'Opening party data edit widget');
-    if (!state.mounted) {
-      return;
-    }
-    await state.push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) => const PartyDataWidget(),
-      ),
-    );
-    await log(LogLevel.debug, 'Closed party data edit widget');
   }
 
   Future<void> _saveSteamSaveFile() async {
@@ -130,7 +90,7 @@ class MenuState extends State<MenuWidget> with SaveReader, Loggable,
       onWillPop: _alertUnexportedChanges,
       child: CommonScaffold(
         title: 'Touhou Labyrinth 2 Save Editor - Menu',
-        settingsLink: _navigateToSettings,
+        settingsLink: navigateToSettings,
         children: <Widget>[
           const SpacedRow(
             spacer: SizedBox(width: 20),
@@ -151,12 +111,12 @@ class MenuState extends State<MenuWidget> with SaveReader, Loggable,
               TButton(
                 text: 'Character Data',
                 icon: Icons.person,
-                onPressed: _editCharacterData,
+                onPressed: navigateToCharacterData,
               ),
               TButton(
                 text: 'Party Data',
                 icon: Icons.groups,
-                onPressed: _editPartyData,
+                onPressed: navigateToPartyEdit,
               ),
             ],
           ),
