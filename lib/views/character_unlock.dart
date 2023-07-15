@@ -13,7 +13,6 @@ import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/character_box_title_unlock.dart';
 import 'package:thlaby2_save_editor/widgets/character_roster.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
-import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 class CharacterUnlockWidget extends StatefulWidget {
   const CharacterUnlockWidget({super.key});
@@ -40,7 +39,8 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
     return false;
   }
 
-  Future<void> _saveChanges() async {
+  @override
+  Future<void> saveChanges() async {
     // Display a warning if trying to lock characters that are in the party
     List<PartySlot> party = saveFile.partyData;
     List<CharacterUnlockFlag> lockedPartyCharacters = _flags.where(
@@ -157,9 +157,7 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
       onWillPop: checkChangesAndConfirm,
       child: CommonScaffold(
         title: 'Edit which characters are unlocked',
-        floatingActionButton: hasChanges
-          ? TSaveButton(onPressed: _saveChanges)
-          : null,
+        floatingActionButton: saveButton,
         children: <Widget>[
           Wrap(
             spacing: 20,

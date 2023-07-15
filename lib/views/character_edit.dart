@@ -14,7 +14,6 @@ import 'package:thlaby2_save_editor/save/tome.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/form_group.dart';
-import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 typedef DropdownFormKeyMap = Map<String, DropdownFormKey>;
 typedef NumberFormKeyMap = Map<String, NumberFormKey>;
@@ -292,7 +291,8 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
 
   void _fixValidationErrors() {}
 
-  Future<void> _saveChanges() async {
+  @override
+  Future<void> saveChanges() async {
     // Check if there are invalid fields, properly show them to user
     if (_hasErrors) {
       await log(LogLevel.warning, 'Attempting to save invalid data');
@@ -635,9 +635,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
       onWillPop: checkChangesAndConfirm,
       child: CommonScaffold(
         title: "Edit ${character.name.upperCaseFirstChar()}'s data",
-        floatingActionButton: hasChanges
-          ? TSaveButton(onPressed: _saveChanges)
-          : null,
+        floatingActionButton: saveButton,
         padding: const EdgeInsets.fromLTRB(20, 0, 250, 0),
         background: Opacity(
           opacity: 0.8,

@@ -10,7 +10,6 @@ import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/party_row.dart';
-import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 class PartyDataWidget extends StatefulWidget {
   const PartyDataWidget({super.key});
@@ -41,7 +40,8 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
     return false;
   }
 
-  Future<void> _saveChanges() async {
+  @override
+  Future<void> saveChanges() async {
     // Display a warning if trying to include duplicates
     bool hasDuplicates = false;
     for (int i = 0; i < _editable.length; i++) {
@@ -120,9 +120,7 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
       onWillPop: checkChangesAndConfirm,
       child: CommonScaffold(
         title: 'Edit which characters are in the party',
-        floatingActionButton: hasChanges
-          ? TSaveButton(onPressed: _saveChanges)
-          : null,
+        floatingActionButton: saveButton,
         children: <int>[8, 4, 0].map<Widget>(
           (int index) => PartyRow(
             slots: _editable.sublist(index, index + 4),

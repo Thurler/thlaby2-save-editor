@@ -8,7 +8,6 @@ import 'package:thlaby2_save_editor/mixins/exception.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
-import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 class Settings {
   late LogLevel logLevel;
@@ -71,7 +70,8 @@ class SettingsState extends State<SettingsWidget> with Loggable,
     );
   }
 
-  Future<void> _saveChanges() async {
+  @override
+  Future<void> saveChanges() async {
     String chosenOption = _logLevelFormKey.currentState!.value;
     _settings.logLevel = LogLevel.values[_options.indexOf(chosenOption)];
     try {
@@ -138,9 +138,7 @@ class SettingsState extends State<SettingsWidget> with Loggable,
       onWillPop: checkChangesAndConfirm,
       child: CommonScaffold(
         title: 'Touhou Labyrinth 2 Save Editor - Settings',
-        floatingActionButton: hasChanges
-          ? TSaveButton(onPressed: _saveChanges)
-          : null,
+        floatingActionButton: saveButton,
         children: <Widget>[
           RoundedBorder(
             color: TFormTitle.subtitleColor,

@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
+import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
 mixin DiscardableChanges<T extends StatefulWidget> on Loggable,
     AlertHandler<T> {
   bool get hasChanges;
+  Future<void> saveChanges();
+
+  FloatingActionButton? get saveButton {
+    return hasChanges ? TSaveButton(onPressed: saveChanges) : null;
+  }
 
   Future<bool> _showUnsavedChangesDialog() {
     return showBoolDialog(
