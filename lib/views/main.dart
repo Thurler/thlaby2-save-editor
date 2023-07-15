@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -40,33 +39,25 @@ class MainState extends CommonState<MainWidget> {
 
   Future<void> _loadSteamSaveFile() async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.debug, 'Load Steam Save File called');
+    await log(LogLevel.debug, 'Load Steam Save File called');
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: <String>['dat'],
     );
     if (result == null) {
-      await logger.log(LogLevel.debug, 'No file selected');
+      await log(LogLevel.debug, 'No file selected');
       return;
     }
-    bool hasErrors = false;
     try {
-      await logger.log(LogLevel.info, 'Loading save file in Steam format');
+      await log(LogLevel.info, 'Loading save file in Steam format');
       String path = result.files.first.path ?? '';
       String name = path.split('/').last.split(r'\').last;
-      await logger.log(LogLevel.debug, 'File selected: $name');
+      await log(LogLevel.debug, 'File selected: $name');
       File rawFile = File(path);
       List<int> bytes = await rawFile.readAsBytes();
-      LogBuffer logBuffer = LogBuffer();
-      saveFileWrapper.saveFile = SaveFile.fromSteamBytes(bytes, logBuffer);
-      for (String line in LineSplitter.split(logBuffer.debug.toString())) {
-        await logger.log(LogLevel.debug, line);
-      }
-      for (String line in LineSplitter.split(logBuffer.error.toString())) {
-        hasErrors = true;
-        await logger.log(LogLevel.error, line);
-      }
-      await logger.log(LogLevel.info, 'Steam save file loaded successfully');
+      saveFileWrapper.saveFile = SaveFile.fromSteamBytes(bytes);
+      await logFlush();
+      await log(LogLevel.info, 'Steam save file loaded successfully');
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);
       return;
@@ -84,7 +75,7 @@ class MainState extends CommonState<MainWidget> {
       await handleUnexpectedException(e, s);
       return;
     }
-    if (hasErrors) {
+    if (saveFileWrapper.saveFile.loadedWithErrors) {
       await showCommonDialog(
         const TWarningDialog(
           title: 'The loaded save file had errors',
@@ -97,6 +88,7 @@ class MainState extends CommonState<MainWidget> {
           confirmText: 'OK',
         ),
       );
+      return;
     }
     if (!state.mounted) {
       return;
@@ -110,13 +102,13 @@ class MainState extends CommonState<MainWidget> {
 
   Future<void> _navigateToSettings() async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.info, 'Opening settings widget');
+    await log(LogLevel.info, 'Opening settings widget');
     await state.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => const SettingsWidget(),
       ),
     );
-    await logger.log(LogLevel.info, 'Closed settings widget');
+    await log(LogLevel.info, 'Closed settings widget');
   }
 
   @override

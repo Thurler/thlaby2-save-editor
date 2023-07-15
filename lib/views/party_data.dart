@@ -41,7 +41,7 @@ class PartyDataState extends CommonState<PartyDataWidget> {
     }
     bool canDiscard = await showUnsavedChangesDialog();
     if (canDiscard) {
-      await logger.log(LogLevel.info, 'Discarding changes to party edit flags');
+      await log(LogLevel.info, 'Discarding changes to party edit flags');
     }
     return canDiscard;
   }
@@ -67,10 +67,7 @@ class PartyDataState extends CommonState<PartyDataWidget> {
       }
     }
     if (hasDuplicates) {
-      await logger.log(
-        LogLevel.warning,
-        'Attempting to include duplicates in party',
-      );
+      await log(LogLevel.warning, 'Attempting to include duplicates in party');
       bool doSave = await showSaveWarningDialog(
         'Having duplicates in the frontline can confuse the game when '
         "computing a duplicated character's MP and TP after a battle",
@@ -81,10 +78,7 @@ class PartyDataState extends CommonState<PartyDataWidget> {
     }
     // Display a warning if trying to empty the front line
     if (_editable.sublist(0, 4).every((PartySlot s)=>!s.isUsed)) {
-      await logger.log(
-        LogLevel.warning,
-        'Attempting to empty the entire front row',
-      );
+      await log(LogLevel.warning, 'Attempting to empty the entire front row');
       bool doSave = await showSaveWarningDialog(
         'An empty frontline can crash the game if you go into battle',
       );
@@ -92,7 +86,7 @@ class PartyDataState extends CommonState<PartyDataWidget> {
         return;
       }
     }
-    await logger.log(LogLevel.info, 'Saved changes');
+    await log(LogLevel.info, 'Saved changes');
     setState(() {
       _original = _editable.deepCopyElements(PartySlot.from);
       saveFileWrapper.saveFile.partyData = _original;
@@ -101,15 +95,15 @@ class PartyDataState extends CommonState<PartyDataWidget> {
 
   Future<void> _changePartyMember(PartySlot slot) async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.info, 'Opening character select widget');
+    await log(LogLevel.info, 'Opening character select widget');
     Character? selected = await state.push(
       MaterialPageRoute<Character>(
         builder: (BuildContext context) => const CharacterSelectWidget(),
       ),
     );
-    await logger.log(LogLevel.info, 'Closed character select widget');
+    await log(LogLevel.info, 'Closed character select widget');
     if (selected != null) {
-      await logger.log(LogLevel.debug, 'Chosen character: ${selected.name}');
+      await log(LogLevel.debug, 'Chosen character: ${selected.name}');
       setState(() {
         slot.isUsed = true;
         slot.character = selected;
@@ -118,7 +112,7 @@ class PartyDataState extends CommonState<PartyDataWidget> {
   }
 
   Future<void> _removePartyMember(PartySlot slot) async {
-    await logger.log(LogLevel.debug, 'Removed ${slot.character.name}');
+    await log(LogLevel.debug, 'Removed ${slot.character.name}');
     setState(() {
       slot.isUsed = false;
       _hoverRm = null;

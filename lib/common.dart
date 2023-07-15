@@ -3,8 +3,7 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 
-abstract class CommonState<T extends StatefulWidget> extends State<T> {
-  final Logger logger = Logger();
+abstract class CommonState<T extends StatefulWidget> extends State<T> with Loggable {
   final SaveFileWrapper saveFileWrapper = SaveFileWrapper();
 
   Future<void> handleException({
@@ -12,7 +11,7 @@ abstract class CommonState<T extends StatefulWidget> extends State<T> {
     required String dialogTitle,
     required String dialogBody,
   }) async {
-    await logger.log(LogLevel.error, logMessage);
+    await log(LogLevel.error, logMessage);
     await showCommonDialog(
       TWarningDialog(
         title: dialogTitle,

@@ -63,7 +63,7 @@ class SettingsState extends CommonState<SettingsWidget> {
     }
     bool canDiscard = await showUnsavedChangesDialog();
     if (canDiscard) {
-      await logger.log(LogLevel.info, 'Discarding changes to settings');
+      await log(LogLevel.info, 'Discarding changes to settings');
     }
     return canDiscard;
   }
@@ -90,12 +90,12 @@ class SettingsState extends CommonState<SettingsWidget> {
       await handleUnexpectedException(e, s);
       return;
     }
-    await logger.log(
+    await log(
       LogLevel.info,
       'Applying log level ${_settings.logLevel.name}',
     );
-    await logger.log(LogLevel.info, 'Saved changes');
-    logger.logLevel = _settings.logLevel;
+    await log(LogLevel.info, 'Saved changes');
+    logLevel = _settings.logLevel;
     // Reset initial value to remove the has changes flag
     _logLevelFormKey.currentState!.resetInitialValue();
     setState((){});
@@ -106,7 +106,7 @@ class SettingsState extends CommonState<SettingsWidget> {
       return;
     }
     LogLevel chosenLevel = LogLevel.values[_options.indexOf(chosen)];
-    await logger.log(
+    await log(
       LogLevel.debug,
       'Log level changed to ${chosenLevel.name}',
     );

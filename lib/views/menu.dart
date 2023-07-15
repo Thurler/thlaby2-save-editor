@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/common.dart';
 import 'package:thlaby2_save_editor/logger.dart';
-import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/views/character_data.dart';
 import 'package:thlaby2_save_editor/views/party_data.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
@@ -32,7 +30,7 @@ class MenuState extends CommonState<MenuWidget> {
     );
     bool canReturn = await showBoolDialog(dialog);
     if (canReturn) {
-      await logger.log(
+      await log(
         LogLevel.info,
         'User confirmed going back to file select without exporting',
       );
@@ -51,18 +49,18 @@ class MenuState extends CommonState<MenuWidget> {
 
   Future<void> _navigateToSettings() async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.info, 'Opening settings widget');
+    await log(LogLevel.info, 'Opening settings widget');
     await state.push(
       MaterialPageRoute<void>(
         builder: (BuildContext context) => const SettingsWidget(),
       ),
     );
-    await logger.log(LogLevel.info, 'Closed settings widget');
+    await log(LogLevel.info, 'Closed settings widget');
   }
 
   Future<void> _editCharacterData() async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.debug, 'Opening character data edit widget');
+    await log(LogLevel.debug, 'Opening character data edit widget');
     if (!state.mounted) {
       return;
     }
@@ -71,12 +69,12 @@ class MenuState extends CommonState<MenuWidget> {
         builder: (BuildContext context) => const CharacterDataWidget(),
       ),
     );
-    await logger.log(LogLevel.debug, 'Closed character data edit widget');
+    await log(LogLevel.debug, 'Closed character data edit widget');
   }
 
   Future<void> _editPartyData() async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.debug, 'Opening party data edit widget');
+    await log(LogLevel.debug, 'Opening party data edit widget');
     if (!state.mounted) {
       return;
     }
@@ -85,31 +83,25 @@ class MenuState extends CommonState<MenuWidget> {
         builder: (BuildContext context) => const PartyDataWidget(),
       ),
     );
-    await logger.log(LogLevel.debug, 'Closed party data edit widget');
+    await log(LogLevel.debug, 'Closed party data edit widget');
   }
 
   Future<void> _saveSteamSaveFile() async {
-    await logger.log(LogLevel.debug, 'Export Steam Save File called');
+    await log(LogLevel.debug, 'Export Steam Save File called');
     String? result = await FilePicker.platform.saveFile(
       dialogTitle: 'Please select where to save the file:',
       fileName: 'steam.dat',
     );
     if (result == null) {
-      await logger.log(LogLevel.debug, 'No file selected');
+      await log(LogLevel.debug, 'No file selected');
       return;
     }
-    await logger.log(LogLevel.debug, 'Exporting save file in Steam format');
+    await log(LogLevel.debug, 'Exporting save file in Steam format');
     try {
       File rawFile = File(result);
-      LogBuffer logBuffer = LogBuffer();
-      List<int> contents = saveFileWrapper.saveFile.exportSteam(logBuffer);
+      List<int> contents = saveFileWrapper.saveFile.exportSteam();
+      await logFlush();
       await rawFile.writeAsBytes(contents);
-      for (String line in LineSplitter.split(logBuffer.debug.toString())) {
-        await logger.log(LogLevel.debug, line);
-      }
-      for (String line in LineSplitter.split(logBuffer.error.toString())) {
-        await logger.log(LogLevel.error, line);
-      }
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);
       return;
@@ -117,7 +109,7 @@ class MenuState extends CommonState<MenuWidget> {
       await handleUnexpectedException(e, s);
       return;
     }
-    await logger.log(LogLevel.info, 'Steam save file exported successfully');
+    await log(LogLevel.info, 'Steam save file exported successfully');
     await showCommonDialog(
       const TSuccessDialog(title: 'Save file exported successfully'),
     );

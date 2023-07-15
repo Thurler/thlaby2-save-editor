@@ -293,10 +293,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
     }
     bool canDiscard = await showUnsavedChangesDialog();
     if (canDiscard) {
-      await logger.log(
-        LogLevel.info,
-        'Discarding changes to character data',
-      );
+      await log(LogLevel.info, 'Discarding changes to character data');
     }
     return canDiscard;
   }
@@ -304,10 +301,7 @@ class CharacterEditState extends CommonState<CharacterEditWidget> {
   Future<void> _saveChanges() async {
     // Check if there are invalid fields, properly show them to user
     if (_hasErrors) {
-      await logger.log(
-        LogLevel.warning,
-        'Attempting to save invalid data',
-      );
+      await log(LogLevel.warning, 'Attempting to save invalid data');
       List<String> messages = _validateMessages();
       bool doSave = await showSaveWarningDialog(
         'Some validation errors were detected, and some of them might require '

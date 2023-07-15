@@ -20,7 +20,7 @@ class CharacterUnlockState extends CommonState<CharacterDataWidget> {
 
   Future<void> _navigateToCharacterUnlock() async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
+    await log(LogLevel.debug, 'Opening character unlock edit widget');
     if (!state.mounted) {
       return;
     }
@@ -29,12 +29,12 @@ class CharacterUnlockState extends CommonState<CharacterDataWidget> {
         builder: (BuildContext context) => const CharacterUnlockWidget(),
       ),
     );
-    await logger.log(LogLevel.debug, 'Closed character unlock edit widget');
+    await log(LogLevel.debug, 'Closed character unlock edit widget');
   }
 
   Future<void> _navigateToCharacterData(Character character) async {
     NavigatorState state = Navigator.of(context);
-    await logger.log(LogLevel.debug, 'Opening character unlock edit widget');
+    await log(LogLevel.debug, 'Opening character unlock edit widget');
     if (!state.mounted) {
       return;
     }
@@ -45,7 +45,7 @@ class CharacterUnlockState extends CommonState<CharacterDataWidget> {
         ),
       ),
     );
-    await logger.log(LogLevel.debug, 'Closed character unlock edit widget');
+    await log(LogLevel.debug, 'Closed character unlock edit widget');
   }
 
   @override

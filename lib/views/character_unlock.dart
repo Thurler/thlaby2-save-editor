@@ -39,10 +39,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     }
     bool canDiscard = await showUnsavedChangesDialog();
     if (canDiscard) {
-      await logger.log(
-        LogLevel.info,
-        'Discarding changes to character unlock flags',
-      );
+      await log(LogLevel.info, 'Discarding changes to character unlock flags');
     }
     return canDiscard;
   }
@@ -56,7 +53,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
       ),
     ).toList();
     if (lockedPartyCharacters.isNotEmpty) {
-      await logger.log(
+      await log(
         LogLevel.warning,
         'Attempting to lock a character that is in the party',
       );
@@ -80,7 +77,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     }
     // Display a warning if trying to lock one of the 4 starting characters
     if (_flags.sublist(0, 4).any((CharacterUnlockFlag f)=>!f.isUnlocked)) {
-      await logger.log(
+      await log(
         LogLevel.warning,
         'Attempting to lock one of the initial 4 characters',
       );
@@ -94,10 +91,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
     }
     // Display a warning if trying to lock all characters
     if (_flags.every((CharacterUnlockFlag f)=>!f.isUnlocked)) {
-      await logger.log(
-        LogLevel.warning,
-        'Attempting to lock all characters',
-      );
+      await log(LogLevel.warning, 'Attempting to lock all characters');
       bool doSave = await showSaveWarningDialog(
         'If you lock all characters, you will be unable to do anything in-game',
       );
@@ -105,7 +99,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
         return;
       }
     }
-    await logger.log(LogLevel.info, 'Saved changes');
+    await log(LogLevel.info, 'Saved changes');
     setState(() {
       _original = _flags.deepCopyElements(CharacterUnlockFlag.from);
       saveFileWrapper.saveFile.characterUnlockFlags = _original;
@@ -121,7 +115,7 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
 
   Future<void> _toggleUnlockedData(CharacterUnlockFlag flag) async {
     String state = (flag.isUnlocked) ? 'locked' : 'unlocked';
-    await logger.log(LogLevel.debug, '${flag.character.name} is now $state');
+    await log(LogLevel.debug, '${flag.character.name} is now $state');
     setState((){
       flag.isUnlocked = !flag.isUnlocked;
     });
@@ -139,17 +133,17 @@ class CharacterUnlockState extends CommonState<CharacterUnlockWidget> {
   }
 
   Future<void> _pressOnlyStartingCharacters() async {
-    await logger.log(LogLevel.debug, 'Applying preset: starting 4 characters');
+    await log(LogLevel.debug, 'Applying preset: starting 4 characters');
     _unlockCharactersUpToIndex(4);
   }
 
   Future<void> _pressOnlyBase48Characters() async {
-    await logger.log(LogLevel.debug, 'Applying preset: base 48 characters');
+    await log(LogLevel.debug, 'Applying preset: base 48 characters');
     _unlockCharactersUpToIndex(48);
   }
 
   Future<void> _pressAllCharacters() async {
-    await logger.log(LogLevel.debug, 'Applying preset: all 56 characters');
+    await log(LogLevel.debug, 'Applying preset: all 56 characters');
     _unlockCharactersUpToIndex(_flags.length);
   }
 
