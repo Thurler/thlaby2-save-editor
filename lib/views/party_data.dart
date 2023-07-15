@@ -27,7 +27,8 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
   PartySlot? _hover;
   PartySlot? _hoverRm;
 
-  bool _hasChanges() {
+  @override
+  bool get hasChanges {
     for (int i = 0; i < _editable.length; i++) {
       bool isUsed = _editable[i].isUsed;
       if (isUsed != _original[i].isUsed) {
@@ -38,17 +39,6 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
       }
     }
     return false;
-  }
-
-  Future<bool> _checkChangesAndConfirm() async {
-    if (!_hasChanges()) {
-      return true;
-    }
-    bool canDiscard = await showUnsavedChangesDialog();
-    if (canDiscard) {
-      await log(LogLevel.info, 'Discarding changes to party edit flags');
-    }
-    return canDiscard;
   }
 
   Future<void> _saveChanges() async {
@@ -127,10 +117,10 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _checkChangesAndConfirm,
+      onWillPop: checkChangesAndConfirm,
       child: CommonScaffold(
         title: 'Edit which characters are in the party',
-        floatingActionButton: _hasChanges()
+        floatingActionButton: hasChanges
           ? TSaveButton(onPressed: _saveChanges)
           : null,
         children: <int>[8, 4, 0].map<Widget>(

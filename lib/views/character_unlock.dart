@@ -30,24 +30,14 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
   late List<CharacterUnlockFlag> _original;
   Character? _hover;
 
-  bool _hasChanges() {
+  @override
+  bool get hasChanges {
     for (int i = 0; i < _flags.length; i++) {
       if (_flags[i].isUnlocked != _original[i].isUnlocked) {
         return true;
       }
     }
     return false;
-  }
-
-  Future<bool> _checkChangesAndConfirm() async {
-    if (!_hasChanges()) {
-      return true;
-    }
-    bool canDiscard = await showUnsavedChangesDialog();
-    if (canDiscard) {
-      await log(LogLevel.info, 'Discarding changes to character unlock flags');
-    }
-    return canDiscard;
   }
 
   Future<void> _saveChanges() async {
@@ -164,10 +154,10 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _checkChangesAndConfirm,
+      onWillPop: checkChangesAndConfirm,
       child: CommonScaffold(
         title: 'Edit which characters are unlocked',
-        floatingActionButton: _hasChanges()
+        floatingActionButton: hasChanges
           ? TSaveButton(onPressed: _saveChanges)
           : null,
         children: <Widget>[

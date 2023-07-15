@@ -59,18 +59,8 @@ class SettingsState extends State<SettingsWidget> with Loggable,
   late TFormDropdown _logLevelForm;
   final DropdownFormKey _logLevelFormKey = DropdownFormKey();
 
-  bool get _hasChanges => _logLevelFormKey.currentState?.hasChanges ?? false;
-
-  Future<bool> _checkChangesAndConfirm() async {
-    if (!_hasChanges) {
-      return true;
-    }
-    bool canDiscard = await showUnsavedChangesDialog();
-    if (canDiscard) {
-      await log(LogLevel.info, 'Discarding changes to settings');
-    }
-    return canDiscard;
-  }
+  @override
+  bool get hasChanges => _logLevelFormKey.currentState?.hasChanges ?? false;
 
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(
@@ -145,10 +135,10 @@ class SettingsState extends State<SettingsWidget> with Loggable,
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _checkChangesAndConfirm,
+      onWillPop: checkChangesAndConfirm,
       child: CommonScaffold(
         title: 'Touhou Labyrinth 2 Save Editor - Settings',
-        floatingActionButton: _hasChanges
+        floatingActionButton: hasChanges
           ? TSaveButton(onPressed: _saveChanges)
           : null,
         children: <Widget>[

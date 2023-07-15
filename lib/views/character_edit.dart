@@ -271,7 +271,8 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
     return '$overlapName already has this subclass';
   }
 
-  bool get _hasChanges => _expansionGroups.any(
+  @override
+  bool get hasChanges => _expansionGroups.any(
     (TFormGroup group) => group.hasChanges,
   );
 
@@ -290,17 +291,6 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
   }
 
   void _fixValidationErrors() {}
-
-  Future<bool> _checkChangesAndConfirm() async {
-    if (!_hasChanges) {
-      return true;
-    }
-    bool canDiscard = await showUnsavedChangesDialog();
-    if (canDiscard) {
-      await log(LogLevel.info, 'Discarding changes to character data');
-    }
-    return canDiscard;
-  }
 
   Future<void> _saveChanges() async {
     // Check if there are invalid fields, properly show them to user
@@ -642,10 +632,10 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _checkChangesAndConfirm,
+      onWillPop: checkChangesAndConfirm,
       child: CommonScaffold(
         title: "Edit ${character.name.upperCaseFirstChar()}'s data",
-        floatingActionButton: _hasChanges
+        floatingActionButton: hasChanges
           ? TSaveButton(onPressed: _saveChanges)
           : null,
         padding: const EdgeInsets.fromLTRB(20, 0, 250, 0),
