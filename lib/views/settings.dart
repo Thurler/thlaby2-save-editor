@@ -45,13 +45,9 @@ class SettingsWidget extends StatefulWidget {
 class SettingsState extends State<SettingsWidget> with Loggable,
     AlertHandler<SettingsWidget>, ExceptionHandler<SettingsWidget>,
     DiscardableChanges<SettingsWidget> {
-  static const List<String> _options = <String>[
-    'Debug (everything is logged)',
-    'Info (major actions and higher are logged)',
-    'Warning (warnings and higher are logged)',
-    'Error (only errors are logged)',
-    'None (nothing is logged)',
-  ];
+  final List<String> _options = LogLevel.values.map(
+    (LogLevel level) => level.dropdownText,
+  ).toList();
 
   late Settings _settings;
 

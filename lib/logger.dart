@@ -2,11 +2,15 @@ import 'dart:io';
 import 'package:thlaby2_save_editor/views/settings.dart';
 
 enum LogLevel {
-  debug,
-  info,
-  warning,
-  error,
-  none,
+  debug('Debug (everything is logged)'),
+  info('Info (major actions and higher are logged)'),
+  warning('Warning (warnings and higher are logged)'),
+  error('Error (only errors are logged)'),
+  none('None (nothing is logged)');
+
+  final String dropdownText;
+
+  const LogLevel(this.dropdownText);
 }
 
 class Logger {
