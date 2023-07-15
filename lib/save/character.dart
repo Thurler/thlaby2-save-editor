@@ -721,8 +721,15 @@ enum Character {
     'Toramaru',
     <TomeStat>[TomeStat.hp, TomeStat.def, TomeStat.mnd],
     <Skill>[
+      CommonSkill.myourenPersonnel, CommonSkill.swindledOne,
+      CommonSkill.abilityGatherTreasures, CommonSkill.pagodaLightDharma,
+      CommonSkill.physicalCounter, CommonSkill.bishamontenWrath,
+      CommonSkill.personificationEffort, CommonSkill.trueBishamontenWrath,
+      CommonSkill.moreTreasures, CommonSkill.piercingAttack,
     ],
     <Skill>[
+      Spell.hungryTiger, Spell.radiantTreasureGun,
+      Spell.dazzlingGold, Spell.auraJustice,
     ],
     <Skill>[],
   ),
@@ -730,8 +737,15 @@ enum Character {
     'Mamizou',
     <TomeStat>[TomeStat.mp, TomeStat.tp, TomeStat.eva],
     <Skill>[
+      CommonSkill.elementalTransformations, CommonSkill.monsterTanukiPrankster,
+      CommonSkill.slipperyTanukiDisguiser, CommonSkill.highSpeedNormalAttack,
+      CommonSkill.elderTanukiWisdom, CommonSkill.heartPerseverance,
+      CommonSkill.monsterTanukiWisdom, CommonSkill.monsterTanukiWiles,
+      CommonSkill.majesty,
     ],
     <Skill>[
+      Spell.frolickingAnimals, Spell.futatsuiwaClanCurse,
+      Spell.tenTransformationsDanmaku, Spell.fullMoonPompokolin,
     ],
     <Skill>[],
   ),
@@ -739,8 +753,15 @@ enum Character {
     'Futo',
     <TomeStat>[TomeStat.tp, TomeStat.atk, TomeStat.res],
     <Skill>[
+      CommonSkill.kodokuPlatePileup, CommonSkill.royalsChaoticDanceFuto,
+      CommonSkill.offeringMikoto, CommonSkill.offeringOkami,
+      CommonSkill.spiritMausoleum, CommonSkill.givingWings,
+      CommonSkill.leylineDragonNest, CommonSkill.lightningSakeCups,
+      CommonSkill.accelerate,
     ],
     <Skill>[
+      Spell.mononobeEightySakeCups, Spell.catastrophicGateOpening,
+      Spell.miwaPlateStorm, Spell.taiyiTrueFire,
     ],
     <Skill>[],
   ),
@@ -748,8 +769,14 @@ enum Character {
     'Miko',
     <TomeStat>[TomeStat.hp, TomeStat.mag, TomeStat.aff],
     <Skill>[
+      CommonSkill.asukaHeritageAttack, CommonSkill.royalsChaoticDanceMiko,
+      CommonSkill.trueAdministrator, CommonSkill.princeShotokyOoPArtifact,
+      CommonSkill.sageToyosatomimi, CommonSkill.meikyoShisui,
+      CommonSkill.princeLesson, CommonSkill.transcendentalAdministrator,
+      CommonSkill.megaAsukaHeritageAttack,
     ],
     <Skill>[
+      Spell.traditionJustRewards, Spell.haloGuseKannon, Spell.wishfulSoulDesire,
     ],
     <Skill>[],
   ),
@@ -757,8 +784,15 @@ enum Character {
     'Kokoro',
     <TomeStat>[TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd],
     <Skill>[
+      CommonSkill.myourenDisciple, CommonSkill.phantasmalEmotion,
+      CommonSkill.powerMaskCreator, CommonSkill.sixtySixEmotions,
+      CommonSkill.manipulationEmotions, CommonSkill.lostEmotion,
+      CommonSkill.emptyHeartedMasks, CommonSkill.maskHope,
+      CommonSkill.moraleMaintenance,
     ],
     <Skill>[
+      Spell.fourHumorsPossession, Spell.invigoratedKaguraLion,
+      Spell.worrisomeManOfQi,
     ],
     <Skill>[],
   ),
@@ -768,8 +802,15 @@ enum Character {
       TomeStat.atk, TomeStat.def, TomeStat.mag, TomeStat.mnd, TomeStat.spd,
     ],
     <Skill>[
+      CommonSkill.namelessBookwormYoukai, CommonSkill.reimuMarisaAbuseVictim,
+      CommonSkill.crestedIbisFeather, CommonSkill.sugariOntachiOrnament,
+      CommonSkill.crossoveredEndangeredBird, CommonSkill.eyeForEye,
+      CommonSkill.loveWayYouRead, CommonSkill.thickBookCQC,
+      CommonSkill.bookwormYoukaiArdor, CommonSkill.bookwormYoukaiGrudge,
     ],
     <Skill>[
+      Spell.youkaiYakuzaKick, Spell.countMonteCristo,
+      Spell.musketeerDartagnan,Spell.nonNeumannSystems,
     ],
     <Skill>[],
   ),
@@ -777,8 +818,15 @@ enum Character {
     'Koisi',
     <TomeStat>[TomeStat.mp, TomeStat.mnd, TomeStat.eva],
     <Skill>[
+      CommonSkill.earthSpiritsParty, CommonSkill.myourenDisciple,
+      CommonSkill.superResponsiveSenses, CommonSkill.subconsciousManipulation,
+      CommonSkill.subconsciousGenetics, CommonSkill.expansionConsciousness,
+      CommonSkill.embryoDream, CommonSkill.superResponsiveSensesPlus,
+      CommonSkill.embryoWhyDance,
     ],
     <Skill>[
+      Spell.embersLove, Spell.superEgo,
+      Spell.bedsideAncestors, Spell.selflessLove,
     ],
     <Skill>[],
   ),
@@ -786,10 +834,14 @@ enum Character {
     'Akyuu',
     <TomeStat>[TomeStat.hp, TomeStat.mp, TomeStat.tp],
     <Skill>[
+      CommonSkill.hyperthymesicMemory, CommonSkill.gensokyoChroniclesWisdom,
+      CommonSkill.memoriesGensokyo, CommonSkill.miareDescendantPower,
+      CommonSkill.ultraIncantation, CommonSkill.phenomenalForceWill,
+      CommonSkill.searchMoreWisdom, CommonSkill.protectorKnowledge,
+      CommonSkill.trueMaidenMiare,
     ],
-    <Skill>[
-    ],
-    <Skill>[],
+    <Skill>[Spell.wiseProtectiveArt, Spell.wiseDefensiveArt],
+    <Skill>[Spell.miareExtensiveKnowledge],
   );
 
   final String filename;
