@@ -25,11 +25,16 @@ class CharacterRoster extends StatelessWidget {
   });
 
   static Future<void> precachePortraits(BuildContext context) async {
+    NavigatorState state = Navigator.of(context);
     for (Character character in Character.values) {
       await precacheImage(
         CharacterBox.imageFromName(character.filename).image,
         context,
       );
+    }
+    // Also precache the empty portrait!
+    if (state.mounted) {
+      await precacheImage(CharacterBox.imageFromName('Empty').image, context);
     }
   }
 
