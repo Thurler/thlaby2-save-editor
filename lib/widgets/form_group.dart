@@ -41,8 +41,7 @@ class TFormGroup {
               text: 'Has Changes',
               color: Colors.green,
             ),
-          if (hasChanges && hasErrors)
-            const SizedBox(width: 5),
+          if (hasChanges && hasErrors) const SizedBox(width: 5),
           if (hasErrors)
             const TBadge(
               text: 'Has Issues',

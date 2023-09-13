@@ -182,7 +182,7 @@ abstract class TForm extends StatefulWidget {
     this.errorMessage = '',
     this.onValueChanged,
     super.key,
-  });  
+  });
 }
 
 abstract class TFormState<T extends TForm> extends State<T> {
