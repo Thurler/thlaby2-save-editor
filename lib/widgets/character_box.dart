@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/widgets/clickable.dart';
 
 class CharacterBox extends StatelessWidget {
-  static const ColorFilter identity = ColorFilter.matrix(<double>[
-    1, 0, 0, 0, 0,
-    0, 1, 0, 0, 0,
-    0, 0, 1, 0, 0,
-    0, 0, 0, 1, 0,
-  ]);
-  static const ColorFilter greyscale = ColorFilter.matrix(<double>[
-    0.2126, 0.7152, 0.0722, 0, 0,
-    0.2126, 0.7152, 0.0722, 0, 0,
-    0.2126, 0.7152, 0.0722, 0, 0,
-    0,      0,      0,      1, 0,
-  ]);
+  static const List<double> identityR = <double>[1, 0, 0, 0, 0];
+  static const List<double> identityG = <double>[0, 1, 0, 0, 0];
+  static const List<double> identityB = <double>[0, 0, 1, 0, 0];
+  static const List<double> identityA = <double>[0, 0, 0, 1, 0];
+  static const List<double> greyscaleC = <double>[0.2126, 0.7152, 0.0722, 0, 0];
+
+  static final ColorFilter identity = ColorFilter.matrix(
+    identityR + identityG + identityB + identityA,
+  );
+  static final ColorFilter greyscale = ColorFilter.matrix(
+    greyscaleC + greyscaleC + greyscaleC + identityA,
+  );
 
   final String title;
   final double? titleFontSize;
@@ -70,11 +70,10 @@ class CharacterBox extends StatelessWidget {
                   color: highlight ? Colors.green : null,
                 ),
               ),
-              if (titleAppend != null)
-                ...<Widget>[
-                  const SizedBox(width: 5),
-                  titleAppend!,
-                ],
+              if (titleAppend != null) ...<Widget>[
+                const SizedBox(width: 5),
+                titleAppend!,
+              ],
             ],
           ),
           DecoratedBox(

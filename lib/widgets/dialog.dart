@@ -44,7 +44,7 @@ class TDialogBody extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
-      width: width * 2/3,
+      width: width * 2 / 3,
       child: SelectableText(text, textAlign: TextAlign.center),
     );
   }
@@ -115,10 +115,8 @@ class TAlertDialog extends StatelessWidget {
           runSpacing: 10,
           spacing: 20,
           children: <Widget>[
-            if (confirm != null)
-              confirm!,
-            if (cancel != null)
-              cancel!,
+            if (confirm != null) confirm!,
+            if (cancel != null) cancel!,
           ],
         ),
       ],

@@ -38,8 +38,7 @@ class CommonScaffold extends StatelessWidget {
       floatingActionButton: floatingActionButton,
       body: Stack(
         children: <Widget>[
-          if (background != null)
-            background!,
+          if (background != null) background!,
           Positioned.fill(
             child: ListView(
               children: <Widget>[
