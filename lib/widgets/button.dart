@@ -27,8 +27,10 @@ class TButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             if (icon != null)
-              Icon(icon),
-              const SizedBox(width: 10),
+              ...<Widget>[
+                Icon(icon),
+                const SizedBox(width: 10),
+              ],
             Flexible(
               child: Text(
                 text,
