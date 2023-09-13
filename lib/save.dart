@@ -57,8 +57,10 @@ class SaveFile with Loggable {
     }
     List<int> decrypted = _runSteamEncoding(bytes);
     if (
-      decrypted[0] != 0x42 || decrypted[1] != 0x4c ||
-      decrypted[2] != 0x48 || decrypted[3] != 0x54 ||
+      decrypted[0] != 0x42 ||
+      decrypted[1] != 0x4c ||
+      decrypted[2] != 0x48 ||
+      decrypted[3] != 0x54 ||
       decrypted[0x67] != 0x01
     ) {
       throw const InvalidHeaderException();
@@ -165,10 +167,10 @@ class SaveFile with Loggable {
   void _setAchievementDataPlus(List<int> bytes) => achievementDataPlus = bytes;
   // ignore: use_setters_to_change_properties
   void _setAchievementNotificationData(List<int> bytes) =>
-    achievementNotificationsData = bytes;
+      achievementNotificationsData = bytes;
   // ignore: use_setters_to_change_properties
   void _setAchievementNotificationDataPlus(List<int> bytes) =>
-    achievementNotificationsDataPlus = bytes;
+      achievementNotificationsDataPlus = bytes;
   // ignore: use_setters_to_change_properties
   void _setBestiaryData(List<int> bytes) => bestiaryData = bytes;
 
@@ -194,26 +196,26 @@ class SaveFile with Loggable {
   void _setEventFlagData(List<int> bytes) => eventFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setMainInventoryFlagData(List<int> bytes) =>
-    mainInventoryFlagData = bytes;
+      mainInventoryFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setSubInventoryFlagData(List<int> bytes) =>
-    subInventoryFlagData = bytes;
+      subInventoryFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setMaterialInventoryFlagData(List<int> bytes) =>
-  materialInventoryFlagData = bytes;
+      materialInventoryFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setSpecialInventoryFlagData(List<int> bytes) =>
-  specialInventoryFlagData = bytes;
+      specialInventoryFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setMainInventoryData(List<int> bytes) => mainInventoryData = bytes;
   // ignore: use_setters_to_change_properties
   void _setSubInventoryData(List<int> bytes) => subInventoryData = bytes;
   // ignore: use_setters_to_change_properties
   void _setMaterialInventoryData(List<int> bytes) =>
-  materialInventoryData = bytes;
+      materialInventoryData = bytes;
   // ignore: use_setters_to_change_properties
   void _setSpecialInventoryData(List<int> bytes) =>
-  specialInventoryData = bytes;
+      specialInventoryData = bytes;
 
   void _setCharacterData(List<int> bytes) {
     characterData = <CharacterData>[];
