@@ -52,5 +52,5 @@ class NumberInputFormatter extends TextInputFormatter {
         extentOffset: finalOffset,
       ),
     );
-  }  
+  }
 }
