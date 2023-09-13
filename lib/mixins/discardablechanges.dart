@@ -4,8 +4,8 @@ import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/widgets/dialog.dart';
 import 'package:thlaby2_save_editor/widgets/save_button.dart';
 
-mixin DiscardableChanges<T extends StatefulWidget> on Loggable,
-    AlertHandler<T> {
+mixin DiscardableChanges<T extends StatefulWidget>
+    on Loggable, AlertHandler<T> {
   bool get hasChanges;
   Future<void> saveChanges();
 
