@@ -16,12 +16,24 @@ class LevelBonus {
 
   void setStatData(int index, int value) {
     switch (index) {
-      case 0: hp = value; break;
-      case 1: atk = value; break;
-      case 2: def = value; break;
-      case 3: mag = value; break;
-      case 4: mnd = value; break;
-      case 5: spd = value; break;
+      case 0:
+        hp = value;
+        break;
+      case 1:
+        atk = value;
+        break;
+      case 2:
+        def = value;
+        break;
+      case 3:
+        mag = value;
+        break;
+      case 4:
+        mnd = value;
+        break;
+      case 5:
+        spd = value;
+        break;
     }
   }
 

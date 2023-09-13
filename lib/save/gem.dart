@@ -17,14 +17,30 @@ class GemData {
 
   void setStatData(int index, int value) {
     switch (index) {
-      case 0: hp = value; break;
-      case 1: mp = value; break;
-      case 2: tp = value; break;
-      case 3: atk = value; break;
-      case 4: def = value; break;
-      case 5: mag = value; break;
-      case 6: mnd = value; break;
-      case 7: spd = value; break;
+      case 0:
+        hp = value;
+        break;
+      case 1:
+        mp = value;
+        break;
+      case 2:
+        tp = value;
+        break;
+      case 3:
+        atk = value;
+        break;
+      case 4:
+        def = value;
+        break;
+      case 5:
+        mag = value;
+        break;
+      case 6:
+        mnd = value;
+        break;
+      case 7:
+        spd = value;
+        break;
     }
   }
 
