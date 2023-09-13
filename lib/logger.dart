@@ -58,7 +58,7 @@ class Logger {
   Future<void> flush() async {
     try {
       await sink.flush();
-    } on Exception catch(e, s) {
+    } on Exception catch (e, s) {
       // Can't do much - if I can't open the log file, I can't log the error
       // ignore: avoid_print
       print('Exception: $e');
