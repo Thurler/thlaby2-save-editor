@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 extension ListExtension<T> on List<T> {
   List<T> deepCopyElements(T Function(T) f) {
-    return map((T t)=>f(t)).toList();
+    return map((T t) => f(t)).toList();
   }
 
   T? elementAtSafe(int index) => index < length ? elementAt(index) : null;
@@ -11,7 +11,7 @@ extension ListExtension<T> on List<T> {
   int getU16(Endian endianness, {int offset = 0}) {
     int result = 0;
     List<int> operands = sublist(offset, offset + 2).map(
-      (T t)=>int.parse(t.toString()),
+      (T t) => int.parse(t.toString()),
     ).toList();
     if (endianness == Endian.little) {
       result += operands[0];
@@ -34,7 +34,7 @@ extension ListExtension<T> on List<T> {
   int getU32(Endian endianness, {int offset = 0}) {
     int result = 0;
     List<int> operands = sublist(offset, offset + 4).map(
-      (T t)=>int.parse(t.toString()),
+      (T t) => int.parse(t.toString()),
     ).toList();
     for (int i = 0; i < 4; i++) {
       int operand = operands[i];
@@ -57,7 +57,7 @@ extension ListExtension<T> on List<T> {
   BigInt getU64(Endian endianness, {int offset = 0}) {
     BigInt result = BigInt.from(0);
     List<BigInt> operands = sublist(offset, offset + 8).map(
-      (T t)=>BigInt.from(int.parse(t.toString())),
+      (T t) => BigInt.from(int.parse(t.toString())),
     ).toList();
     for (int i = 0; i < 8; i++) {
       BigInt operand = operands[i];

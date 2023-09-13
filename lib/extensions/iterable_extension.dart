@@ -1,6 +1,6 @@
 extension IterableExtension<T> on Iterable<T> {
   Iterable<T> deepCopyElements(T Function(T) f) {
-    return map((T t)=>f(t));
+    return map((T t) => f(t));
   }
 
   List<T> separateWith(T? separator, {bool separatorOnEnds = false}) {

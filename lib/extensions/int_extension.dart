@@ -15,7 +15,7 @@ extension IntExtension on int {
     StringBuffer copy = StringBuffer();
     copy.write(raw.substring(0, startingDigits));
     for (int i = startingDigits; i < raw.length; i += 3) {
-      copy.write(',${raw.substring(i, i+3)}');
+      copy.write(',${raw.substring(i, i + 3)}');
     }
     String sign = negative ? '-' : '';
     return '$sign$copy';
@@ -75,7 +75,7 @@ extension BigIntExtension on BigInt {
     StringBuffer copy = StringBuffer();
     copy.write(raw.substring(0, startingDigits));
     for (int i = startingDigits; i < raw.length; i += 3) {
-      copy.write(',${raw.substring(i, i+3)}');
+      copy.write(',${raw.substring(i, i + 3)}');
     }
     String sign = negative ? '-' : '';
     return '$sign$copy';
