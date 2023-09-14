@@ -42,9 +42,12 @@ class SettingsWidget extends StatefulWidget {
   State<SettingsWidget> createState() => SettingsState();
 }
 
-class SettingsState extends State<SettingsWidget> with Loggable,
-    AlertHandler<SettingsWidget>, ExceptionHandler<SettingsWidget>,
-    DiscardableChanges<SettingsWidget> {
+class SettingsState extends State<SettingsWidget>
+    with
+        Loggable,
+        AlertHandler<SettingsWidget>,
+        ExceptionHandler<SettingsWidget>,
+        DiscardableChanges<SettingsWidget> {
   final List<String> _options = LogLevel.values.map(
     (LogLevel level) => level.dropdownText,
   ).toList();
@@ -62,7 +65,7 @@ class SettingsState extends State<SettingsWidget> with Loggable,
       logMessage: 'FileSystem Exception when saving settings: ${e.message}',
       dialogTitle: 'An error occured when saving the settings!',
       dialogBody: 'Make sure your user has permission to write a file in '
-        'the folder this app is in.',
+          'the folder this app is in.',
     );
   }
 
@@ -88,7 +91,7 @@ class SettingsState extends State<SettingsWidget> with Loggable,
     logLevel = _settings.logLevel;
     // Reset initial value to remove the has changes flag
     _logLevelFormKey.currentState!.resetInitialValue();
-    setState((){});
+    setState(() {});
   }
 
   Future<void> _changeLogLevel(String? chosen) async {
@@ -101,7 +104,7 @@ class SettingsState extends State<SettingsWidget> with Loggable,
       'Log level changed to ${chosenLevel.name}',
     );
     // Refresh has changes flag
-    setState((){});
+    setState(() {});
   }
 
   @override

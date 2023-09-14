@@ -19,14 +19,18 @@ class MenuWidget extends StatefulWidget {
   State<MenuWidget> createState() => MenuState();
 }
 
-class MenuState extends State<MenuWidget> with SaveReader, Loggable,
-    AlertHandler<MenuWidget>, ExceptionHandler<MenuWidget>,
-    Navigatable<MenuWidget> {
+class MenuState extends State<MenuWidget>
+    with
+        SaveReader,
+        Loggable,
+        AlertHandler<MenuWidget>,
+        ExceptionHandler<MenuWidget>,
+        Navigatable<MenuWidget> {
   Future<bool> _alertUnexportedChanges() async {
     TBoolDialog dialog = const TBoolDialog(
       title: 'Did you export your changes?',
       body: 'Are you sure you want to go back and load a different save file? '
-            'Any changes that have not been exported will be discarded!',
+          'Any changes that have not been exported will be discarded!',
       confirmText: 'Yes, change files',
       cancelText: 'No, keep me here',
     );
@@ -45,7 +49,7 @@ class MenuState extends State<MenuWidget> with SaveReader, Loggable,
       logMessage: 'FileSystem Exception when exporting file: ${e.message}',
       dialogTitle: 'An error occured when exporting the file!',
       dialogBody: 'Make sure your user has permission to write the file in '
-        'the folder you chose.',
+          'the folder you chose.',
     );
   }
 

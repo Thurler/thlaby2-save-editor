@@ -18,15 +18,20 @@ class MainWidget extends StatefulWidget {
   State<MainWidget> createState() => MainState();
 }
 
-class MainState extends State<MainWidget> with SaveReader, SaveWriter, Loggable,
-    AlertHandler<MainWidget>, ExceptionHandler<MainWidget>,
-    Navigatable<MainWidget> {
+class MainState extends State<MainWidget>
+    with
+        SaveReader,
+        SaveWriter,
+        Loggable,
+        AlertHandler<MainWidget>,
+        ExceptionHandler<MainWidget>,
+        Navigatable<MainWidget> {
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(
       logMessage: 'FileSystem Exception when loading file: ${e.message}',
       dialogTitle: 'An error occured when reading the file!',
       dialogBody: 'Make sure your user has permission to read the file you '
-        'chose.',
+          'chose.',
     );
   }
 
@@ -35,7 +40,7 @@ class MainState extends State<MainWidget> with SaveReader, SaveWriter, Loggable,
       logMessage: logMessage,
       dialogTitle: 'The selected file is invalid!',
       dialogBody: 'Make sure you chose a Steam save file. It should be a file '
-        'like "save1.dat" inside the %APPDATA%/CUBETYPE/tohoLaby folder.',
+          'like "save1.dat" inside the %APPDATA%/CUBETYPE/tohoLaby folder.',
     );
   }
 
@@ -81,11 +86,11 @@ class MainState extends State<MainWidget> with SaveReader, SaveWriter, Loggable,
         const TWarningDialog(
           title: 'The loaded save file had errors',
           body: 'Some of the data that was read seemed to contain invalid '
-            'values. Please check the "applicationlog.txt" file for more '
-            'information.\n\nIf you are sure the uploaded file was not '
-            'tampered with, please report this as an issue at the link below, '
-            'including your save file and the "applicationlog.txt" file:\n'
-            'https://github.com/Thurler/thlaby2-save-editor/issues',
+              'values. Please check the "applicationlog.txt" file for more '
+              'information.\n\nIf you are sure the uploaded file was not '
+              'tampered with, please report this as an issue at the link '
+              'below, including your save file and the "applicationlog.txt" '
+              'file:\nhttps://github.com/Thurler/thlaby2-save-editor/issues',
           confirmText: 'OK',
         ),
       );
