@@ -28,53 +28,39 @@ class LibraryData {
 
   void setStatData(int index, int value) {
     switch (index) {
-      case 0:
-        hp = value;
-        break;
-      case 1:
-        atk = value;
-        break;
-      case 2:
-        def = value;
-        break;
-      case 3:
-        mag = value;
-        break;
-      case 4:
-        mnd = value;
-        break;
-      case 5:
-        spd = value;
-        break;
+      case 0: hp = value;
+      break;
+      case 1: atk = value;
+      break;
+      case 2: def = value;
+      break;
+      case 3: mag = value;
+      break;
+      case 4: mnd = value;
+      break;
+      case 5: spd = value;
+      break;
     }
   }
 
   void setElementData(int index, int value) {
     switch (index) {
-      case 0:
-        fir = value;
-        break;
-      case 1:
-        cld = value;
-        break;
-      case 2:
-        wnd = value;
-        break;
-      case 3:
-        ntr = value;
-        break;
-      case 4:
-        mys = value;
-        break;
-      case 5:
-        spi = value;
-        break;
-      case 6:
-        drk = value;
-        break;
-      case 7:
-        phy = value;
-        break;
+      case 0: fir = value;
+      break;
+      case 1: cld = value;
+      break;
+      case 2: wnd = value;
+      break;
+      case 3: ntr = value;
+      break;
+      case 4: mys = value;
+      break;
+      case 5: spi = value;
+      break;
+      case 6: drk = value;
+      break;
+      case 7: phy = value;
+      break;
     }
   }
 

@@ -79,42 +79,30 @@ class TomeData {
   void setStatData(int index, String raw, {required bool isNatural}) {
     TomeLevel value = levelFromString(raw, isNatural: isNatural);
     switch (index) {
-      case 0:
-        hp = value;
-        break;
-      case 1:
-        mp = value;
-        break;
-      case 2:
-        tp = value;
-        break;
-      case 3:
-        atk = value;
-        break;
-      case 4:
-        def = value;
-        break;
-      case 5:
-        mag = value;
-        break;
-      case 6:
-        mnd = value;
-        break;
-      case 7:
-        spd = value;
-        break;
-      case 8:
-        eva = value;
-        break;
-      case 9:
-        acc = value;
-        break;
-      case 10:
-        aff = value;
-        break;
-      case 11:
-        res = value;
-        break;
+      case 0: hp = value;
+      break;
+      case 1: mp = value;
+      break;
+      case 2: tp = value;
+      break;
+      case 3: atk = value;
+      break;
+      case 4: def = value;
+      break;
+      case 5: mag = value;
+      break;
+      case 6: mnd = value;
+      break;
+      case 7: spd = value;
+      break;
+      case 8: eva = value;
+      break;
+      case 9: acc = value;
+      break;
+      case 10: aff = value;
+      break;
+      case 11: res = value;
+      break;
     }
   }
 

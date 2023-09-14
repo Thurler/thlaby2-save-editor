@@ -788,53 +788,39 @@ class SkillData {
 
   void setBoostData(int index, int value) {
     switch (index) {
-      case 0:
-        hpBoost = value;
-        break;
-      case 1:
-        mpBoost = value;
-        break;
-      case 2:
-        tpBoost = value;
-        break;
-      case 3:
-        atkBoost = value;
-        break;
-      case 4:
-        defBoost = value;
-        break;
-      case 5:
-        magBoost = value;
-        break;
-      case 6:
-        mndBoost = value;
-        break;
-      case 7:
-        spdBoost = value;
-        break;
-      case 8:
-        evaBoost = value;
-        break;
-      case 9:
-        accBoost = value;
-        break;
-      case 10:
-        affBoost = value;
-        break;
-      case 11:
-        resBoost = value;
-        break;
+      case 0: hpBoost = value;
+      break;
+      case 1: mpBoost = value;
+      break;
+      case 2: tpBoost = value;
+      break;
+      case 3: atkBoost = value;
+      break;
+      case 4: defBoost = value;
+      break;
+      case 5: magBoost = value;
+      break;
+      case 6: mndBoost = value;
+      break;
+      case 7: spdBoost = value;
+      break;
+      case 8: evaBoost = value;
+      break;
+      case 9: accBoost = value;
+      break;
+      case 10: affBoost = value;
+      break;
+      case 11: resBoost = value;
+      break;
     }
   }
 
   void setExpData(int index, int value) {
     switch (index) {
-      case 0:
-        motivatedHeart = value;
-        break;
-      case 1:
-        handsOnExperience = value;
-        break;
+      case 0: motivatedHeart = value;
+      break;
+      case 1: handsOnExperience = value;
+      break;
     }
   }
 
