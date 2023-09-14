@@ -14,8 +14,8 @@ class CharacterDataWidget extends StatefulWidget {
   State<CharacterDataWidget> createState() => CharacterUnlockState();
 }
 
-class CharacterUnlockState extends State<CharacterDataWidget> with Loggable,
-    SaveReader, Navigatable<CharacterDataWidget> {
+class CharacterUnlockState extends State<CharacterDataWidget>
+    with Loggable, SaveReader, Navigatable<CharacterDataWidget> {
   Character? _hover;
 
   @override
@@ -33,8 +33,12 @@ class CharacterUnlockState extends State<CharacterDataWidget> with Loggable,
           highlight: _hover,
           unlockFlags: saveFile.characterUnlockFlags,
           onTap: navigateToCharacterEdit,
-          onEnter: (Character character) => setState((){_hover = character;}),
-          onExit: (Character character) => setState((){_hover = null;}),
+          onEnter: (Character character) => setState(() {
+            _hover = character;
+          }),
+          onExit: (Character character) => setState(() {
+            _hover = null;
+          }),
         ),
       ],
     );

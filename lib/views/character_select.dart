@@ -11,8 +11,8 @@ class CharacterSelectWidget extends StatefulWidget {
   State<CharacterSelectWidget> createState() => CharacterSelectState();
 }
 
-class CharacterSelectState extends State<CharacterSelectWidget> with
-    SaveReader {
+class CharacterSelectState extends State<CharacterSelectWidget>
+    with SaveReader {
   Character? _hover;
 
   Future<void> _selectCharacter(Character character) async {
@@ -28,8 +28,12 @@ class CharacterSelectState extends State<CharacterSelectWidget> with
           highlight: _hover,
           unlockFlags: saveFile.characterUnlockFlags,
           onTap: _selectCharacter,
-          onEnter: (Character character) => setState((){_hover = character;}),
-          onExit: (Character character) => setState((){_hover = null;}),
+          onEnter: (Character character) => setState(() {
+            _hover = character;
+          }),
+          onExit: (Character character) => setState(() {
+            _hover = null;
+          }),
         ),
       ],
     );
