@@ -28,18 +28,40 @@ class CharacterEditWidget extends StatefulWidget {
   State<CharacterEditWidget> createState() => CharacterEditState();
 }
 
-class CharacterEditState extends State<CharacterEditWidget> with Loggable,
-    SaveReader, AlertHandler<CharacterEditWidget>,
-    DiscardableChanges<CharacterEditWidget>,
-    BreakableChanges<CharacterEditWidget> {
+class CharacterEditState extends State<CharacterEditWidget>
+    with
+        Loggable,
+        SaveReader,
+        AlertHandler<CharacterEditWidget>,
+        DiscardableChanges<CharacterEditWidget>,
+        BreakableChanges<CharacterEditWidget> {
   static const List<String> stats = <String>[
-    'HP', 'ATK', 'DEF', 'MAG', 'MND', 'SPD',
+    'HP',
+    'ATK',
+    'DEF',
+    'MAG',
+    'MND',
+    'SPD',
   ];
   static const List<String> gemStats = <String>[
-    'HP', 'MP', 'TP', 'ATK', 'DEF', 'MAG', 'MND', 'SPD',
+    'HP',
+    'MP',
+    'TP',
+    'ATK',
+    'DEF',
+    'MAG',
+    'MND',
+    'SPD',
   ];
   static const List<String> elements = <String>[
-    'FIR', 'CLD', 'WND', 'NTR', 'MYS', 'SPI', 'DRK', 'PHY',
+    'FIR',
+    'CLD',
+    'WND',
+    'NTR',
+    'MYS',
+    'SPI',
+    'DRK',
+    'PHY',
   ];
   static const List<Skill> boostSkills = BoostSkill.values;
   static const List<Skill> expSkills = ExpSkill.values;
@@ -53,15 +75,15 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
   static const int gemCap = 20; // Hard cap at shrine
 
   static final String librarySubtitle = 'Must be at most '
-    '${libraryCap.commaSeparate()}';
+      '${libraryCap.commaSeparate()}';
   static final String libraryElementSubtitle = 'Must be at most '
-    '${libraryElementCap.commaSeparate()}';
+      '${libraryElementCap.commaSeparate()}';
 
   static String skillSubtitle(Skill skill) => 'Must be at most '
-    '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
+      '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
 
   static String spellSubtitle(Skill skill) => 'Must be between 1 and '
-    '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
+      '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
 
   Character get character => widget.character;
 
@@ -83,14 +105,15 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
     ),
   );
 
+  List<Skill> get _allSkills =>
+      boostSkills +
+      expSkills +
+      character.skills +
+      character.spells +
+      character.awakeningSpells;
+
   late final SkillFormKeyMap _skillsFormsKeys = SkillFormKeyMap.fromEntries(
-    boostSkills
-    .cast<Skill>()
-    .followedBy(expSkills)
-    .followedBy(character.skills)
-    .followedBy(character.spells)
-    .followedBy(character.awakeningSpells)
-    .map(
+    _allSkills.map(
       (Skill skill) => MapEntry<Skill, NumberFormKey>(skill, NumberFormKey()),
     ),
   );
@@ -98,7 +121,8 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
   final DropdownFormKeyMap _tomeFormsKeys = DropdownFormKeyMap.fromEntries(
     tomeStats.map(
       (TomeStat stat) => MapEntry<String, DropdownFormKey>(
-        stat.name, DropdownFormKey(),
+        stat.name,
+        DropdownFormKey(),
       ),
     ),
   );
@@ -111,7 +135,9 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
 
   final FixedFormKey _mainEquipFormKey = FixedFormKey();
   final List<FixedFormKey> _subEquipFormKeys = <FixedFormKey>[
-    FixedFormKey(), FixedFormKey(), FixedFormKey(),
+    FixedFormKey(),
+    FixedFormKey(),
+    FixedFormKey(),
   ];
 
   late final List<TFormGroup> _expansionGroups;
@@ -136,7 +162,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
           initialValue: initialValueBuilder(i).commaSeparate(),
           minValue: minValue ?? BigInt.from(0),
           maxValue: maxValue,
-          onValueChanged: onValueChanged ?? (String? value) => setState((){}),
+          onValueChanged: onValueChanged ?? (String? value) => setState(() {}),
           key: keys[names[i]],
         ),
       ),
@@ -160,7 +186,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
           initialValue: initialValueBuilder(i).commaSeparate(),
           minValue: minValue ?? BigInt.from(0),
           maxValue: BigInt.from(skills[i].maxLevel),
-          onValueChanged: (String? value) => setState((){}),
+          onValueChanged: (String? value) => setState(() {}),
           key: keys[skills[i]],
         ),
       ),
@@ -184,7 +210,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
       remainingCap -= value;
       available -= value;
     }
-    setState((){
+    setState(() {
       // The cap for each individual stat becomes whatever has been allocated,
       // plus whatever is left from the global cap
       for (String stat in stats) {
@@ -212,7 +238,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
         (DropdownFormKey key) => key.currentState!.value,
       ),
     );
-    setState((){
+    setState(() {
       for (int i = 0; i < boostSkills.length; i++) {
         Skill base = boostSkills[i];
         Skill skill = commonSkills[i];
@@ -326,15 +352,18 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
     // Library data + Level bonus data
     for (int i = 0; i < stats.length; i++) {
       data.libraryLevels.setStatData(
-        i, _libraryFormsKeys[stats[i]]!.currentState!.saveIntValue(),
+        i,
+        _libraryFormsKeys[stats[i]]!.currentState!.saveIntValue(),
       );
       data.levelBonus.setStatData(
-        i, _levelBonusFormsKeys[stats[i]]!.currentState!.saveIntValue(),
+        i,
+        _levelBonusFormsKeys[stats[i]]!.currentState!.saveIntValue(),
       );
     }
     for (int i = 0; i < elements.length; i++) {
       data.libraryLevels.setElementData(
-        i, _libraryFormsKeys[elements[i]]!.currentState!.saveIntValue(),
+        i,
+        _libraryFormsKeys[elements[i]]!.currentState!.saveIntValue(),
       );
     }
     data.unusedBonusPoints = _unusedLevelFormKey.currentState!.saveIntValue();
@@ -342,12 +371,14 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
     // Common skills data
     for (int i = 0; i < boostSkills.length; i++) {
       data.skills.setBoostData(
-        i, _skillsFormsKeys[boostSkills[i]]!.currentState!.saveIntValue(),
+        i,
+        _skillsFormsKeys[boostSkills[i]]!.currentState!.saveIntValue(),
       );
     }
     for (int i = 0; i < expSkills.length; i++) {
       data.skills.setExpData(
-        i, _skillsFormsKeys[expSkills[i]]!.currentState!.saveIntValue(),
+        i,
+        _skillsFormsKeys[expSkills[i]]!.currentState!.saveIntValue(),
       );
     }
 
@@ -374,7 +405,8 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
     // Gem data
     for (int i = 0; i < gemStats.length; i++) {
       data.gems.setStatData(
-        i, _gemFormsKeys[gemStats[i]]!.currentState!.saveIntValue(),
+        i,
+        _gemFormsKeys[gemStats[i]]!.currentState!.saveIntValue(),
       );
     }
 
@@ -393,7 +425,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
     }
 
     // Refresh widget to get rid of the save symbol
-    setState((){});
+    setState(() {});
   }
 
   //
@@ -430,7 +462,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
             initialValue: data.experience.commaSeparate(),
             minValue: BigInt.from(0),
             maxValue: BigInt.parse(expCap),
-            onValueChanged: (String? value) => setState((){}),
+            onValueChanged: (String? value) => setState(() {}),
             key: _expFormKey,
           ),
           _bpFormKey: TFormNumber(
@@ -440,7 +472,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
             initialValue: data.bp.commaSeparate(),
             minValue: BigInt.from(0),
             maxValue: BigInt.from(bpCap),
-            onValueChanged: (String? value) => setState((){}),
+            onValueChanged: (String? value) => setState(() {}),
             key: _bpFormKey,
           ),
           _subclassFormKey: TFormDropdown(
@@ -451,7 +483,7 @@ class CharacterEditState extends State<CharacterEditWidget> with Loggable,
             options: Subclass.values.map((Subclass s) => s.prettyName).toList(),
             initialValue: data.subclass.prettyName,
             validationCallback: _checkForDuplicateUniqueSubclasses,
-            onValueChanged: (String? value) => setState((){}),
+            onValueChanged: (String? value) => setState(() {}),
             key: _subclassFormKey,
           ),
         },
