@@ -21,13 +21,25 @@ class CharacterUnlockWidget extends StatefulWidget {
   State<CharacterUnlockWidget> createState() => CharacterUnlockState();
 }
 
-class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
-    SaveReader, AlertHandler<CharacterUnlockWidget>,
-    DiscardableChanges<CharacterUnlockWidget>,
-    BreakableChanges<CharacterUnlockWidget> {
+class CharacterUnlockState extends State<CharacterUnlockWidget>
+    with
+        Loggable,
+        SaveReader,
+        AlertHandler<CharacterUnlockWidget>,
+        DiscardableChanges<CharacterUnlockWidget>,
+        BreakableChanges<CharacterUnlockWidget> {
   late List<CharacterUnlockFlag> _flags;
   late List<CharacterUnlockFlag> _original;
   Character? _hover;
+
+  bool _flagLocksAPartyCharacter(CharacterUnlockFlag flag) {
+    if (flag.isUnlocked) {
+      return false;
+    }
+    return saveFile.partyData.any(
+      (PartySlot s) => s.isUsed && s.character == flag.character,
+    );
+  }
 
   @override
   bool get hasChanges {
@@ -42,11 +54,8 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
   @override
   Future<void> saveChanges() async {
     // Display a warning if trying to lock characters that are in the party
-    List<PartySlot> party = saveFile.partyData;
     List<CharacterUnlockFlag> lockedPartyCharacters = _flags.where(
-      (CharacterUnlockFlag f) => !f.isUnlocked && party.any(
-        (PartySlot s) => s.isUsed && s.character == f.character,
-      ),
+      _flagLocksAPartyCharacter,
     ).toList();
     if (lockedPartyCharacters.isNotEmpty) {
       await log(
@@ -54,7 +63,7 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
         'Attempting to lock a character that is in the party',
       );
       String affectedCharacters = lockedPartyCharacters.map(
-        (CharacterUnlockFlag f)=>f.character.name.upperCaseFirstChar(),
+        (CharacterUnlockFlag f) => f.character.name.upperCaseFirstChar(),
       ).join(', ');
       bool doSave = await showSaveWarningDialog(
         '$affectedCharacters are being locked, but they are in your party. '
@@ -65,14 +74,14 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
         return;
       }
       for (CharacterUnlockFlag flag in lockedPartyCharacters) {
-        PartySlot slot = party.firstWhere(
+        PartySlot slot = saveFile.partyData.firstWhere(
           (PartySlot s) => s.isUsed && s.character == flag.character,
         );
         slot.isUsed = false;
       }
     }
     // Display a warning if trying to lock one of the 4 starting characters
-    if (_flags.sublist(0, 4).any((CharacterUnlockFlag f)=>!f.isUnlocked)) {
+    if (_flags.sublist(0, 4).any((CharacterUnlockFlag f) => !f.isUnlocked)) {
       await log(
         LogLevel.warning,
         'Attempting to lock one of the initial 4 characters',
@@ -86,7 +95,7 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
       }
     }
     // Display a warning if trying to lock all characters
-    if (_flags.every((CharacterUnlockFlag f)=>!f.isUnlocked)) {
+    if (_flags.every((CharacterUnlockFlag f) => !f.isUnlocked)) {
       await log(LogLevel.warning, 'Attempting to lock all characters');
       bool doSave = await showSaveWarningDialog(
         'If you lock all characters, you will be unable to do anything in-game',
@@ -112,7 +121,7 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
   Future<void> _toggleUnlockedData(CharacterUnlockFlag flag) async {
     String state = (flag.isUnlocked) ? 'locked' : 'unlocked';
     await log(LogLevel.debug, '${flag.character.name} is now $state');
-    setState((){
+    setState(() {
       flag.isUnlocked = !flag.isUnlocked;
     });
   }
@@ -188,8 +197,12 @@ class CharacterUnlockState extends State<CharacterUnlockWidget> with Loggable,
             interactWhenLocked: true,
             highlight: _hover,
             onTap: _characterTap,
-            onEnter: (Character character) => setState((){_hover = character;}),
-            onExit: (Character character) => setState((){_hover = null;}),
+            onEnter: (Character character) => setState(() {
+              _hover = character;
+            }),
+            onExit: (Character character) => setState(() {
+              _hover = null;
+            }),
             unlockFlags: _flags,
             titleAppendMap: Map<Character, Widget>.fromEntries(
               Character.values.map(
