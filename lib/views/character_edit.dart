@@ -577,9 +577,8 @@ class CharacterEditState extends State<CharacterEditWidget>
               skills: character.awakeningSpells,
               keys: _skillsFormsKeys,
               subtitleBuilder: skillSubtitle,
-              initialValueBuilder: (int i) => data.skills.personalSpells[
-                character.spells.length + i
-              ],
+              initialValueBuilder: (int i) =>
+                  data.skills.personalSpells[character.spells.length + i],
             ),
           ),
         ),
@@ -629,23 +628,23 @@ class CharacterEditState extends State<CharacterEditWidget>
             title: 'Main equipment',
             subtitle: 'Item occupying the main slot',
             initialValue: data.mainEquip.name,
-            setCallback: (){},
-            onValueChanged: (String? value) => setState((){}),
+            setCallback: () {},
+            onValueChanged: (String? value) => setState(() {}),
             emptyValue: MainEquip.slot0.name,
             key: _mainEquipFormKey,
           ),
         }..addEntries(
           <int>[1, 2, 3].map(
             (int i) => MapEntry<FormKey, TForm>(
-              _subEquipFormKeys[i-1],
+              _subEquipFormKeys[i - 1],
               TFormFixed(
                 title: 'Sub equipment $i',
                 subtitle: 'Item occupying sub slot $i',
-                initialValue: data.subEquips[i-1].name,
-                setCallback: (){},
-                onValueChanged: (String? value) => setState((){}),
+                initialValue: data.subEquips[i - 1].name,
+                setCallback: () {},
+                onValueChanged: (String? value) => setState(() {}),
                 emptyValue: SubEquip.slot0.name,
-                key: _subEquipFormKeys[i-1],
+                key: _subEquipFormKeys[i - 1],
               ),
             ),
           ),
