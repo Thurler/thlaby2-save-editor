@@ -30,7 +30,7 @@ mixin DiscardableChanges<T extends StatefulWidget>
     }
     bool canDiscard = await _showUnsavedChangesDialog();
     if (canDiscard) {
-      await log(LogLevel.info, 'Discarding changes to character data');
+      await log(LogLevel.info, 'Discarding changes');
     }
     return canDiscard;
   }
