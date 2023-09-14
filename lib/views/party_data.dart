@@ -18,9 +18,14 @@ class PartyDataWidget extends StatefulWidget {
   State<PartyDataWidget> createState() => PartyDataState();
 }
 
-class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
-    AlertHandler<PartyDataWidget>, DiscardableChanges<PartyDataWidget>,
-    BreakableChanges<PartyDataWidget>, Navigatable<PartyDataWidget> {
+class PartyDataState extends State<PartyDataWidget>
+    with
+        SaveReader,
+        Loggable,
+        AlertHandler<PartyDataWidget>,
+        DiscardableChanges<PartyDataWidget>,
+        BreakableChanges<PartyDataWidget>,
+        Navigatable<PartyDataWidget> {
   late List<PartySlot> _editable;
   late List<PartySlot> _original;
   PartySlot? _hover;
@@ -48,7 +53,7 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
       if (!_editable[i].isUsed) {
         continue;
       }
-      for (int j = i+1; j < _editable.length; j++) {
+      for (int j = i + 1; j < _editable.length; j++) {
         if (!_editable[j].isUsed) {
           continue;
         }
@@ -72,7 +77,7 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
       }
     }
     // Display a warning if trying to empty the front line
-    if (_editable.sublist(0, 4).every((PartySlot s)=>!s.isUsed)) {
+    if (_editable.sublist(0, 4).every((PartySlot s) => !s.isUsed)) {
       await log(LogLevel.warning, 'Attempting to empty the entire front row');
       bool doSave = await showSaveWarningDialog(
         'An empty frontline can crash the game if you go into battle',
@@ -128,10 +133,18 @@ class PartyDataState extends State<PartyDataWidget> with SaveReader, Loggable,
             removeOnTap: _removePartyMember,
             characterHighlight: _hover,
             removeHighlight: _hoverRm,
-            characterOnEnter: (PartySlot slot) => setState((){_hover = slot;}),
-            removeOnEnter: (PartySlot slot) => setState((){_hoverRm = slot;}),
-            characterOnExit: (PartySlot slot) => setState((){_hover = null;}),
-            removeOnExit: (PartySlot slot) => setState((){_hoverRm = null;}),
+            characterOnEnter: (PartySlot slot) => setState(() {
+              _hover = slot;
+            }),
+            removeOnEnter: (PartySlot slot) => setState(() {
+              _hoverRm = slot;
+            }),
+            characterOnExit: (PartySlot slot) => setState(() {
+              _hover = null;
+            }),
+            removeOnExit: (PartySlot slot) => setState(() {
+              _hoverRm = null;
+            }),
           ),
         ).toList()..insert(2, const Divider()),
       ),
