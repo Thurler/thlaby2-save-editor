@@ -1199,6 +1199,8 @@ enum Character {
 
   bool isNaturalTomeStat(TomeStat stat) => naturalTomeStats.contains(stat);
 
+  List<Skill> get allSkills => skills + spells + awakeningSpells;
+
   List<String> tomeDropdownOptions(TomeStat stat) {
     List<TomeLevel> levels = <TomeLevel>[TomeLevel.unused];
     bool isNatural = isNaturalTomeStat(stat);
