@@ -5,11 +5,15 @@ import 'package:thlaby2_save_editor/widgets/form_group.dart';
 import 'package:thlaby2_save_editor/widgets/skill_form.dart';
 
 class SkillFormGroup extends TFormGroup {
+  final Map<Skill, FormKey> keys;
+  final Function(String?) onValueChanged;
+  final int Function(int) initialValueBuilder;
+
   SkillFormGroup({
     required List<Skill> skills,
-    required Map<Skill, FormKey> keys,
-    required int Function(int) initialValueBuilder,
-    required Function(String?) onValueChanged,
+    required this.keys,
+    required this.onValueChanged,
+    required this.initialValueBuilder,
     required super.title,
   }) : super(
     forms: Map<FormKey, TForm>.fromEntries(

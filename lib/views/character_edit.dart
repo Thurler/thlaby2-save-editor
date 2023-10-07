@@ -142,6 +142,8 @@ class CharacterEditState extends State<CharacterEditWidget>
 
   late final List<TFormGroup> _expansionGroups;
 
+  late final SubclassFormGroup subclassFormGroup;
+
   Iterable<MapEntry<FormKey, TForm>> _formMapEntriesFromList({
     required List<String> names,
     required Map<String, FormKey> keys,
@@ -196,6 +198,12 @@ class CharacterEditState extends State<CharacterEditWidget>
       // The unused level up points form should be updated automatically
       _unusedLevelFormKey.currentState!.value = available.commaSeparate();
     });
+  }
+
+  void _onSubclassChange(String? value) {
+    // Propagate the change to the group so it can reset the forms
+    subclassFormGroup.changeSubclass(Subclass.fromName(value));
+    setState(() {});
   }
 
   void _onLevelChange(String? value) => _updateLevelPoints(
@@ -367,6 +375,31 @@ class CharacterEditState extends State<CharacterEditWidget>
       data.skills.personalSpells[i] = key.currentState!.saveIntValue();
     }
 
+    // Subclass skills - length might have changed thanks to subclass change, so
+    // we iterate over all slots, checking for valid entries
+    List<Skill> subclassSkills = data.subclass.skills;
+    for (int i = 0; i < data.skills.subclassSkills.length; i++) {
+      if (i < subclassSkills.length) {
+        SkillFormKey key = _subclassSkillsFormsKeys[subclassSkills[i]]!;
+        data.skills.subclassSkills[i] = key.currentState!.saveIntValue();
+      } else {
+        data.skills.subclassSkills[i] = 0;
+      }
+    }
+    subclassFormGroup.save();
+
+    // Subclass skills - length might have changed thanks to subclass change, so
+    // we iterate over all slots, checking for valid entries
+    List<Skill> subclassSpells = data.subclass.spells;
+    for (int i = 0; i < data.skills.subclassSpells.length; i++) {
+      if (i < subclassSpells.length) {
+        SkillFormKey key = _subclassSkillsFormsKeys[subclassSpells[i]]!;
+        data.skills.subclassSpells[i] = key.currentState!.saveIntValue();
+      } else {
+        data.skills.subclassSpells[i] = 0;
+      }
+    }
+
     // Tome data
     for (TomeStat stat in tomeStats) {
       data.tomes.setStatData(
@@ -418,6 +451,15 @@ class CharacterEditState extends State<CharacterEditWidget>
     for (Skill skill in data.subclass.allSkills) {
       _subclassSkillsFormsKeys[skill] = SkillFormKey();
     }
+    // Also initialize subclass skill form group after initializing the keys
+    subclassFormGroup = SubclassFormGroup(
+      current: data.subclass,
+      keys: _subclassSkillsFormsKeys,
+      onValueChanged: (String? value) => setState(() {}),
+      initialValueBuilder: (int i) => i < data.subclass.skills.length
+        ? data.skills.subclassSkills[i]
+        : data.skills.subclassSpells[i - data.subclass.skills.length],
+    );
 
     _expansionGroups = <TFormGroup>[
       // Basic info - level, exp, bp, subclass
@@ -457,12 +499,12 @@ class CharacterEditState extends State<CharacterEditWidget>
           _subclassFormKey: TFormDropdown(
             enabled: true,
             title: 'Subclass',
-            subtitle: 'Changing this will affect skills data',
+            subtitle: 'Changing this will affect skills data!',
             hintText: 'Select a subclass',
             options: Subclass.values.map((Subclass s) => s.prettyName).toList(),
             initialValue: data.subclass.prettyName,
             validationCallback: _checkForDuplicateUniqueSubclasses,
-            onValueChanged: (String? value) => setState(() {}),
+            onValueChanged: _onSubclassChange,
             key: _subclassFormKey,
           ),
         },
@@ -536,14 +578,7 @@ class CharacterEditState extends State<CharacterEditWidget>
           : data.skills.personalSpells[i - character.skills.length],
       ),
       // Subclass skill data
-      SubclassFormGroup(
-        current: data.subclass,
-        keys: _subclassSkillsFormsKeys,
-        onValueChanged: (String? value) => setState(() {}),
-        initialValueBuilder: (int i) => i < data.subclass.skills.length
-          ? data.skills.subclassSkills[i]
-          : data.skills.subclassSpells[i - data.subclass.skills.length],
-      ),
+      subclassFormGroup,
       // Tome level data
       TFormGroup(
         title: 'Tomes',
