@@ -10,6 +10,7 @@ import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/equip.dart';
 import 'package:thlaby2_save_editor/save/library.dart';
 import 'package:thlaby2_save_editor/save/skill.dart';
+import 'package:thlaby2_save_editor/save/subclass.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
