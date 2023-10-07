@@ -106,6 +106,7 @@ class CharacterEditState extends State<CharacterEditWidget>
   );
 
   List<Skill> get _allSkills =>
+      <Skill>[] + // The runtime type casting is dumb
       boostSkills +
       expSkills +
       character.skills +
