@@ -10,61 +10,95 @@ enum Subclass {
   guardian(
     'Guardian',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.shieldBash,
+      SubclassSpell.shieldDefense,
+    ],
     isUnique: false,
   ),
   monk(
     'Monk',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.puncturingThrust,
+      SubclassSpell.ironMountainCharge,
+    ],
     isUnique: false,
   ),
   warrior(
     'Warrior',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.severingFlash,
+      SubclassSpell.explosiveFlameSword,
+    ],
     isUnique: false,
   ),
   sorcerer(
     'Sorcerer',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.penetrator,
+      SubclassSpell.aspirationSurge,
+    ],
     isUnique: false,
   ),
   healer(
     'Healer',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.prayerRecovery,
+      SubclassSpell.prayerGoodHealth,
+    ],
     isUnique: false,
   ),
   enhancer(
     'Enhancer',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.artBattlemage,
+      SubclassSpell.ouncePrevention,
+    ],
     isUnique: false,
   ),
   hexer(
     'Hexer',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.hexCrimson,
+      SubclassSpell.hexDark,
+      SubclassSpell.hexWhite,
+    ],
     isUnique: false,
   ),
   toxicologist(
     'Toxicologist',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.poisonousIncense,
+      SubclassSpell.paralyzingIncense,
+      SubclassSpell.numbingIncense,
+      SubclassSpell.deathlyIncense,
+    ],
     isUnique: false,
   ),
   magician(
     'Magician',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.magicTransfer,
+      SubclassSpell.magicCircuit,
+    ],
     isUnique: false,
   ),
   herbalist(
     'Herbalist',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.placeboEffect,
+      SubclassSpell.incenseTreatment,
+      SubclassSpell.herbAwakening,
+    ],
     isUnique: false,
   ),
   strategist(
@@ -82,7 +116,10 @@ enum Subclass {
   diva(
     'Diva',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.rhythmicDance,
+      SubclassSpell.danceCochlea,
+    ],
     isUnique: false,
   ),
   transcendent(
@@ -94,23 +131,25 @@ enum Subclass {
   swordmaster(
     'Swordmaster',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.severingFlash,
+      SubclassSpell.explosiveFlameSword,
+      SubclassSpell.moonShadowFlash,
+      SubclassSpell.samidareSlash,
+      SubclassSpell.swordmasterStance,
+    ],
     isUnique: false,
   ),
   archmage(
     'Archmage',
-    skills: <Skill>[
-      CommonSkill.sutraStrength,
-      CommonSkill.sutraShield,
-      CommonSkill.sutraChant,
-      CommonSkill.sutraFocus,
-      CommonSkill.sutraDrang,
-      CommonSkill.sutraRecovery,
-      CommonSkill.sutraMana,
-      CommonSkill.sutraResistance,
-      CommonSkill.sutraImmunity,
+    skills: <Skill>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.penetrator,
+      SubclassSpell.aspirationSurge,
+      SubclassSpell.southernCross,
+      SubclassSpell.execution,
+      SubclassSpell.archmageChant,
     ],
-    spells: <SubclassSpell>[SubclassSpell.test1, SubclassSpell.test2],
     isUnique: false,
   ),
   appraiser(
@@ -122,37 +161,54 @@ enum Subclass {
   elementalist(
     'Elementalist',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.enchantSpinel,
+      SubclassSpell.enchantLazurite,
+      SubclassSpell.enchantPyrope,
+      SubclassSpell.enchantFluorite,
+    ],
     isUnique: false,
   ),
   ninja(
     'Ninja',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.assassinationSword,
+      SubclassSpell.swiftSpeed,
+    ],
     isUnique: false,
   ),
   oracle(
     'Oracle',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[SubclassSpell.oracleTalisman],
     isUnique: false,
   ),
   holyblessing(
     'Holy Blessing',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.ameMurakumoSlash,
+      SubclassSpell.startHeavenlyDemise,
+      SubclassSpell.worldShakingRule,
+    ],
     isUnique: true,
   ),
   dragongodpower(
     "Dragon God's Power",
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[SubclassSpell.dragonGodSigh],
     isUnique: true,
   ),
   winner(
     '*WINNER*',
     skills: <Skill>[],
-    spells: <SubclassSpell>[],
+    spells: <SubclassSpell>[
+      SubclassSpell.vorpalBlade,
+      SubclassSpell.manaStorm,
+      SubclassSpell.swordLight,
+      SubclassSpell.staffDestruction,
+    ],
     isUnique: true,
   );
 
