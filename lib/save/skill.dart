@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 
 abstract class Skill {
+  final int minLevel = 0;
   final int maxLevel;
   final int levelCost;
   final String name;
@@ -10,125 +11,137 @@ abstract class Skill {
 }
 
 enum BoostSkill implements Skill {
-  hp(5, 2, 'HP Boost'),
-  mp(5, 2, 'MP Boost'),
-  tp(5, 2, 'TP Boost'),
-  atk(5, 2, 'ATK Boost'),
-  def(5, 2, 'DEF Boost'),
-  mag(5, 2, 'MAG Boost'),
-  mnd(5, 2, 'MND Boost'),
-  spd(5, 2, 'SPD Boost'),
-  eva(5, 2, 'EVA Boost'),
-  acc(5, 2, 'ACC Boost'),
-  aff(5, 2, 'Affinity Boost'),
-  res(5, 2, 'Resistance Boost');
+  hp('HP Boost'),
+  mp('MP Boost'),
+  tp('TP Boost'),
+  atk('ATK Boost'),
+  def('DEF Boost'),
+  mag('MAG Boost'),
+  mnd('MND Boost'),
+  spd('SPD Boost'),
+  eva('EVA Boost'),
+  acc('ACC Boost'),
+  aff('Affinity Boost'),
+  res('Resistance Boost');
 
   @override
-  final int maxLevel;
+  final int minLevel = 0;
   @override
-  final int levelCost;
+  final int maxLevel = 5;
+  @override
+  final int levelCost = 2;
   @override
   final String name;
 
-  const BoostSkill(this.maxLevel, this.levelCost, this.name);
+  const BoostSkill(this.name);
 }
 
 enum Boost2Skill implements Skill {
-  hp(5, 10, 'HP Boost 2'),
-  mp(5, 10, 'MP Boost 2'),
-  tp(5, 10, 'TP Boost 2'),
-  atk(5, 10, 'ATK Boost 2'),
-  def(5, 10, 'DEF Boost 2'),
-  mag(5, 10, 'MAG Boost 2'),
-  mnd(5, 10, 'MND Boost 2'),
-  spd(5, 10, 'SPD Boost 2');
+  hp('HP Boost 2'),
+  mp('MP Boost 2'),
+  tp('TP Boost 2'),
+  atk('ATK Boost 2'),
+  def('DEF Boost 2'),
+  mag('MAG Boost 2'),
+  mnd('MND Boost 2'),
+  spd('SPD Boost 2');
 
   @override
-  final int maxLevel;
+  final int minLevel = 0;
   @override
-  final int levelCost;
+  final int maxLevel = 5;
+  @override
+  final int levelCost = 10;
   @override
   final String name;
 
-  const Boost2Skill(this.maxLevel, this.levelCost, this.name);
+  const Boost2Skill(this.name);
 }
 
 enum BoostMegaSkill implements Skill {
-  hp(5, 50, 'HP Mega Boost'),
-  mp(5, 50, 'MP Mega Boost'),
-  tp(5, 50, 'TP Mega Boost'),
-  atk(5, 50, 'ATK Mega Boost'),
-  def(5, 50, 'DEF Mega Boost'),
-  mag(5, 50, 'MAG Mega Boost'),
-  mnd(5, 50, 'MND Mega Boost'),
-  spd(5, 50, 'SPD Mega Boost');
+  hp('HP Mega Boost'),
+  mp('MP Mega Boost'),
+  tp('TP Mega Boost'),
+  atk('ATK Mega Boost'),
+  def('DEF Mega Boost'),
+  mag('MAG Mega Boost'),
+  mnd('MND Mega Boost'),
+  spd('SPD Mega Boost');
 
   @override
-  final int maxLevel;
+  final int minLevel = 0;
   @override
-  final int levelCost;
+  final int maxLevel = 5;
+  @override
+  final int levelCost = 50;
   @override
   final String name;
 
-  const BoostMegaSkill(this.maxLevel, this.levelCost, this.name);
+  const BoostMegaSkill(this.name);
 }
 
 enum BoostHighSkill implements Skill {
-  hp(5, 6, 'HP High Boost'),
-  mp(5, 3, 'MP High Boost'),
-  tp(5, 6, 'TP High Boost'),
-  atk(5, 6, 'ATK High Boost'),
-  def(5, 6, 'DEF High Boost'),
-  mag(5, 6, 'MAG High Boost'),
-  mnd(5, 6, 'MND High Boost'),
-  spd(5, 6, 'SPD High Boost'),
-  eva(5, 6, 'EVA High Boost'),
-  acc(5, 6, 'ACC High Boost'),
-  aff(5, 6, 'Affinity High Boost'),
-  res(5, 6, 'Resistance High Boost');
+  hp(6, 'HP High Boost'),
+  mp(3, 'MP High Boost'),
+  tp(6, 'TP High Boost'),
+  atk(6, 'ATK High Boost'),
+  def(6, 'DEF High Boost'),
+  mag(6, 'MAG High Boost'),
+  mnd(6, 'MND High Boost'),
+  spd(6, 'SPD High Boost'),
+  eva(6, 'EVA High Boost'),
+  acc(6, 'ACC High Boost'),
+  aff(6, 'Affinity High Boost'),
+  res(6, 'Resistance High Boost');
 
   @override
-  final int maxLevel;
+  final int minLevel = 0;
+  @override
+  final int maxLevel = 5;
   @override
   final int levelCost;
   @override
   final String name;
 
-  const BoostHighSkill(this.maxLevel, this.levelCost, this.name);
+  const BoostHighSkill(this.levelCost, this.name);
 }
 
 enum BoostGigaSkill implements Skill {
-  hp(5, 75, 'HP Giga Boost'),
-  mp(5, 75, 'MP Giga Boost'),
-  tp(5, 75, 'TP Giga Boost'),
-  atk(5, 75, 'ATK Giga Boost'),
-  def(5, 75, 'DEF Giga Boost'),
-  mag(5, 75, 'MAG Giga Boost'),
-  mnd(5, 75, 'MND Giga Boost'),
-  spd(5, 75, 'SPD Giga Boost');
+  hp('HP Giga Boost'),
+  mp('MP Giga Boost'),
+  tp('TP Giga Boost'),
+  atk('ATK Giga Boost'),
+  def('DEF Giga Boost'),
+  mag('MAG Giga Boost'),
+  mnd('MND Giga Boost'),
+  spd('SPD Giga Boost');
 
   @override
-  final int maxLevel;
+  final int minLevel = 0;
   @override
-  final int levelCost;
+  final int maxLevel = 5;
+  @override
+  final int levelCost = 75;
   @override
   final String name;
 
-  const BoostGigaSkill(this.maxLevel, this.levelCost, this.name);
+  const BoostGigaSkill(this.name);
 }
 
 enum ExpSkill implements Skill {
-  motivatedHeart(2, 5, 'Motivated Heart'),
-  handsOnExperience(2, 5, 'Hands-on Experience');
+  motivatedHeart('Motivated Heart'),
+  handsOnExperience('Hands-on Experience');
 
   @override
-  final int maxLevel;
+  final int minLevel = 0;
   @override
-  final int levelCost;
+  final int maxLevel = 2;
+  @override
+  final int levelCost = 5;
   @override
   final String name;
 
-  const ExpSkill(this.maxLevel, this.levelCost, this.name);
+  const ExpSkill(this.name);
 }
 
 enum CommonSkill implements Skill {
@@ -515,6 +528,8 @@ enum CommonSkill implements Skill {
   trueMaidenMiare(1, 50, 'True Maiden of Miare');
 
   @override
+  final int minLevel = 0;
+  @override
   final int maxLevel;
   @override
   final int levelCost;
@@ -525,224 +540,256 @@ enum CommonSkill implements Skill {
 }
 
 enum Spell implements Skill {
-  yinYang(5, 5, 'Yin-Yang Orb'),
-  fantasySeal(5, 5, 'Fantasy Seal'),
-  exorcisingBorder(5, 5, 'Exorcising Border'),
-  greatBarrier(5, 5, 'Great Hakurei Barrier'),
-  magicMissile(5, 5, 'Magic Missile'),
-  asteroidBelt(5, 5, 'Asteroid Belt'),
-  masterSparkMarisa(5, 5, 'Master Spark'),
-  concentration(5, 5, 'Concentration'),
-  firstAid(5, 5, 'First Aid'),
-  battleCommand(5, 5, 'Battle Command'),
-  preciseDiagnosis(5, 25, 'Precise Diagnosis'),
-  ancientHistory(5, 5, 'Ancient History -Old History-'),
-  newHistory(5, 5, 'New History -Next History-'),
-  treasuresSword(5, 5, 'Three Treasures - Sword'),
-  treasuresMirror(5, 5, 'Three Treasures - Mirror'),
-  rabiesBite(5, 5, 'Rabies Bite'),
-  expelleeCanaan(5, 5, "Expellee's Canaan"),
-  presentSlash(9, 5, 'Present Life Slash'),
-  slashEternity(9, 5, 'Slash of Eternity'),
-  slashKarmaWind(9, 5, "God's Slash of Karma Wind"),
-  slashSixSenses(9, 5, 'Slash Clearing the Six Senses'),
-  karakasaFlash(5, 5, 'Karakasa Surprising Flash'),
-  rainyGhostStory(5, 5, "A Rainy Night's Ghost Story"),
-  drizzlingRaindrops(5, 5, 'Drizzling Large Raindrops'),
-  moonlightRay(5, 5, 'Moonlight Ray'),
-  darkSideMoon(5, 5, 'Dark Side of the Moon'),
-  demarcation(5, 5, 'Demarcation'),
-  icicleFall(5, 5, 'Icicle Fall'),
-  diamondBlizzard(5, 5, 'Diamond Blizzard'),
-  perfectFreeze(5, 5, 'Perfect Freeze'),
-  whiteAlbum(5, 5, 'White Album'),
-  autumnSky(5, 5, 'Autumn Sky'),
-  warmHarvest(5, 5, 'Warm Colour Harvest'),
-  sweetPotato(5, 5, 'Sweet Potato Room'),
-  owotoshiHarvester(5, 5, 'Owotoshi Harvester'),
-  shortExpectancy(5, 5, 'Short Life Expectancy'),
-  ferriageFog(5, 5, 'Ferriage in the Deep Fog'),
-  confinesAvici(5, 5, 'Narrow Confines of Avici'),
-  scytheChoosesDead(5, 5, 'Scythe that Chooses the Dead'),
-  flightIdaten(5, 5, 'Flight of Idaten'),
-  phoenixWings(5, 5, 'Phoenix Spread Wings'),
-  kimontonkou(5, 5, 'Kimontonkou'),
-  kappaWatterfall(5, 5, "Kappa's Illusionary Waterfall"),
-  extendingArm(5, 5, 'Exteeeending Aaaaarm'),
-  superScope(5, 5, 'Super Scope 3D'),
-  portableMachine(5, 5, 'Portable Versatile Machine'),
-  largeSmallBox(5, 5, 'Large Box and Small Box'),
-  midnightRitual(5, 5, 'Midnight Anathema Ritual'),
-  grudgeReturning(5, 5, 'Grudge Returning'),
-  jealousyKindLovely(5, 5, 'Jealousy of Kind and Lovely'),
-  cometEarth(5, 5, 'Comet on Earth'),
-  fireflyPhenomenon(5, 5, 'Firefly Phenomenon'),
-  nightbugTornado(5, 5, 'Nightbug Tornado'),
-  dragonJewel(5, 5, "Dragon's Neck Jewel"),
-  buddhaBowl(5, 5, "Buddha's Stone Bowl"),
-  swallowShell(5, 5, "Swallow's Cowrie Shell"),
-  bulletHourai(5, 5, 'Bullet Branch of Hourai'),
-  firePhoenix(5, 5, 'Fire Bird -Flying Phoenix-'),
-  tsukiCurse(5, 5, "Tsuki no Iwakasa's Curse"),
-  fujiyamaVolcano(5, 5, 'Fujiyama Volcano'),
-  windGodFan(5, 5, "Wind God's Fan"),
-  peerlessWindGod(5, 5, 'Peerless Wind God'),
-  sarutahikoGuidance(5, 5, "Sarutahiko's Guidance"),
-  divineAdvent(5, 5, "Divine Grandson's Advent"),
-  illDive(7, 5, 'Ill-Starred Dive'),
-  poisonousDance(7, 5, "Poisonous Moth's Dark Dance"),
-  midnightChorus(7, 5, 'Midnight Chorus Master'),
-  mysteriousSong(5, 5, 'Mysterious Song'),
-  higekiriArm(5, 5, "Higekiri's Cursed Arm"),
-  echoForestGods(5, 5, 'Echo of the Nine Forest Gods'),
-  divingWaltz(5, 5, 'Diving Waltz of the Raijuu'),
-  breathHermit(5, 5, 'Breath of the Hermit'),
-  summonDragonTiger(5, 25, 'Summon Dragon and Tiger'),
-  goldRush(5, 5, 'Gold Rush'),
-  rareMetalDetector(5, 5, 'Rare Metal Detector'),
-  nazrinPendulum(5, 5, 'Nazrin Pendulum'),
-  misfortuneBiorhythm(5, 5, "Misfortune God's Biorhythm"),
-  painFlow(5, 5, 'Pain Flow'),
-  oldLadyFire(5, 5, "Old Lady Ohgane's Fire"),
-  catWalk(7, 5, "Cat's Walk"),
-  vengefulSpirit(7, 5, 'Vengeful Cannibal Spirit'),
-  hellNeedleHill(7, 5, "Former Hell's Needle Hill"),
-  blazingWheel(7, 5, 'Blazing Wheel'),
-  gigaFlare(5, 5, 'Giga Flare'),
-  nuclearReaction(5, 5, 'Intense Nuclear Reaction'),
-  hellTokamak(5, 5, "Hell's Tokamak"),
-  brainFingerprint(5, 5, 'Brain Fingerprint'),
-  supernaturalPhenomenon(5, 5, 'Supernatural Phenomenon'),
-  koThreeSteps(5, 5, 'Knockout in Three Steps'),
-  irremovableShackles(5, 5, 'Irremovable Shackles'),
-  brilliantGem(5, 5, 'Brilliant Light Gem'),
-  mountainBreaker(5, 5, 'Mountain Breaker'),
-  colorfulRain(5, 5, 'Colourful Rain'),
-  healer(5, 5, 'Healer'),
-  artfulSacrifice(7, 5, 'Artful Sacrifice'),
-  littleLegion(7, 5, 'Little Legion'),
-  hangedHourai(7, 5, 'Hanged Hourai Doll'),
-  tripWire(7, 5, 'Trip Wire'),
-  royalFlare(7, 5, 'Royal Flare'),
-  princessUndine(7, 5, 'Princess Undine'),
-  djinnGust(7, 5, 'Djinn Gust'),
-  satelliteHimawari(7, 5, 'Satellite Himawari'),
-  silentSelene(7, 5, 'Silent Selene'),
-  mercurySea(5, 5, 'Mercury Sea'),
-  omoikaneDevice(5, 5, "Omoikane's Device"),
-  houraiElixir(5, 5, 'Hourai Elixir'),
-  astronomicalEntombing(5, 5, 'Astronomical Entombing'),
-  lunaticRedEyes(5, 5, 'Lunatic Red Eyes'),
-  mindStarmine(5, 5, 'Mind Starmine'),
-  discarder(5, 5, 'Discarder'),
-  gasWovenOrb(5, 5, 'Gas-Woven Orb'),
-  grandPatriotElixir(5, 5, "Grand Patriot's Elixir"),
-  nightGuesstStars(9, 5, 'Night of Bright Guest Stars'),
-  mosesMiracle(9, 5, "Moses's Miracle"),
-  yasakaWind(5, 5, "Yasaka's Divine Wind"),
-  miracleFruit(5, 5, 'Miracle Fruit'),
-  elekiterPalace(5, 5, 'Elekiter Dragon Palace'),
-  lightDragonSigh(5, 5, "Light Dragon's Sigh"),
-  thunedrcloudStickleback(5, 5, 'Thundercloud Stickleback'),
-  whiskersDragonGod(5, 5, 'Whiskers of the Dragon God'),
-  throwingTogakushi(5, 5, 'Throwing Mt.Togakushi'),
-  throwingAtlas(5, 5, 'Throwing Atlas'),
-  gatheringDissipating(5, 5, 'Gathering and Dissipating'),
-  missingPower(5, 5, 'Missing Power'),
-  artSegakiBinding(5, 5, 'Art of Segaki Binding'),
-  foxTanukiLaser(7, 5, 'Fox-Tanuki Youkai Laser'),
-  princessTenko(7, 5, 'Princess Tenko'),
-  soaringOzuno(7, 5, 'Soaring En no Ozuno'),
-  banquetGeneralGods(5, 5, 'Banquet of General Gods'),
-  eightyMillionBoards(5, 5, 'Eighty Million Holy Boards'),
-  spearGungnir(9, 5, 'Spear the Gungnir'),
-  curseVladTepes(5, 5, 'Curse of Vlad Tepes'),
-  badLadyScramble(9, 5, 'Bad Lady Scramble'),
-  misdirection(5, 5, 'Misdirection'),
-  killingDoll(5, 5, 'Killing Doll'),
-  soulSculpture(5, 5, 'Soul Sculpture'),
-  lunarClock(5, 5, 'Lunar Clock'),
-  privateSquare(5, 5, 'Private Square'),
-  madDanceMedoteko(5, 5, 'Mad Dance on Medoteko'),
-  misayamaRitual(5, 5, 'Misayama Hunting Ritual'),
-  beautifulSuiga(5, 5, 'Beautiful Spring like Suiga'),
-  virtueWindGod(5, 5, 'Virtue of Wind God'),
-  moriyaIronRing(5, 5, "Moriya's Iron Ring"),
-  longArmLeg(5, 5, 'Long-Arm and Long-Leg'),
-  froggyBravesElements(5, 5, 'Froggy Braves the Elements'),
-  mishagujiSama(5, 5, 'Mishaguji-sama'),
-  worldCreationPress(5, 5, 'World Creation Press'),
-  violentMotherland(5, 5, 'Violent Motherland'),
-  swordHisou(5, 5, 'Sword of Hisou'),
-  stateEnlightenment(5, 5, 'State of Enlightenment'),
-  starbowBreak(5, 5, 'Starbow Break'),
-  forbiddenFruit(5, 5, 'Forbidden Fruit'),
-  laveatein(5, 5, 'Laveatein'),
-  dreamButterfly(5, 5, "Ghostly Dream's Butterfly"),
-  swallowtailLance(5, 5, 'Deadly Swallowtail Lance'),
-  ghastlyDream(5, 5, 'Ghastly Dream'),
-  flawlessNirvana(5, 5, 'Saigyouji Flawless Nirvana'),
-  flowerShot(5, 5, 'Flower Shot'),
-  gensokyoReflowering(5, 5, "Gensokyo's Reflowering"),
-  beautyNature(5, 5, 'Beauty of Nature'),
-  masterSparkYuuka(5, 25, 'Master Spark'),
-  meshLightDarkness(5, 5, 'Mesh of Light and Darkness'),
-  hyperactiveFlyingObject(5, 5, 'Hyperactive Flying Object'),
-  shikigamiRanPlus(5, 5, 'Shikigami "Ran Yakumo +"'),
-  spiritingAway(5, 5, "Yukari's Spiriting Away"),
-  quadrupleBarrier(5, 5, 'IN Quadruple Barrier'),
-  skandaLegs(5, 5, "Skanda's Legs"),
-  masterTrichilocosm(5, 5, 'Master of the Trichiliocosm'),
-  magicMilkyWay(5, 5, 'Magic Milky Way'),
-  starSwordApologetics(5, 5, 'Star Sword Apologetics'),
-  sutraDuplicatingChant(5, 5, 'Sutra - Duplicating Chant'),
-  lastJudgement(9, 5, 'Last Judgement'),
-  trialTenKings(9, 5, 'Trial of the Ten Kings'),
-  wanderingSin(9, 5, 'Wandering Sin'),
-  galaxyStop(5, 5, 'Galaxy Stop'),
-  charge(5, 5, 'Charge'),
-  liberatedAbilities(5, 5, 'Liberated Abilities'),
-  chaoticQuadrupleBarrier(5, 5, 'Chaotic Quadruple Barrier'),
-  overflowingPower(5, 5, 'Overflowing Unnatural Power'),
-  mariDYIBorder(5, 5, "Mari's DIY Novice Border"),
-  hungryTiger(5, 5, 'Hungry Tiger'),
-  radiantTreasureGun(5, 5, 'Radiant Treasure Gun'),
-  dazzlingGold(5, 5, 'Dazzling Gold'),
-  auraJustice(5, 5, 'Aura of Justice'),
-  frolickingAnimals(5, 5, 'Frolicking Animals Scrolls'),
-  futatsuiwaClanCurse(5, 5, "Futatsuiwa Clan's Curse"),
-  tenTransformationsDanmaku(5, 5, '10 Transformations Danmaku'),
-  fullMoonPompokolin(5, 5, 'Full Moon Pompokolin'),
-  mononobeEightySakeCups(5, 5, "Mononobe's Eighty Sake Cups"),
-  catastrophicGateOpening(5, 5, 'Catastrophic Gate Opening'),
-  miwaPlateStorm(5, 5, 'Miwa Plate Storm'),
-  taiyiTrueFire(5, 5, 'Taiyi True Fire'),
-  traditionJustRewards(5, 5, 'Tradition of Just Rewards'),
-  haloGuseKannon(5, 5, 'Halo of the Guse Kannon'),
-  wishfulSoulDesire(5, 5, 'Wishful Soul of Desire'),
-  fourHumorsPossession(5, 5, 'Four Humors Possession'),
-  invigoratedKaguraLion(5, 5, 'Invigorated Kagura Lion'),
-  worrisomeManOfQi(5, 5, 'Worrisome Man of Qi'),
-  youkaiYakuzaKick(5, 5, 'Youkai Yakuza Kick'),
-  countMonteCristo(5, 5, 'The Count of Monte Cristo'),
-  musketeerDartagnan(5, 5, "Musketeer d'Artagnan"),
-  nonNeumannSystems(5, 5, 'Non-Neumann Systems'),
-  embersLove(5, 5, 'The Embers of Love'),
-  superEgo(5, 5, 'Super-Ego'),
-  bedsideAncestors(5, 5, 'Bedside Ancestors'),
-  selflessLove(5, 5, 'Selfless Love'),
-  wiseProtectiveArt(5, 5, 'Wise Protective Art'),
-  wiseDefensiveArt(5, 5, 'Wise Defensive Art'),
-  miareExtensiveKnowledge(5, 25, "Miare's Extensive Knowledge");
+  yinYang(5, 'Yin-Yang Orb'),
+  fantasySeal(5, 'Fantasy Seal'),
+  exorcisingBorder(5, 'Exorcising Border'),
+  greatBarrier(5, 'Great Hakurei Barrier'),
+  magicMissile(5, 'Magic Missile'),
+  asteroidBelt(5, 'Asteroid Belt'),
+  masterSparkMarisa(5, 'Master Spark'),
+  concentration(5, 'Concentration'),
+  firstAid(5, 'First Aid'),
+  battleCommand(5, 'Battle Command'),
+  ancientHistory(5, 'Ancient History -Old History-'),
+  newHistory(5, 'New History -Next History-'),
+  treasuresSword(5, 'Three Treasures - Sword'),
+  treasuresMirror(5, 'Three Treasures - Mirror'),
+  rabiesBite(5, 'Rabies Bite'),
+  expelleeCanaan(5, "Expellee's Canaan"),
+  presentSlash(9, 'Present Life Slash'),
+  slashEternity(9, 'Slash of Eternity'),
+  slashKarmaWind(9, "God's Slash of Karma Wind"),
+  slashSixSenses(9, 'Slash Clearing the Six Senses'),
+  karakasaFlash(5, 'Karakasa Surprising Flash'),
+  rainyGhostStory(5, "A Rainy Night's Ghost Story"),
+  drizzlingRaindrops(5, 'Drizzling Large Raindrops'),
+  moonlightRay(5, 'Moonlight Ray'),
+  darkSideMoon(5, 'Dark Side of the Moon'),
+  demarcation(5, 'Demarcation'),
+  icicleFall(5, 'Icicle Fall'),
+  diamondBlizzard(5, 'Diamond Blizzard'),
+  perfectFreeze(5, 'Perfect Freeze'),
+  whiteAlbum(5, 'White Album'),
+  autumnSky(5, 'Autumn Sky'),
+  warmHarvest(5, 'Warm Colour Harvest'),
+  sweetPotato(5, 'Sweet Potato Room'),
+  owotoshiHarvester(5, 'Owotoshi Harvester'),
+  shortExpectancy(5, 'Short Life Expectancy'),
+  ferriageFog(5, 'Ferriage in the Deep Fog'),
+  confinesAvici(5, 'Narrow Confines of Avici'),
+  scytheChoosesDead(5, 'Scythe that Chooses the Dead'),
+  flightIdaten(5, 'Flight of Idaten'),
+  phoenixWings(5, 'Phoenix Spread Wings'),
+  kimontonkou(5, 'Kimontonkou'),
+  kappaWatterfall(5, "Kappa's Illusionary Waterfall"),
+  extendingArm(5, 'Exteeeending Aaaaarm'),
+  superScope(5, 'Super Scope 3D'),
+  portableMachine(5, 'Portable Versatile Machine'),
+  largeSmallBox(5, 'Large Box and Small Box'),
+  midnightRitual(5, 'Midnight Anathema Ritual'),
+  grudgeReturning(5, 'Grudge Returning'),
+  jealousyKindLovely(5, 'Jealousy of Kind and Lovely'),
+  cometEarth(5, 'Comet on Earth'),
+  fireflyPhenomenon(5, 'Firefly Phenomenon'),
+  nightbugTornado(5, 'Nightbug Tornado'),
+  dragonJewel(5, "Dragon's Neck Jewel"),
+  buddhaBowl(5, "Buddha's Stone Bowl"),
+  swallowShell(5, "Swallow's Cowrie Shell"),
+  bulletHourai(5, 'Bullet Branch of Hourai'),
+  firePhoenix(5, 'Fire Bird -Flying Phoenix-'),
+  tsukiCurse(5, "Tsuki no Iwakasa's Curse"),
+  fujiyamaVolcano(5, 'Fujiyama Volcano'),
+  windGodFan(5, "Wind God's Fan"),
+  peerlessWindGod(5, 'Peerless Wind God'),
+  sarutahikoGuidance(5, "Sarutahiko's Guidance"),
+  divineAdvent(5, "Divine Grandson's Advent"),
+  illDive(7, 'Ill-Starred Dive'),
+  poisonousDance(7, "Poisonous Moth's Dark Dance"),
+  midnightChorus(7, 'Midnight Chorus Master'),
+  mysteriousSong(5, 'Mysterious Song'),
+  higekiriArm(5, "Higekiri's Cursed Arm"),
+  echoForestGods(5, 'Echo of the Nine Forest Gods'),
+  divingWaltz(5, 'Diving Waltz of the Raijuu'),
+  breathHermit(5, 'Breath of the Hermit'),
+  goldRush(5, 'Gold Rush'),
+  rareMetalDetector(5, 'Rare Metal Detector'),
+  nazrinPendulum(5, 'Nazrin Pendulum'),
+  misfortuneBiorhythm(5, "Misfortune God's Biorhythm"),
+  painFlow(5, 'Pain Flow'),
+  oldLadyFire(5, "Old Lady Ohgane's Fire"),
+  catWalk(7, "Cat's Walk"),
+  vengefulSpirit(7, 'Vengeful Cannibal Spirit'),
+  hellNeedleHill(7, "Former Hell's Needle Hill"),
+  blazingWheel(7, 'Blazing Wheel'),
+  gigaFlare(5, 'Giga Flare'),
+  nuclearReaction(5, 'Intense Nuclear Reaction'),
+  hellTokamak(5, "Hell's Tokamak"),
+  brainFingerprint(5, 'Brain Fingerprint'),
+  supernaturalPhenomenon(5, 'Supernatural Phenomenon'),
+  koThreeSteps(5, 'Knockout in Three Steps'),
+  irremovableShackles(5, 'Irremovable Shackles'),
+  brilliantGem(5, 'Brilliant Light Gem'),
+  mountainBreaker(5, 'Mountain Breaker'),
+  colorfulRain(5, 'Colourful Rain'),
+  healer(5, 'Healer'),
+  artfulSacrifice(7, 'Artful Sacrifice'),
+  littleLegion(7, 'Little Legion'),
+  hangedHourai(7, 'Hanged Hourai Doll'),
+  tripWire(7, 'Trip Wire'),
+  royalFlare(7, 'Royal Flare'),
+  princessUndine(7, 'Princess Undine'),
+  djinnGust(7, 'Djinn Gust'),
+  satelliteHimawari(7, 'Satellite Himawari'),
+  silentSelene(7, 'Silent Selene'),
+  mercurySea(5, 'Mercury Sea'),
+  omoikaneDevice(5, "Omoikane's Device"),
+  houraiElixir(5, 'Hourai Elixir'),
+  astronomicalEntombing(5, 'Astronomical Entombing'),
+  lunaticRedEyes(5, 'Lunatic Red Eyes'),
+  mindStarmine(5, 'Mind Starmine'),
+  discarder(5, 'Discarder'),
+  gasWovenOrb(5, 'Gas-Woven Orb'),
+  grandPatriotElixir(5, "Grand Patriot's Elixir"),
+  nightGuesstStars(9, 'Night of Bright Guest Stars'),
+  mosesMiracle(9, "Moses's Miracle"),
+  yasakaWind(5, "Yasaka's Divine Wind"),
+  miracleFruit(5, 'Miracle Fruit'),
+  elekiterPalace(5, 'Elekiter Dragon Palace'),
+  lightDragonSigh(5, "Light Dragon's Sigh"),
+  thunedrcloudStickleback(5, 'Thundercloud Stickleback'),
+  whiskersDragonGod(5, 'Whiskers of the Dragon God'),
+  throwingTogakushi(5, 'Throwing Mt.Togakushi'),
+  throwingAtlas(5, 'Throwing Atlas'),
+  gatheringDissipating(5, 'Gathering and Dissipating'),
+  missingPower(5, 'Missing Power'),
+  artSegakiBinding(5, 'Art of Segaki Binding'),
+  foxTanukiLaser(7, 'Fox-Tanuki Youkai Laser'),
+  princessTenko(7, 'Princess Tenko'),
+  soaringOzuno(7, 'Soaring En no Ozuno'),
+  banquetGeneralGods(5, 'Banquet of General Gods'),
+  eightyMillionBoards(5, 'Eighty Million Holy Boards'),
+  spearGungnir(9, 'Spear the Gungnir'),
+  curseVladTepes(5, 'Curse of Vlad Tepes'),
+  misdirection(5, 'Misdirection'),
+  killingDoll(5, 'Killing Doll'),
+  soulSculpture(5, 'Soul Sculpture'),
+  lunarClock(5, 'Lunar Clock'),
+  privateSquare(5, 'Private Square'),
+  madDanceMedoteko(5, 'Mad Dance on Medoteko'),
+  misayamaRitual(5, 'Misayama Hunting Ritual'),
+  beautifulSuiga(5, 'Beautiful Spring like Suiga'),
+  virtueWindGod(5, 'Virtue of Wind God'),
+  moriyaIronRing(5, "Moriya's Iron Ring"),
+  longArmLeg(5, 'Long-Arm and Long-Leg'),
+  froggyBravesElements(5, 'Froggy Braves the Elements'),
+  mishagujiSama(5, 'Mishaguji-sama'),
+  worldCreationPress(5, 'World Creation Press'),
+  violentMotherland(5, 'Violent Motherland'),
+  swordHisou(5, 'Sword of Hisou'),
+  stateEnlightenment(5, 'State of Enlightenment'),
+  starbowBreak(5, 'Starbow Break'),
+  forbiddenFruit(5, 'Forbidden Fruit'),
+  laveatein(5, 'Laveatein'),
+  dreamButterfly(5, "Ghostly Dream's Butterfly"),
+  swallowtailLance(5, 'Deadly Swallowtail Lance'),
+  ghastlyDream(5, 'Ghastly Dream'),
+  flawlessNirvana(5, 'Saigyouji Flawless Nirvana'),
+  flowerShot(5, 'Flower Shot'),
+  gensokyoReflowering(5, "Gensokyo's Reflowering"),
+  beautyNature(5, 'Beauty of Nature'),
+  meshLightDarkness(5, 'Mesh of Light and Darkness'),
+  hyperactiveFlyingObject(5, 'Hyperactive Flying Object'),
+  shikigamiRanPlus(5, 'Shikigami "Ran Yakumo +"'),
+  spiritingAway(5, "Yukari's Spiriting Away"),
+  quadrupleBarrier(5, 'IN Quadruple Barrier'),
+  skandaLegs(5, "Skanda's Legs"),
+  masterTrichilocosm(5, 'Master of the Trichiliocosm'),
+  magicMilkyWay(5, 'Magic Milky Way'),
+  starSwordApologetics(5, 'Star Sword Apologetics'),
+  sutraDuplicatingChant(5, 'Sutra - Duplicating Chant'),
+  lastJudgement(9, 'Last Judgement'),
+  trialTenKings(9, 'Trial of the Ten Kings'),
+  wanderingSin(9, 'Wandering Sin'),
+  galaxyStop(5, 'Galaxy Stop'),
+  charge(5, 'Charge'),
+  liberatedAbilities(5, 'Liberated Abilities'),
+  chaoticQuadrupleBarrier(5, 'Chaotic Quadruple Barrier'),
+  overflowingPower(5, 'Overflowing Unnatural Power'),
+  mariDYIBorder(5, "Mari's DIY Novice Border"),
+  hungryTiger(5, 'Hungry Tiger'),
+  radiantTreasureGun(5, 'Radiant Treasure Gun'),
+  dazzlingGold(5, 'Dazzling Gold'),
+  auraJustice(5, 'Aura of Justice'),
+  frolickingAnimals(5, 'Frolicking Animals Scrolls'),
+  futatsuiwaClanCurse(5, "Futatsuiwa Clan's Curse"),
+  tenTransformationsDanmaku(5, '10 Transformations Danmaku'),
+  fullMoonPompokolin(5, 'Full Moon Pompokolin'),
+  mononobeEightySakeCups(5, "Mononobe's Eighty Sake Cups"),
+  catastrophicGateOpening(5, 'Catastrophic Gate Opening'),
+  miwaPlateStorm(5, 'Miwa Plate Storm'),
+  taiyiTrueFire(5, 'Taiyi True Fire'),
+  traditionJustRewards(5, 'Tradition of Just Rewards'),
+  haloGuseKannon(5, 'Halo of the Guse Kannon'),
+  wishfulSoulDesire(5, 'Wishful Soul of Desire'),
+  fourHumorsPossession(5, 'Four Humors Possession'),
+  invigoratedKaguraLion(5, 'Invigorated Kagura Lion'),
+  worrisomeManOfQi(5, 'Worrisome Man of Qi'),
+  youkaiYakuzaKick(5, 'Youkai Yakuza Kick'),
+  countMonteCristo(5, 'The Count of Monte Cristo'),
+  musketeerDartagnan(5, "Musketeer d'Artagnan"),
+  nonNeumannSystems(5, 'Non-Neumann Systems'),
+  embersLove(5, 'The Embers of Love'),
+  superEgo(5, 'Super-Ego'),
+  bedsideAncestors(5, 'Bedside Ancestors'),
+  selflessLove(5, 'Selfless Love'),
+  wiseProtectiveArt(5, 'Wise Protective Art'),
+  wiseDefensiveArt(5, 'Wise Defensive Art');
 
   @override
+  final int minLevel = 1;
+  @override
   final int maxLevel;
+  @override
+  final int levelCost = 5;
+  @override
+  final String name;
+
+  const Spell(this.maxLevel, this.name);
+}
+
+enum AwakeningSpell implements Skill {
+  preciseDiagnosis(5, 'Precise Diagnosis'),
+  summonDragonTiger(5, 'Summon Dragon and Tiger'),
+  badLadyScramble(9, 'Bad Lady Scramble'),
+  masterSparkYuuka(5, 'Master Spark'),
+  miareExtensiveKnowledge(5, "Miare's Extensive Knowledge");
+
+  @override
+  final int minLevel = 0;
+  @override
+  final int maxLevel;
+  @override
+  final int levelCost = 25;
+  @override
+  final String name;
+
+  const AwakeningSpell(this.maxLevel, this.name);
+}
+
+enum SubclassSpell implements Skill {
+  test1(5, '1'),
+  test2(5, '2');
+
+  @override
+  final int minLevel = 0;
+  @override
+  final int maxLevel = 5;
   @override
   final int levelCost;
   @override
   final String name;
 
-  const Spell(this.maxLevel, this.levelCost, this.name);
+  const SubclassSpell(this.levelCost, this.name);
 }
 
 class SkillData {

@@ -174,9 +174,8 @@ class CharacterEditState extends State<CharacterEditWidget>
   Iterable<MapEntry<FormKey, TForm>> _formMapEntriesFromSkillList({
     required List<Skill> skills,
     required Map<Skill, FormKey> keys,
-    required String Function(Skill) subtitleBuilder,
     required int Function(int) initialValueBuilder,
-    BigInt? minValue,
+    String Function(Skill) subtitleBuilder = skillSubtitle,
   }) {
     return skills.asMap().keys.map(
       (int i) => MapEntry<FormKey, TForm>(
@@ -186,7 +185,7 @@ class CharacterEditState extends State<CharacterEditWidget>
           title: skills[i].name,
           subtitle: subtitleBuilder(skills[i]),
           initialValue: initialValueBuilder(i).commaSeparate(),
-          minValue: minValue ?? BigInt.from(0),
+          minValue: BigInt.from(skills[i].minLevel),
           maxValue: BigInt.from(skills[i].maxLevel),
           onValueChanged: (String? value) => setState(() {}),
           key: keys[skills[i]],
@@ -389,7 +388,9 @@ class CharacterEditState extends State<CharacterEditWidget>
       NumberFormKey key = _skillsFormsKeys[character.skills[i]]!;
       data.skills.personalSkills[i] = key.currentState!.saveIntValue();
     }
-    List<Skill> spells = character.spells + character.awakeningSpells;
+    List<Skill> spells = <Skill>[];
+    spells += character.spells;
+    spells += character.awakeningSpells;
     for (int i = 0; i < spells.length; i++) {
       NumberFormKey key = _skillsFormsKeys[spells[i]]!;
       data.skills.personalSpells[i] = key.currentState!.saveIntValue();
@@ -552,13 +553,11 @@ class CharacterEditState extends State<CharacterEditWidget>
           _formMapEntriesFromSkillList(
             skills: boostSkills,
             keys: _skillsFormsKeys,
-            subtitleBuilder: skillSubtitle,
             initialValueBuilder: (int i) => data.skills.getBoostData(i),
           ).followedBy(
             _formMapEntriesFromSkillList(
               skills: expSkills,
               keys: _skillsFormsKeys,
-              subtitleBuilder: skillSubtitle,
               initialValueBuilder: (int i) => data.skills.getExpData(i),
             ),
           ),
@@ -571,7 +570,6 @@ class CharacterEditState extends State<CharacterEditWidget>
           _formMapEntriesFromSkillList(
             skills: character.skills,
             keys: _skillsFormsKeys,
-            subtitleBuilder: skillSubtitle,
             initialValueBuilder: (int i) => data.skills.personalSkills[i],
           ).followedBy(
             _formMapEntriesFromSkillList(
@@ -579,13 +577,11 @@ class CharacterEditState extends State<CharacterEditWidget>
               keys: _skillsFormsKeys,
               subtitleBuilder: spellSubtitle,
               initialValueBuilder: (int i) => data.skills.personalSpells[i],
-              minValue: BigInt.from(1),
             ),
           ).followedBy(
             _formMapEntriesFromSkillList(
               skills: character.awakeningSpells,
               keys: _skillsFormsKeys,
-              subtitleBuilder: skillSubtitle,
               initialValueBuilder: (int i) =>
                   data.skills.personalSpells[character.spells.length + i],
             ),

@@ -24,13 +24,13 @@ enum Character {
       CommonSkill.barrierExpert,
       CommonSkill.superYoukaiBuster,
     ],
-    <Skill>[
+    <Spell>[
       Spell.yinYang,
       Spell.fantasySeal,
       Spell.exorcisingBorder,
       Spell.greatBarrier,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   marisa(
     'Marisa',
@@ -46,13 +46,13 @@ enum Character {
       CommonSkill.hakkeroCustom,
       CommonSkill.magicDrain,
     ],
-    <Skill>[
+    <Spell>[
       Spell.magicMissile,
       Spell.asteroidBelt,
       Spell.masterSparkMarisa,
       Spell.concentration,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   rinnosuke(
     'Kourin',
@@ -74,8 +74,8 @@ enum Character {
       CommonSkill.murakumoOwner,
       CommonSkill.guts,
     ],
-    <Skill>[Spell.firstAid, Spell.battleCommand],
-    <Skill>[Spell.preciseDiagnosis],
+    <Spell>[Spell.firstAid, Spell.battleCommand],
+    <AwakeningSpell>[AwakeningSpell.preciseDiagnosis],
   ),
   keine(
     'Keine',
@@ -91,13 +91,13 @@ enum Character {
       CommonSkill.wereHakutaku,
       CommonSkill.createHistory,
     ],
-    <Skill>[
+    <Spell>[
       Spell.ancientHistory,
       Spell.newHistory,
       Spell.treasuresSword,
       Spell.treasuresMirror,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   momiji(
     'Momiji',
@@ -112,8 +112,8 @@ enum Character {
       CommonSkill.youkaiAlliance,
       CommonSkill.encounterFoe,
     ],
-    <Skill>[Spell.rabiesBite, Spell.expelleeCanaan],
-    <Skill>[],
+    <Spell>[Spell.rabiesBite, Spell.expelleeCanaan],
+    <AwakeningSpell>[],
   ),
   youmu(
     'Youmu',
@@ -130,13 +130,13 @@ enum Character {
       CommonSkill.silentNirvana,
       CommonSkill.mistressServant,
     ],
-    <Skill>[
+    <Spell>[
       Spell.presentSlash,
       Spell.slashEternity,
       Spell.slashKarmaWind,
       Spell.slashSixSenses,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   kogasa(
     'Kogasa',
@@ -153,12 +153,12 @@ enum Character {
       CommonSkill.terrorDeath,
       CommonSkill.speedyFormationChange,
     ],
-    <Skill>[
+    <Spell>[
       Spell.karakasaFlash,
       Spell.rainyGhostStory,
       Spell.drizzlingRaindrops,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   rumia(
     'Rumia',
@@ -175,8 +175,8 @@ enum Character {
       CommonSkill.proofKinship,
       CommonSkill.goingAlone,
     ],
-    <Skill>[Spell.moonlightRay, Spell.darkSideMoon, Spell.demarcation],
-    <Skill>[],
+    <Spell>[Spell.moonlightRay, Spell.darkSideMoon, Spell.demarcation],
+    <AwakeningSpell>[],
   ),
   cirno(
     'Cirno',
@@ -193,13 +193,13 @@ enum Character {
       CommonSkill.proofKinship,
       CommonSkill.goingAlone,
     ],
-    <Skill>[
+    <Spell>[
       Spell.icicleFall,
       Spell.diamondBlizzard,
       Spell.perfectFreeze,
       Spell.whiteAlbum,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   minoriko(
     'Minoriko',
@@ -215,13 +215,13 @@ enum Character {
       CommonSkill.plantationBlessing,
       CommonSkill.abundanceHarvest,
     ],
-    <Skill>[
+    <Spell>[
       Spell.autumnSky,
       Spell.warmHarvest,
       Spell.sweetPotato,
       Spell.owotoshiHarvester,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   komachi(
     'Komachi',
@@ -237,13 +237,13 @@ enum Character {
       CommonSkill.shinigamiScythe,
       CommonSkill.slackerMotivation,
     ],
-    <Skill>[
+    <Spell>[
       Spell.shortExpectancy,
       Spell.ferriageFog,
       Spell.confinesAvici,
       Spell.scytheChoosesDead,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   chen(
     'Chen',
@@ -259,8 +259,8 @@ enum Character {
       CommonSkill.monsterCat,
       CommonSkill.proofKinship,
     ],
-    <Skill>[Spell.flightIdaten, Spell.phoenixWings, Spell.kimontonkou],
-    <Skill>[],
+    <Spell>[Spell.flightIdaten, Spell.phoenixWings, Spell.kimontonkou],
+    <AwakeningSpell>[],
   ),
   nitori(
     'Nitori',
@@ -275,13 +275,13 @@ enum Character {
       CommonSkill.youkaiAlliance,
       CommonSkill.kappaAesthetica,
     ],
-    <Skill>[
+    <Spell>[
       Spell.kappaWatterfall,
       Spell.extendingArm,
       Spell.superScope,
       Spell.portableMachine,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   parsee(
     'Parsee',
@@ -296,13 +296,13 @@ enum Character {
       CommonSkill.greenEyedMonster,
       CommonSkill.jealousyFinalBlow,
     ],
-    <Skill>[
+    <Spell>[
       Spell.largeSmallBox,
       Spell.midnightRitual,
       Spell.grudgeReturning,
       Spell.jealousyKindLovely,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   wriggle(
     'Wriggle',
@@ -319,8 +319,8 @@ enum Character {
       CommonSkill.proofKinship,
       CommonSkill.goingAlone,
     ],
-    <Skill>[Spell.cometEarth, Spell.fireflyPhenomenon, Spell.nightbugTornado],
-    <Skill>[],
+    <Spell>[Spell.cometEarth, Spell.fireflyPhenomenon, Spell.nightbugTornado],
+    <AwakeningSpell>[],
   ),
   kaguya(
     'Kaguya',
@@ -336,13 +336,13 @@ enum Character {
       CommonSkill.fiveRequests,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.dragonJewel,
       Spell.buddhaBowl,
       Spell.swallowShell,
       Spell.bulletHourai,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   mokou(
     'Mokou',
@@ -358,8 +358,8 @@ enum Character {
       CommonSkill.desperation,
       CommonSkill.imperishableShooting,
     ],
-    <Skill>[Spell.firePhoenix, Spell.tsukiCurse, Spell.fujiyamaVolcano],
-    <Skill>[],
+    <Spell>[Spell.firePhoenix, Spell.tsukiCurse, Spell.fujiyamaVolcano],
+    <AwakeningSpell>[],
   ),
   aya(
     'Aya',
@@ -374,13 +374,13 @@ enum Character {
       CommonSkill.tenguWatchfulEyes,
       CommonSkill.youkaiAlliance,
     ],
-    <Skill>[
+    <Spell>[
       Spell.windGodFan,
       Spell.peerlessWindGod,
       Spell.sarutahikoGuidance,
       Spell.divineAdvent,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   mystia(
     'Mystia',
@@ -396,13 +396,13 @@ enum Character {
       CommonSkill.proofKinship,
       CommonSkill.goingAlone,
     ],
-    <Skill>[
+    <Spell>[
       Spell.illDive,
       Spell.poisonousDance,
       Spell.midnightChorus,
       Spell.mysteriousSong,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   kasen(
     'Kasen',
@@ -418,13 +418,13 @@ enum Character {
       CommonSkill.healthySpirit,
       CommonSkill.fourDevaOoe,
     ],
-    <Skill>[
+    <Spell>[
       Spell.higekiriArm,
       Spell.echoForestGods,
       Spell.divingWaltz,
       Spell.breathHermit,
     ],
-    <Skill>[Spell.summonDragonTiger],
+    <AwakeningSpell>[AwakeningSpell.summonDragonTiger],
   ),
   nazrin(
     'Nazrin',
@@ -441,8 +441,8 @@ enum Character {
       CommonSkill.effectiveChange,
       CommonSkill.tinyCommanderWisdom,
     ],
-    <Skill>[Spell.goldRush, Spell.rareMetalDetector, Spell.nazrinPendulum],
-    <Skill>[],
+    <Spell>[Spell.goldRush, Spell.rareMetalDetector, Spell.nazrinPendulum],
+    <AwakeningSpell>[],
   ),
   hina(
     'Hina',
@@ -458,8 +458,8 @@ enum Character {
       CommonSkill.youkaiAlliance,
       CommonSkill.cursedDoll,
     ],
-    <Skill>[Spell.misfortuneBiorhythm, Spell.painFlow, Spell.oldLadyFire],
-    <Skill>[],
+    <Spell>[Spell.misfortuneBiorhythm, Spell.painFlow, Spell.oldLadyFire],
+    <AwakeningSpell>[],
   ),
   rin(
     'Rin',
@@ -476,13 +476,13 @@ enum Character {
       CommonSkill.ashRekindling,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.catWalk,
       Spell.vengefulSpirit,
       Spell.hellNeedleHill,
       Spell.blazingWheel,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   utsuho(
     'Utsuho',
@@ -497,8 +497,8 @@ enum Character {
       CommonSkill.highBlazing,
       CommonSkill.proofKinship,
     ],
-    <Skill>[Spell.gigaFlare, Spell.nuclearReaction, Spell.hellTokamak],
-    <Skill>[],
+    <Spell>[Spell.gigaFlare, Spell.nuclearReaction, Spell.hellTokamak],
+    <AwakeningSpell>[],
   ),
   satori(
     'Satori',
@@ -513,8 +513,8 @@ enum Character {
       CommonSkill.terrifyingHypnotism,
       CommonSkill.proofKinship,
     ],
-    <Skill>[Spell.brainFingerprint],
-    <Skill>[],
+    <Spell>[Spell.brainFingerprint],
+    <AwakeningSpell>[],
   ),
   yuugi(
     'Yuugi',
@@ -531,12 +531,12 @@ enum Character {
       CommonSkill.lastFortressPlus,
       CommonSkill.fourDevaOoe,
     ],
-    <Skill>[
+    <Spell>[
       Spell.supernaturalPhenomenon,
       Spell.koThreeSteps,
       Spell.irremovableShackles,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   meiling(
     'Meirin',
@@ -553,13 +553,13 @@ enum Character {
       CommonSkill.chineseGirlQigong,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.brilliantGem,
       Spell.mountainBreaker,
       Spell.colorfulRain,
       Spell.healer,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   alice(
     'Alice',
@@ -575,13 +575,13 @@ enum Character {
       CommonSkill.firstAidDolls,
       CommonSkill.additionalGuards,
     ],
-    <Skill>[
+    <Spell>[
       Spell.artfulSacrifice,
       Spell.littleLegion,
       Spell.hangedHourai,
       Spell.tripWire,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   patchouli(
     'Patchouli',
@@ -598,14 +598,14 @@ enum Character {
       CommonSkill.speedyIncantation,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.royalFlare,
       Spell.princessUndine,
       Spell.djinnGust,
       Spell.satelliteHimawari,
       Spell.silentSelene,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   eirin(
     'Eirin',
@@ -622,13 +622,13 @@ enum Character {
       CommonSkill.poisonMixing,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.mercurySea,
       Spell.omoikaneDevice,
       Spell.houraiElixir,
       Spell.astronomicalEntombing,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   reisen(
     'Reisen',
@@ -645,14 +645,14 @@ enum Character {
       CommonSkill.grandVertigo,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.lunaticRedEyes,
       Spell.mindStarmine,
       Spell.discarder,
       Spell.gasWovenOrb,
       Spell.grandPatriotElixir,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   sanae(
     'Sanae',
@@ -669,13 +669,13 @@ enum Character {
       CommonSkill.hisoutenGuard,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.nightGuesstStars,
       Spell.mosesMiracle,
       Spell.yasakaWind,
       Spell.miracleFruit,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   iku(
     'Iku',
@@ -692,13 +692,13 @@ enum Character {
       CommonSkill.thunderAbtruseClouds,
       CommonSkill.pearlClawedDragon,
     ],
-    <Skill>[
+    <Spell>[
       Spell.elekiterPalace,
       Spell.lightDragonSigh,
       Spell.thunedrcloudStickleback,
       Spell.whiskersDragonGod,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   suika(
     'Suika',
@@ -713,14 +713,14 @@ enum Character {
       CommonSkill.pandemonicSprinkle,
       CommonSkill.fourDevaOoe,
     ],
-    <Skill>[
+    <Spell>[
       Spell.throwingTogakushi,
       Spell.throwingAtlas,
       Spell.gatheringDissipating,
       Spell.missingPower,
       Spell.artSegakiBinding,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   ran(
     'Ran',
@@ -737,14 +737,14 @@ enum Character {
       CommonSkill.friedTofuPower,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.foxTanukiLaser,
       Spell.princessTenko,
       Spell.soaringOzuno,
       Spell.banquetGeneralGods,
       Spell.eightyMillionBoards,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   remilia(
     'Remilia',
@@ -761,8 +761,8 @@ enum Character {
       CommonSkill.proofKinship,
       CommonSkill.piercingAttack,
     ],
-    <Skill>[Spell.spearGungnir, Spell.curseVladTepes],
-    <Skill>[Spell.badLadyScramble],
+    <Spell>[Spell.spearGungnir, Spell.curseVladTepes],
+    <AwakeningSpell>[AwakeningSpell.badLadyScramble],
   ),
   sakuya(
     'Sakuya',
@@ -779,14 +779,14 @@ enum Character {
       CommonSkill.sakuyaWorld,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.misdirection,
       Spell.killingDoll,
       Spell.soulSculpture,
       Spell.lunarClock,
       Spell.privateSquare,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   kanako(
     'Kanako',
@@ -801,13 +801,13 @@ enum Character {
       CommonSkill.majestyPlus,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.madDanceMedoteko,
       Spell.misayamaRitual,
       Spell.beautifulSuiga,
       Spell.virtueWindGod,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   suwako(
     'Suwako',
@@ -822,13 +822,13 @@ enum Character {
       CommonSkill.chytridiomycosisResistance,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.moriyaIronRing,
       Spell.longArmLeg,
       Spell.froggyBravesElements,
       Spell.mishagujiSama,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   tenshi(
     'Tensi',
@@ -845,13 +845,13 @@ enum Character {
       CommonSkill.hugeTemperamentKeystone,
       CommonSkill.peachesImmortality,
     ],
-    <Skill>[
+    <Spell>[
       Spell.worldCreationPress,
       Spell.violentMotherland,
       Spell.swordHisou,
       Spell.stateEnlightenment,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   flandre(
     'Flandre',
@@ -868,8 +868,8 @@ enum Character {
       CommonSkill.proofKinship,
       CommonSkill.destructionRoulette,
     ],
-    <Skill>[Spell.starbowBreak, Spell.forbiddenFruit, Spell.laveatein],
-    <Skill>[],
+    <Spell>[Spell.starbowBreak, Spell.forbiddenFruit, Spell.laveatein],
+    <AwakeningSpell>[],
   ),
   yuyuko(
     'Yuyuko',
@@ -885,13 +885,13 @@ enum Character {
       CommonSkill.majestyPlus,
       CommonSkill.mistressServant,
     ],
-    <Skill>[
+    <Spell>[
       Spell.dreamButterfly,
       Spell.swallowtailLance,
       Spell.ghastlyDream,
       Spell.flawlessNirvana,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   yuuka(
     'Yuuka',
@@ -905,8 +905,8 @@ enum Character {
       CommonSkill.perilousSpring,
       CommonSkill.plantationBlessing,
     ],
-    <Skill>[Spell.flowerShot, Spell.gensokyoReflowering, Spell.beautyNature],
-    <Skill>[Spell.masterSparkYuuka],
+    <Spell>[Spell.flowerShot, Spell.gensokyoReflowering, Spell.beautyNature],
+    <AwakeningSpell>[AwakeningSpell.masterSparkYuuka],
   ),
   yukari(
     'Yukari',
@@ -923,14 +923,14 @@ enum Character {
       CommonSkill.enhancedBoundaryControl,
       CommonSkill.proofKinship,
     ],
-    <Skill>[
+    <Spell>[
       Spell.meshLightDarkness,
       Spell.hyperactiveFlyingObject,
       Spell.shikigamiRanPlus,
       Spell.spiritingAway,
       Spell.quadrupleBarrier,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   byakuren(
     'Hijiri',
@@ -947,14 +947,14 @@ enum Character {
       CommonSkill.sutraImmunity,
       CommonSkill.superhumanLineage,
     ],
-    <Skill>[
+    <Spell>[
       Spell.skandaLegs,
       Spell.masterTrichilocosm,
       Spell.magicMilkyWay,
       Spell.starSwordApologetics,
       Spell.sutraDuplicatingChant,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   eiki(
     'Eiki',
@@ -971,8 +971,8 @@ enum Character {
       CommonSkill.moralInversion,
       CommonSkill.superThankfulPreaching,
     ],
-    <Skill>[Spell.lastJudgement, Spell.trialTenKings, Spell.wanderingSin],
-    <Skill>[],
+    <Spell>[Spell.lastJudgement, Spell.trialTenKings, Spell.wanderingSin],
+    <AwakeningSpell>[],
   ),
   renko(
     'Renko',
@@ -988,8 +988,8 @@ enum Character {
       CommonSkill.readMoreStars,
       CommonSkill.readMoreMoons,
     ],
-    <Skill>[Spell.galaxyStop, Spell.charge],
-    <Skill>[],
+    <Spell>[Spell.galaxyStop, Spell.charge],
+    <AwakeningSpell>[],
   ),
   maribel(
     'Maribel',
@@ -1005,13 +1005,13 @@ enum Character {
       CommonSkill.controlLiberation,
       CommonSkill.controlUnnatural,
     ],
-    <Skill>[
+    <Spell>[
       Spell.liberatedAbilities,
       Spell.chaoticQuadrupleBarrier,
       Spell.overflowingPower,
       Spell.mariDYIBorder,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   shou(
     'Toramaru',
@@ -1028,13 +1028,13 @@ enum Character {
       CommonSkill.moreTreasures,
       CommonSkill.piercingAttack,
     ],
-    <Skill>[
+    <Spell>[
       Spell.hungryTiger,
       Spell.radiantTreasureGun,
       Spell.dazzlingGold,
       Spell.auraJustice,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   mamizou(
     'Mamizou',
@@ -1050,13 +1050,13 @@ enum Character {
       CommonSkill.monsterTanukiWiles,
       CommonSkill.majesty,
     ],
-    <Skill>[
+    <Spell>[
       Spell.frolickingAnimals,
       Spell.futatsuiwaClanCurse,
       Spell.tenTransformationsDanmaku,
       Spell.fullMoonPompokolin,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   futo(
     'Futo',
@@ -1072,13 +1072,13 @@ enum Character {
       CommonSkill.lightningSakeCups,
       CommonSkill.accelerate,
     ],
-    <Skill>[
+    <Spell>[
       Spell.mononobeEightySakeCups,
       Spell.catastrophicGateOpening,
       Spell.miwaPlateStorm,
       Spell.taiyiTrueFire,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   miko(
     'Miko',
@@ -1094,12 +1094,12 @@ enum Character {
       CommonSkill.transcendentalAdministrator,
       CommonSkill.megaAsukaHeritageAttack,
     ],
-    <Skill>[
+    <Spell>[
       Spell.traditionJustRewards,
       Spell.haloGuseKannon,
       Spell.wishfulSoulDesire,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   kokoro(
     'Kokoro',
@@ -1115,12 +1115,12 @@ enum Character {
       CommonSkill.maskHope,
       CommonSkill.moraleMaintenance,
     ],
-    <Skill>[
+    <Spell>[
       Spell.fourHumorsPossession,
       Spell.invigoratedKaguraLion,
       Spell.worrisomeManOfQi,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   tokiko(
     'Tokiko',
@@ -1143,13 +1143,13 @@ enum Character {
       CommonSkill.bookwormYoukaiArdor,
       CommonSkill.bookwormYoukaiGrudge,
     ],
-    <Skill>[
+    <Spell>[
       Spell.youkaiYakuzaKick,
       Spell.countMonteCristo,
       Spell.musketeerDartagnan,
       Spell.nonNeumannSystems,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   koishi(
     'Koisi',
@@ -1165,13 +1165,13 @@ enum Character {
       CommonSkill.superResponsiveSensesPlus,
       CommonSkill.embryoWhyDance,
     ],
-    <Skill>[
+    <Spell>[
       Spell.embersLove,
       Spell.superEgo,
       Spell.bedsideAncestors,
       Spell.selflessLove,
     ],
-    <Skill>[],
+    <AwakeningSpell>[],
   ),
   akyuu(
     'Akyuu',
@@ -1187,15 +1187,15 @@ enum Character {
       CommonSkill.protectorKnowledge,
       CommonSkill.trueMaidenMiare,
     ],
-    <Skill>[Spell.wiseProtectiveArt, Spell.wiseDefensiveArt],
-    <Skill>[Spell.miareExtensiveKnowledge],
+    <Spell>[Spell.wiseProtectiveArt, Spell.wiseDefensiveArt],
+    <AwakeningSpell>[AwakeningSpell.miareExtensiveKnowledge],
   );
 
   final String filename;
   final List<TomeStat> naturalTomeStats;
   final List<Skill> skills;
-  final List<Skill> spells;
-  final List<Skill> awakeningSpells;
+  final List<Spell> spells;
+  final List<AwakeningSpell> awakeningSpells;
 
   const Character(
     this.filename,
