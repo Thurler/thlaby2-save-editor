@@ -18,8 +18,10 @@ class TFormSkill extends TFormNumber {
     maxValue: BigInt.from(skill.maxLevel),
   );
 
-  static String skillSubtitle(Skill skill) => 'Must be at most '
-      '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
+  static String skillSubtitle(Skill skill) => skill.maxLevel > 0
+    ? 'Must be at most ${skill.maxLevel} | Uses ${skill.levelCost} skill '
+        'points per level'
+    : 'Innate skill';
 
   static String spellSubtitle(Skill skill) => 'Must be between 1 and '
       '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
