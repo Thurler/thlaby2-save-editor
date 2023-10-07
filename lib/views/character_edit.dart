@@ -252,9 +252,7 @@ class CharacterEditState extends State<CharacterEditWidget>
   //
 
   String _checkForDuplicateUniqueSubclasses(String value) {
-    Subclass chosen = Subclass.values.firstWhere(
-      (Subclass s) => s.prettyName == value,
-    );
+    Subclass chosen = Subclass.fromName(value);
     // If the chosen subclass is not a unique one, aceept the value
     if (!chosen.isUnique) {
       return '';
@@ -321,9 +319,7 @@ class CharacterEditState extends State<CharacterEditWidget>
     data.experience = _expFormKey.currentState!.saveBigIntValue();
     data.bp = _bpFormKey.currentState!.saveIntValue();
     String chosenSubclass = _subclassFormKey.currentState!.saveValue();
-    data.subclass = Subclass.values.firstWhere(
-      (Subclass s) => s.prettyName == chosenSubclass,
-    );
+    data.subclass = Subclass.fromName(chosenSubclass);
 
     // Library data + Level bonus data
     for (int i = 0; i < stats.length; i++) {
@@ -360,14 +356,14 @@ class CharacterEditState extends State<CharacterEditWidget>
 
     // Personal skills and spells data
     for (int i = 0; i < character.skills.length; i++) {
-      NumberFormKey key = _skillsFormsKeys[character.skills[i]]!;
+      SkillFormKey key = _skillsFormsKeys[character.skills[i]]!;
       data.skills.personalSkills[i] = key.currentState!.saveIntValue();
     }
     List<Skill> spells = <Skill>[];
     spells += character.spells;
     spells += character.awakeningSpells;
     for (int i = 0; i < spells.length; i++) {
-      NumberFormKey key = _skillsFormsKeys[spells[i]]!;
+      SkillFormKey key = _skillsFormsKeys[spells[i]]!;
       data.skills.personalSpells[i] = key.currentState!.saveIntValue();
     }
 

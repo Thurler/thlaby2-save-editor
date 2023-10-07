@@ -169,4 +169,10 @@ enum Subclass {
     required this.spells,
     required this.isUnique,
   });
+
+  factory Subclass.fromName(String? name) {
+    return Subclass.values.firstWhere(
+      (Subclass s) => s.prettyName == name,
+    );
+  }
 }
