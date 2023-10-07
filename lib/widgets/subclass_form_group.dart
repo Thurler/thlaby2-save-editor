@@ -1,16 +1,20 @@
 import 'package:thlaby2_save_editor/save/enums/subclass.dart';
-import 'package:thlaby2_save_editor/widgets/form.dart';
-import 'package:thlaby2_save_editor/widgets/form_group.dart';
+import 'package:thlaby2_save_editor/widgets/skill_form_group.dart';
 
-class SubclassFormGroup extends TFormGroup {
+class SubclassFormGroup extends SkillFormGroup {
   Subclass original;
   Subclass current;
 
-  SubclassFormGroup({required this.current}) :
+  SubclassFormGroup({
+    required this.current,
+    required super.keys,
+    required super.initialValueBuilder,
+    required super.onValueChanged,
+  }) :
     original = current,
     super(
       title: 'Skill levels (Subclass)',
-      forms: <FormKey, TForm>{},
+      skills: current.allSkills,
     );
 
   @override

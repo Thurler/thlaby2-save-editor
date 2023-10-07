@@ -151,6 +151,8 @@ enum Subclass {
   final List<Skill> skills;
   final List<Spell> spells;
 
+  List<Skill> get allSkills => skills + spells;
+
   const Subclass(
     this.prettyName, {
     required this.skills,

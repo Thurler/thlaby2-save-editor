@@ -166,6 +166,8 @@ class CharacterEditState extends State<CharacterEditWidget>
     );
   }
 
+  CharacterData get characterData => saveFile.characterData[character.index];
+
   //
   // Helper methods to handle state changes when forms get altered
   //
