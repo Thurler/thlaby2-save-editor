@@ -18,6 +18,7 @@ import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/form_group.dart';
 import 'package:thlaby2_save_editor/widgets/skill_form.dart';
 import 'package:thlaby2_save_editor/widgets/skill_form_group.dart';
+import 'package:thlaby2_save_editor/widgets/subclass_form_group.dart';
 
 typedef DropdownFormKeyMap = Map<String, DropdownFormKey>;
 typedef NumberFormKeyMap = Map<String, NumberFormKey>;
@@ -114,6 +115,8 @@ class CharacterEditState extends State<CharacterEditWidget>
       (Skill skill) => MapEntry<Skill, SkillFormKey>(skill, SkillFormKey()),
     ),
   );
+
+  late final SkillFormKeyMap _subclassSkillsFormsKeys = <Skill, SkillFormKey>{};
 
   final DropdownFormKeyMap _tomeFormsKeys = DropdownFormKeyMap.fromEntries(
     tomeStats.map(
@@ -415,12 +418,10 @@ class CharacterEditState extends State<CharacterEditWidget>
     CharacterData data = characterData;
     LibraryData libraryData = data.libraryLevels;
 
-    // Initialize subclass skill group separately since it can change forms
-    // dynamically as we change subclasses
-    TFormGroup subclassSkillGroup = TFormGroup(
-      title: 'Skill levels (Subclass)',
-      forms: <FormKey, TForm>{},
-    );
+    // Initialize subclass form map with keys based on current subclass
+    for (Skill skill in data.subclass.allSkills) {
+      _subclassSkillsFormsKeys[skill] = SkillFormKey();
+    }
 
     _expansionGroups = <TFormGroup>[
       // Basic info - level, exp, bp, subclass
@@ -539,7 +540,14 @@ class CharacterEditState extends State<CharacterEditWidget>
           : data.skills.personalSpells[i - character.skills.length],
       ),
       // Subclass skill data
-      subclassSkillGroup,
+      SubclassFormGroup(
+        current: data.subclass,
+        keys: _subclassSkillsFormsKeys,
+        onValueChanged: (String? value) => setState(() {}),
+        initialValueBuilder: (int i) => i < data.subclass.skills.length
+          ? data.skills.subclassSkills[i]
+          : data.skills.subclassSpells[i - data.subclass.skills.length],
+      ),
       // Tome level data
       TFormGroup(
         title: 'Tomes',
