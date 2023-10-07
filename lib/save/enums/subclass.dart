@@ -1,4 +1,4 @@
-import 'package:thlaby2_save_editor/save/skill.dart';
+import 'package:thlaby2_save_editor/save/enums/skill.dart';
 
 enum Subclass {
   none(

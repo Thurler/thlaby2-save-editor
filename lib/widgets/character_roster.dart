@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
-import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
+import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/widgets/character_box.dart';
 
 class CharacterRoster extends StatelessWidget {

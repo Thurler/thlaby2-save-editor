@@ -1,4 +1,4 @@
-import 'package:thlaby2_save_editor/save/subclass.dart';
+import 'package:thlaby2_save_editor/save/enums/subclass.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/form_group.dart';
 

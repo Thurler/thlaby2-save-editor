@@ -1,4 +1,4 @@
-import 'package:thlaby2_save_editor/save/character.dart';
+import 'package:thlaby2_save_editor/save/enums/character.dart';
 
 class PartySlot {
   late Character character;
