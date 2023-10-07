@@ -442,6 +442,13 @@ class CharacterEditState extends State<CharacterEditWidget>
     CharacterData data = characterData;
     LibraryData libraryData = data.libraryLevels;
 
+    // Initialize subclass skill group separately since it can change forms
+    // dynamically as we change subclasses
+    TFormGroup subclassSkillGroup = TFormGroup(
+      title: 'Skill levels (Subclass)',
+      forms: <FormKey, TForm>{},
+    );
+
     _expansionGroups = <TFormGroup>[
       // Basic info - level, exp, bp, subclass
       TFormGroup(
@@ -540,7 +547,7 @@ class CharacterEditState extends State<CharacterEditWidget>
       ),
       // Common skill data
       TFormGroup(
-        title: 'Skill points (Common)',
+        title: 'Skill levels (Common)',
         forms: Map<FormKey, TForm>.fromEntries(
           _formMapEntriesFromSkillList(
             skills: boostSkills,
@@ -559,7 +566,7 @@ class CharacterEditState extends State<CharacterEditWidget>
       ),
       // Personal skill data
       TFormGroup(
-        title: 'Skill points (Personal)',
+        title: 'Skill levels (Personal)',
         forms: Map<FormKey, TForm>.fromEntries(
           _formMapEntriesFromSkillList(
             skills: character.skills,
@@ -586,7 +593,7 @@ class CharacterEditState extends State<CharacterEditWidget>
         ),
       ),
       // Subclass skill data
-      TFormGroup(title: 'Skill points (Subclass)', forms: <FormKey, TForm>{}),
+      subclassSkillGroup,
       // Tome level data
       TFormGroup(
         title: 'Tomes',
