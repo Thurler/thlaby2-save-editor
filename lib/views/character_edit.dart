@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
+import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
@@ -219,6 +220,42 @@ class CharacterEditState extends State<CharacterEditWidget>
   void _onLevelBonusChange(String? value) => _updateLevelPoints(
     _levelFormKey.currentState!.intValue,
   );
+
+  void _updateSkillPoints(String? value) {
+    // Available count is level + trainig manuals + 2
+    int available = _levelFormKey.currentState!.intValue + 2;
+    available += _trainingManualFormKey.currentState!.intValue;
+    // First we map out what the skill names and attributes will be for our
+    // current tome configuration
+    List<Skill> boostSkills = characterData.getCommonSkills(
+      _tomeFormsKeys.values.map(
+        (DropdownFormKey key) => key.currentState!.value,
+      ),
+    );
+    // Subtract points for each skill learned - boost skills need to be replaced
+    // with the skills returned above; spells need to reduce level by 1 since
+    // they start off at level 1
+    for (MapEntry<int, Skill> skillEntry in _allSkills.enumerate()) {
+      int index = skillEntry.key;
+      Skill skill = skillEntry.value;
+      int level = _skillsFormsKeys[skill]!.currentState!.intValue;
+      if (skill is BoostSkill) {
+        available -= level * boostSkills[index].levelCost;
+      } else if (skill is Spell) {
+        available -= (level - 1) * skill.levelCost;
+      } else {
+        available -= level * skill.levelCost;
+      }
+    }
+    Subclass subclass = Subclass.fromName(_subclassFormKey.currentState!.value);
+    // Subtract points for each skill learned from subclass
+    for (Skill skill in subclass.allSkills) {
+      int level = _subclassSkillsFormsKeys[skill]!.currentState!.intValue;
+      available -= level * skill.levelCost;
+    }
+    _unusedSkillPointsFormKey.currentState!.value = available.commaSeparate();
+    setState(() {});
+  }
 
   void _updateTomeSkills(String? value) {
     // First we map out what the skill names and attributes will be for our
@@ -454,7 +491,7 @@ class CharacterEditState extends State<CharacterEditWidget>
     subclassFormGroup = SubclassFormGroup(
       current: data.subclass,
       keys: _subclassSkillsFormsKeys,
-      onValueChanged: (String? value) => setState(() {}),
+      onValueChanged: _updateSkillPoints,
       initialValueBuilder: (int i) => data.skills.subclassSkills[i],
     );
 
@@ -573,6 +610,7 @@ class CharacterEditState extends State<CharacterEditWidget>
             subtitle: trainingManualSubtitle,
             initialValue: data.usedManuals.commaSeparate(),
             maxValue: BigInt.from(trainingManualsCap),
+            onValueChanged: _updateSkillPoints,
             key: _trainingManualFormKey,
           ),
         },
@@ -582,7 +620,7 @@ class CharacterEditState extends State<CharacterEditWidget>
         title: 'Skill levels (Common)',
         skills: <Skill>[] + boostSkills + expSkills,
         keys: _skillsFormsKeys,
-        onValueChanged: (String? value) => setState(() {}),
+        onValueChanged: _updateSkillPoints,
         initialValueBuilder: (int i) => i < boostSkills.length
           ? data.skills.getBoostData(i)
           : data.skills.getExpData(i - boostSkills.length),
@@ -592,7 +630,7 @@ class CharacterEditState extends State<CharacterEditWidget>
         title: 'Skill levels (Personal)',
         skills: character.allSkills,
         keys: _skillsFormsKeys,
-        onValueChanged: (String? value) => setState(() {}),
+        onValueChanged: _updateSkillPoints,
         initialValueBuilder: (int i) => i < character.skills.length
           ? data.skills.personalSkills[i]
           : data.skills.personalSpells[i - character.skills.length],
@@ -671,6 +709,7 @@ class CharacterEditState extends State<CharacterEditWidget>
     WidgetsBinding.instance.addPostFrameCallback((Duration d) {
       _updateLevelPoints(data.level);
       _updateTomeSkills(null);
+      _updateSkillPoints(null);
     });
   }
 
