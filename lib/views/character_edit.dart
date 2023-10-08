@@ -7,17 +7,22 @@ import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
-import 'package:thlaby2_save_editor/save/equip.dart';
+import 'package:thlaby2_save_editor/save/enums/character.dart';
+import 'package:thlaby2_save_editor/save/enums/item.dart';
+import 'package:thlaby2_save_editor/save/enums/skill.dart';
+import 'package:thlaby2_save_editor/save/enums/subclass.dart';
 import 'package:thlaby2_save_editor/save/library.dart';
-import 'package:thlaby2_save_editor/save/skill.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/form_group.dart';
+import 'package:thlaby2_save_editor/widgets/skill_form.dart';
+import 'package:thlaby2_save_editor/widgets/skill_form_group.dart';
+import 'package:thlaby2_save_editor/widgets/subclass_form_group.dart';
 
 typedef DropdownFormKeyMap = Map<String, DropdownFormKey>;
 typedef NumberFormKeyMap = Map<String, NumberFormKey>;
-typedef SkillFormKeyMap = Map<Skill, NumberFormKey>;
+typedef SkillFormKeyMap = Map<Skill, SkillFormKey>;
 typedef FixedFormKeyMap = Map<String, FixedFormKey>;
 
 class CharacterEditWidget extends StatefulWidget {
@@ -79,12 +84,6 @@ class CharacterEditState extends State<CharacterEditWidget>
   static final String libraryElementSubtitle = 'Must be at most '
       '${libraryElementCap.commaSeparate()}';
 
-  static String skillSubtitle(Skill skill) => 'Must be at most '
-      '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
-
-  static String spellSubtitle(Skill skill) => 'Must be between 1 and '
-      '${skill.maxLevel} | Uses ${skill.levelCost} skill points per level';
-
   Character get character => widget.character;
 
   final NumberFormKey _levelFormKey = NumberFormKey();
@@ -109,15 +108,15 @@ class CharacterEditState extends State<CharacterEditWidget>
       <Skill>[] + // The runtime type casting is dumb
       boostSkills +
       expSkills +
-      character.skills +
-      character.spells +
-      character.awakeningSpells;
+      character.allSkills;
 
   late final SkillFormKeyMap _skillsFormsKeys = SkillFormKeyMap.fromEntries(
     _allSkills.map(
-      (Skill skill) => MapEntry<Skill, NumberFormKey>(skill, NumberFormKey()),
+      (Skill skill) => MapEntry<Skill, SkillFormKey>(skill, SkillFormKey()),
     ),
   );
+
+  late final SkillFormKeyMap _subclassSkillsFormsKeys = <Skill, SkillFormKey>{};
 
   final DropdownFormKeyMap _tomeFormsKeys = DropdownFormKeyMap.fromEntries(
     tomeStats.map(
@@ -143,6 +142,8 @@ class CharacterEditState extends State<CharacterEditWidget>
 
   late final List<TFormGroup> _expansionGroups;
 
+  late final SubclassFormGroup subclassFormGroup;
+
   Iterable<MapEntry<FormKey, TForm>> _formMapEntriesFromList({
     required List<String> names,
     required Map<String, FormKey> keys,
@@ -165,30 +166,6 @@ class CharacterEditState extends State<CharacterEditWidget>
           maxValue: maxValue,
           onValueChanged: onValueChanged ?? (String? value) => setState(() {}),
           key: keys[names[i]],
-        ),
-      ),
-    );
-  }
-
-  Iterable<MapEntry<FormKey, TForm>> _formMapEntriesFromSkillList({
-    required List<Skill> skills,
-    required Map<Skill, FormKey> keys,
-    required String Function(Skill) subtitleBuilder,
-    required int Function(int) initialValueBuilder,
-    BigInt? minValue,
-  }) {
-    return skills.asMap().keys.map(
-      (int i) => MapEntry<FormKey, TForm>(
-        keys[skills[i]]!,
-        TFormNumber(
-          enabled: true,
-          title: skills[i].name,
-          subtitle: subtitleBuilder(skills[i]),
-          initialValue: initialValueBuilder(i).commaSeparate(),
-          minValue: minValue ?? BigInt.from(0),
-          maxValue: BigInt.from(skills[i].maxLevel),
-          onValueChanged: (String? value) => setState(() {}),
-          key: keys[skills[i]],
         ),
       ),
     );
@@ -221,6 +198,12 @@ class CharacterEditState extends State<CharacterEditWidget>
       // The unused level up points form should be updated automatically
       _unusedLevelFormKey.currentState!.value = available.commaSeparate();
     });
+  }
+
+  void _onSubclassChange(String? value) {
+    // Propagate the change to the group so it can reset the forms
+    subclassFormGroup.changeSubclass(Subclass.fromName(value));
+    setState(() {});
   }
 
   void _onLevelChange(String? value) => _updateLevelPoints(
@@ -264,7 +247,7 @@ class CharacterEditState extends State<CharacterEditWidget>
         } else {
           // Unlock the skill from the zero cap and return to regular subtitle
           maxValue = BigInt.from(skill.maxLevel);
-          subtitle = skillSubtitle(skill);
+          subtitle = TFormSkill.skillSubtitle(skill);
         }
         boostSkill.subtitle = subtitle;
         boostSkill.maxValue = maxValue;
@@ -277,9 +260,7 @@ class CharacterEditState extends State<CharacterEditWidget>
   //
 
   String _checkForDuplicateUniqueSubclasses(String value) {
-    Subclass chosen = Subclass.values.firstWhere(
-      (Subclass s) => s.prettyName == value,
-    );
+    Subclass chosen = Subclass.fromName(value);
     // If the chosen subclass is not a unique one, aceept the value
     if (!chosen.isUnique) {
       return '';
@@ -346,9 +327,7 @@ class CharacterEditState extends State<CharacterEditWidget>
     data.experience = _expFormKey.currentState!.saveBigIntValue();
     data.bp = _bpFormKey.currentState!.saveIntValue();
     String chosenSubclass = _subclassFormKey.currentState!.saveValue();
-    data.subclass = Subclass.values.firstWhere(
-      (Subclass s) => s.prettyName == chosenSubclass,
-    );
+    data.subclass = Subclass.fromName(chosenSubclass);
 
     // Library data + Level bonus data
     for (int i = 0; i < stats.length; i++) {
@@ -385,13 +364,40 @@ class CharacterEditState extends State<CharacterEditWidget>
 
     // Personal skills and spells data
     for (int i = 0; i < character.skills.length; i++) {
-      NumberFormKey key = _skillsFormsKeys[character.skills[i]]!;
+      SkillFormKey key = _skillsFormsKeys[character.skills[i]]!;
       data.skills.personalSkills[i] = key.currentState!.saveIntValue();
     }
-    List<Skill> spells = character.spells + character.awakeningSpells;
+    List<Skill> spells = <Skill>[];
+    spells += character.spells;
+    spells += character.awakeningSpells;
     for (int i = 0; i < spells.length; i++) {
-      NumberFormKey key = _skillsFormsKeys[spells[i]]!;
+      SkillFormKey key = _skillsFormsKeys[spells[i]]!;
       data.skills.personalSpells[i] = key.currentState!.saveIntValue();
+    }
+
+    // Subclass skills - length might have changed thanks to subclass change, so
+    // we iterate over all slots, checking for valid entries
+    List<Skill> subclassSkills = data.subclass.skills;
+    for (int i = 0; i < data.skills.subclassSkills.length; i++) {
+      if (i < subclassSkills.length) {
+        SkillFormKey key = _subclassSkillsFormsKeys[subclassSkills[i]]!;
+        data.skills.subclassSkills[i] = key.currentState!.saveIntValue();
+      } else {
+        data.skills.subclassSkills[i] = 0;
+      }
+    }
+    subclassFormGroup.save();
+
+    // Subclass skills - length might have changed thanks to subclass change, so
+    // we iterate over all slots, checking for valid entries
+    List<Skill> subclassSpells = data.subclass.spells;
+    for (int i = 0; i < data.skills.subclassSpells.length; i++) {
+      if (i < subclassSpells.length) {
+        SkillFormKey key = _subclassSkillsFormsKeys[subclassSpells[i]]!;
+        data.skills.subclassSpells[i] = key.currentState!.saveIntValue();
+      } else {
+        data.skills.subclassSpells[i] = 0;
+      }
     }
 
     // Tome data
@@ -441,6 +447,20 @@ class CharacterEditState extends State<CharacterEditWidget>
     CharacterData data = characterData;
     LibraryData libraryData = data.libraryLevels;
 
+    // Initialize subclass form map with keys based on current subclass
+    for (Skill skill in data.subclass.allSkills) {
+      _subclassSkillsFormsKeys[skill] = SkillFormKey();
+    }
+    // Also initialize subclass skill form group after initializing the keys
+    subclassFormGroup = SubclassFormGroup(
+      current: data.subclass,
+      keys: _subclassSkillsFormsKeys,
+      onValueChanged: (String? value) => setState(() {}),
+      initialValueBuilder: (int i) => i < data.subclass.skills.length
+        ? data.skills.subclassSkills[i]
+        : data.skills.subclassSpells[i - data.subclass.skills.length],
+    );
+
     _expansionGroups = <TFormGroup>[
       // Basic info - level, exp, bp, subclass
       TFormGroup(
@@ -479,12 +499,12 @@ class CharacterEditState extends State<CharacterEditWidget>
           _subclassFormKey: TFormDropdown(
             enabled: true,
             title: 'Subclass',
-            subtitle: 'Changing this will affect skills data',
+            subtitle: 'Changing this will affect skills data!',
             hintText: 'Select a subclass',
             options: Subclass.values.map((Subclass s) => s.prettyName).toList(),
             initialValue: data.subclass.prettyName,
             validationCallback: _checkForDuplicateUniqueSubclasses,
-            onValueChanged: (String? value) => setState(() {}),
+            onValueChanged: _onSubclassChange,
             key: _subclassFormKey,
           ),
         },
@@ -538,54 +558,27 @@ class CharacterEditState extends State<CharacterEditWidget>
         ),
       ),
       // Common skill data
-      TFormGroup(
-        title: 'Skill points (Common)',
-        forms: Map<FormKey, TForm>.fromEntries(
-          _formMapEntriesFromSkillList(
-            skills: boostSkills,
-            keys: _skillsFormsKeys,
-            subtitleBuilder: skillSubtitle,
-            initialValueBuilder: (int i) => data.skills.getBoostData(i),
-          ).followedBy(
-            _formMapEntriesFromSkillList(
-              skills: expSkills,
-              keys: _skillsFormsKeys,
-              subtitleBuilder: skillSubtitle,
-              initialValueBuilder: (int i) => data.skills.getExpData(i),
-            ),
-          ),
-        ),
+      SkillFormGroup(
+        title: 'Skill levels (Common)',
+        skills: <Skill>[] + boostSkills + expSkills,
+        keys: _skillsFormsKeys,
+        onValueChanged: (String? value) => setState(() {}),
+        initialValueBuilder: (int i) => i < boostSkills.length
+          ? data.skills.getBoostData(i)
+          : data.skills.getExpData(i - boostSkills.length),
       ),
       // Personal skill data
-      TFormGroup(
-        title: 'Skill points (Personal)',
-        forms: Map<FormKey, TForm>.fromEntries(
-          _formMapEntriesFromSkillList(
-            skills: character.skills,
-            keys: _skillsFormsKeys,
-            subtitleBuilder: skillSubtitle,
-            initialValueBuilder: (int i) => data.skills.personalSkills[i],
-          ).followedBy(
-            _formMapEntriesFromSkillList(
-              skills: character.spells,
-              keys: _skillsFormsKeys,
-              subtitleBuilder: spellSubtitle,
-              initialValueBuilder: (int i) => data.skills.personalSpells[i],
-              minValue: BigInt.from(1),
-            ),
-          ).followedBy(
-            _formMapEntriesFromSkillList(
-              skills: character.awakeningSpells,
-              keys: _skillsFormsKeys,
-              subtitleBuilder: skillSubtitle,
-              initialValueBuilder: (int i) =>
-                  data.skills.personalSpells[character.spells.length + i],
-            ),
-          ),
-        ),
+      SkillFormGroup(
+        title: 'Skill levels (Personal)',
+        skills: character.allSkills,
+        keys: _skillsFormsKeys,
+        onValueChanged: (String? value) => setState(() {}),
+        initialValueBuilder: (int i) => i < character.skills.length
+          ? data.skills.personalSkills[i]
+          : data.skills.personalSpells[i - character.skills.length],
       ),
       // Subclass skill data
-      TFormGroup(title: 'Skill points (Subclass)', forms: <FormKey, TForm>{}),
+      subclassFormGroup,
       // Tome level data
       TFormGroup(
         title: 'Tomes',

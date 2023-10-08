@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/logger.dart';
-import 'package:thlaby2_save_editor/save/character.dart';
+import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/views/character_data.dart';
 import 'package:thlaby2_save_editor/views/character_edit.dart';
 import 'package:thlaby2_save_editor/views/character_select.dart';

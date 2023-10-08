@@ -1,7 +1,16 @@
 import 'dart:typed_data';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 
-enum MainEquip {
+abstract class Item {
+  final int id;
+  final String name;
+
+  const Item(this.id, this.name);
+
+  Iterable<int> toBytes(Endian endianness);
+}
+
+enum MainEquip implements Item {
   slot0(0, 'Empty'),
   slot1(1, 'Miko Board'),
   slot2(2, 'Tin Watering Can'),
@@ -64,17 +73,20 @@ enum MainEquip {
   slot59(59, 'Avoid Ring'),
   slot60(60, 'Infinity Bandana');
 
+  @override
   final int id;
+  @override
   final String name;
 
   const MainEquip(this.id, this.name);
 
+  @override
   Iterable<int> toBytes(Endian endianness) {
     return id.toU16(endianness);
   }
 }
 
-enum SubEquip {
+enum SubEquip implements Item {
   slot0(0, 'Empty'),
   slot1(201, 'Piece of Heart'),
   slot2(202, 'Mad Milk'),
@@ -317,11 +329,14 @@ enum SubEquip {
   slot239(439, 'True Ame-no-Murakumo'),
   slot240(440, "Dragon God's Power Source");
 
+  @override
   final int id;
+  @override
   final String name;
 
   const SubEquip(this.id, this.name);
 
+  @override
   Iterable<int> toBytes(Endian endianness) {
     return id.toU16(endianness);
   }

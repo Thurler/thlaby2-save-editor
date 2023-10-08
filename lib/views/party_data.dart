@@ -6,7 +6,7 @@ import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/save/character.dart';
+import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/party_row.dart';
