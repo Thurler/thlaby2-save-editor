@@ -19,7 +19,6 @@ class SkillData {
   late List<int> personalSkills;
   late List<int> personalSpells;
   late List<int> subclassSkills;
-  late List<int> subclassSpells;
 
   int getBoostData(int index) {
     return <int>[
@@ -97,13 +96,13 @@ class SkillData {
     handsOnExperience = bytes[offset + 38];
     personalSkills = List<int>.filled(10, 0);
     personalSpells = List<int>.filled(10, 0);
-    subclassSkills = List<int>.filled(10, 0);
-    subclassSpells = List<int>.filled(10, 0);
     for (int i = 0; i < 10; i++) {
       personalSkills[i] = bytes[offset + 40 + (i * 2)];
       personalSpells[i] = bytes[offset + 60 + (i * 2)];
+    }
+    subclassSkills = List<int>.filled(20, 0);
+    for (int i = 0; i < 20; i++) {
       subclassSkills[i] = bytes[offset + 80 + (i * 2)];
-      subclassSpells[i] = bytes[offset + 100 + (i * 2)];
     }
   }
 
@@ -125,7 +124,6 @@ class SkillData {
     personalSkills = List<int>.from(other.personalSkills);
     personalSpells = List<int>.from(other.personalSpells);
     subclassSkills = List<int>.from(other.subclassSkills);
-    subclassSpells = List<int>.from(other.subclassSpells);
   }
 
   Iterable<int> _skillListToBytes(List<int> skills, Endian endianness) {
@@ -155,7 +153,6 @@ class SkillData {
       ..._skillListToBytes(personalSkills, endianness),
       ..._skillListToBytes(personalSpells, endianness),
       ..._skillListToBytes(subclassSkills, endianness),
-      ..._skillListToBytes(subclassSpells, endianness),
     ];
   }
 }

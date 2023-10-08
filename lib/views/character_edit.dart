@@ -377,7 +377,7 @@ class CharacterEditState extends State<CharacterEditWidget>
 
     // Subclass skills - length might have changed thanks to subclass change, so
     // we iterate over all slots, checking for valid entries
-    List<Skill> subclassSkills = data.subclass.skills;
+    List<Skill> subclassSkills = data.subclass.allSkills;
     for (int i = 0; i < data.skills.subclassSkills.length; i++) {
       if (i < subclassSkills.length) {
         SkillFormKey key = _subclassSkillsFormsKeys[subclassSkills[i]]!;
@@ -387,18 +387,6 @@ class CharacterEditState extends State<CharacterEditWidget>
       }
     }
     subclassFormGroup.save();
-
-    // Subclass skills - length might have changed thanks to subclass change, so
-    // we iterate over all slots, checking for valid entries
-    List<Skill> subclassSpells = data.subclass.spells;
-    for (int i = 0; i < data.skills.subclassSpells.length; i++) {
-      if (i < subclassSpells.length) {
-        SkillFormKey key = _subclassSkillsFormsKeys[subclassSpells[i]]!;
-        data.skills.subclassSpells[i] = key.currentState!.saveIntValue();
-      } else {
-        data.skills.subclassSpells[i] = 0;
-      }
-    }
 
     // Tome data
     for (TomeStat stat in tomeStats) {
@@ -456,9 +444,7 @@ class CharacterEditState extends State<CharacterEditWidget>
       current: data.subclass,
       keys: _subclassSkillsFormsKeys,
       onValueChanged: (String? value) => setState(() {}),
-      initialValueBuilder: (int i) => i < data.subclass.skills.length
-        ? data.skills.subclassSkills[i]
-        : data.skills.subclassSpells[i - data.subclass.skills.length],
+      initialValueBuilder: (int i) => data.skills.subclassSkills[i],
     );
 
     _expansionGroups = <TFormGroup>[
