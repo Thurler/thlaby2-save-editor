@@ -433,7 +433,7 @@ class CharacterEditState extends State<CharacterEditWidget>
 
     // Unused skill points and training manuals used
     data.usedManuals = _trainingManualFormKey.currentState!.saveIntValue();
-    data.unusedBonusPoints = _unusedSkillPointsFormKey
+    data.unusedSkillPoints = _unusedSkillPointsFormKey
         .currentState!.saveIntValue();
 
     // Tome data
