@@ -74,6 +74,8 @@ class CharacterEditState extends State<CharacterEditWidget>
   static const String expCap = '999999999999999999'; // Can go higher, but why
   static const int levelCap = 9999999; // Save load sets it to this if higher
   static const int levelBonusCap = levelCap - 1;
+  static const int skillPointBonusCap = levelCap + 2;
+  static const int trainingManualsCap = 255;
   static const int bpCap = 2147483647; // Goes negative past this
   static const int libraryCap = 99999999; // Hard cap at library
   static const int libraryElementCap = 100; // Hard cap at library
@@ -83,6 +85,8 @@ class CharacterEditState extends State<CharacterEditWidget>
       '${libraryCap.commaSeparate()}';
   static final String libraryElementSubtitle = 'Must be at most '
       '${libraryElementCap.commaSeparate()}';
+  static final String trainingManualSubtitle = 'Must be at most '
+      '${trainingManualsCap.commaSeparate()}';
 
   Character get character => widget.character;
 
@@ -98,6 +102,8 @@ class CharacterEditState extends State<CharacterEditWidget>
   );
 
   final NumberFormKey _unusedLevelFormKey = NumberFormKey();
+  final NumberFormKey _unusedSkillPointsFormKey = NumberFormKey();
+  final NumberFormKey _trainingManualFormKey = NumberFormKey();
   final NumberFormKeyMap _levelBonusFormsKeys = NumberFormKeyMap.fromEntries(
     stats.map(
       (String stat) => MapEntry<String, NumberFormKey>(stat, NumberFormKey()),
@@ -388,6 +394,11 @@ class CharacterEditState extends State<CharacterEditWidget>
     }
     subclassFormGroup.save();
 
+    // Unused skill points and training manuals used
+    data.usedManuals = _trainingManualFormKey.currentState!.saveIntValue();
+    data.unusedBonusPoints = _unusedSkillPointsFormKey
+        .currentState!.saveIntValue();
+
     // Tome data
     for (TomeStat stat in tomeStats) {
       data.tomes.setStatData(
@@ -542,6 +553,29 @@ class CharacterEditState extends State<CharacterEditWidget>
             onValueChanged: _onLevelBonusChange,
           ),
         ),
+      ),
+      // Skill points info and training manuals
+      TFormGroup(
+        title: 'Skill points',
+        forms: <FormKey, TForm>{
+          _unusedSkillPointsFormKey: TFormNumber(
+            enabled: false,
+            title: 'Unused skill points',
+            subtitle: 'Updated automatically with skill levels and manuals',
+            initialValue: data.unusedSkillPoints.commaSeparate(),
+            minValue: BigInt.from(3 - skillPointBonusCap),
+            maxValue: BigInt.from(skillPointBonusCap + trainingManualsCap),
+            key: _unusedSkillPointsFormKey,
+          ),
+          _trainingManualFormKey: TFormNumber(
+            enabled: true,
+            title: 'Training manuals used',
+            subtitle: trainingManualSubtitle,
+            initialValue: data.usedManuals.commaSeparate(),
+            maxValue: BigInt.from(trainingManualsCap),
+            key: _trainingManualFormKey,
+          ),
+        },
       ),
       // Common skill data
       SkillFormGroup(
