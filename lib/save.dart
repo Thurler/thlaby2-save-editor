@@ -1,108 +1,9 @@
-enum CharacterName {
-  reimu,
-  marisa,
-  rinnosuke,
-  keine,
-  momiji,
-  youmu,
-  kogasa,
-  rumia,
-  cirno,
-  minoriko,
-  komachi,
-  chen,
-  nitori,
-  parsee,
-  wriggle,
-  kaguya,
-  mokou,
-  aya,
-  mystia,
-  kasen,
-  nazrin,
-  hina,
-  rin,
-  utsuho,
-  satori,
-  yuugi,
-  meiling,
-  alice,
-  patchouli,
-  eirin,
-  reisen,
-  sanae,
-  iku,
-  suika,
-  ran,
-  remilia,
-  sakuya,
-  kanako,
-  suwako,
-  tenshi,
-  flandre,
-  yuyuko,
-  yuuka,
-  yukari,
-  byakuren,
-  eiki,
-  renko,
-  maribel,
-  shou,
-  mamizou,
-  futo,
-  miko,
-  kokoro,
-  tokiko,
-  koishi,
-  akyuu,
-}
-
-class CharacterUnlockFlag {
-  late CharacterName character;
-  late bool isUnlocked;
-
-  CharacterUnlockFlag({
-    required this.character,
-    required this.isUnlocked,
-  });
-
-  CharacterUnlockFlag.from(CharacterUnlockFlag other) {
-    character = other.character;
-    isUnlocked = other.isUnlocked;
-  }
-
-  @override
-  String toString() {
-    return '${character.name}: $isUnlocked';
-  }
-}
-
-class PartySlot {
-  late CharacterName character;
-  late bool isUsed;
-
-  PartySlot.empty() : isUsed = false;
-  PartySlot.filled(int byte) {
-    character = CharacterName.values.elementAt(byte - 1);
-    isUsed = true;
-  }
-
-  PartySlot.from(PartySlot other) {
-    isUsed = other.isUsed;
-    if (isUsed) {
-      character = other.character;
-    }
-  }
-
-  int toByte() {
-    return isUsed ? CharacterName.values.indexOf(character) + 1 : 0;
-  }
-
-  @override
-  String toString() {
-    return isUsed ? character.name : 'empty';
-  }
-}
+import 'dart:typed_data';
+import 'package:thlaby2_save_editor/logger.dart';
+import 'package:thlaby2_save_editor/save/character.dart';
+import 'package:thlaby2_save_editor/save/character_unlock.dart';
+import 'package:thlaby2_save_editor/save/enums/character.dart';
+import 'package:thlaby2_save_editor/save/party_slot.dart';
 
 class FileSizeException implements Exception {
   const FileSizeException() : super();
@@ -124,13 +25,9 @@ class SaveFileWrapper {
   SaveFileWrapper._internal();
 }
 
-class LogBuffer {
-  StringBuffer debug = StringBuffer();
-  StringBuffer error = StringBuffer();
-}
-
-class SaveFile {
+class SaveFile with Loggable {
   static const int steamFileSize = 257678;
+  static const int characterDataLength = 271;
 
   late List<CharacterUnlockFlag> characterUnlockFlags;
   List<int> achievementData = <int>[];
@@ -149,29 +46,33 @@ class SaveFile {
   List<int> subInventoryData = <int>[];
   List<int> materialInventoryData = <int>[];
   List<int> specialInventoryData = <int>[];
-  List<int> characterData = <int>[];
+  late List<CharacterData> characterData;
   List<int> mainMapData = <int>[];
   List<int> undergroundMapData = <int>[];
 
-  SaveFile.fromSteamBytes(List<int> bytes, LogBuffer logBuffer) {
+  bool loadedWithErrors = false;
+
+  SaveFile.fromSteamBytes(List<int> bytes) {
     if (bytes.length != steamFileSize) {
       throw const FileSizeException();
     }
     List<int> decrypted = _runSteamEncoding(bytes);
     if (
-      decrypted[0] != 0x42 || decrypted[1] != 0x4c ||
-      decrypted[2] != 0x48 || decrypted[3] != 0x54 ||
+      decrypted[0] != 0x42 ||
+      decrypted[1] != 0x4c ||
+      decrypted[2] != 0x48 ||
+      decrypted[3] != 0x54 ||
       decrypted[0x67] != 0x01
     ) {
       throw const InvalidHeaderException();
     }
-    _setCharacterUnlockFlagsFromBytes(decrypted.sublist(0x5, 0x3d), logBuffer);
+    _setCharacterUnlockFlagsFromBytes(decrypted.sublist(0x5, 0x3d));
     _setAchievementData(decrypted.sublist(0x68, 0xd0));
     _setAchievementDataPlus(decrypted.sublist(0xd6, 0x10a));
     _setAchievementNotificationData(decrypted.sublist(0x130, 0x198));
     _setAchievementNotificationDataPlus(decrypted.sublist(0x19e, 0x1d2));
     _setBestiaryData(decrypted.sublist(0x2c2, 0x4c22));
-    _setPartyData(decrypted.sublist(0x5018, 0x5024), logBuffer);
+    _setPartyData(decrypted.sublist(0x5018, 0x5024));
     _setGeneralGameData(decrypted.sublist(0x540c, 0x54c6));
     _setEventFlagData(decrypted.sublist(0x54c6, 0x68b2));
     _setMainInventoryFlagData(decrypted.sublist(0x7bd7, 0x7c13));
@@ -187,17 +88,17 @@ class SaveFile {
     _setUndergroundMapData(decrypted.sublist(0x33e8e, 0x3ee8e));
   }
 
-  List<int> exportSteam(LogBuffer logBuffer) {
+  List<int> exportSteam() {
     List<int> bytes = List<int>.filled(steamFileSize, 0, growable: true);
     bytes[0x67] = 0x1;
     bytes.replaceRange(0x0, 0x4, <int>[0x42, 0x4c, 0x48, 0x54]);
-    bytes.replaceRange(0x5, 0x3d, _exportCharacterUnlockFlags(logBuffer));
+    bytes.replaceRange(0x5, 0x3d, _exportCharacterUnlockFlags());
     bytes.replaceRange(0x68, 0xd0, achievementData);
     bytes.replaceRange(0xd6, 0x10a, achievementDataPlus);
     bytes.replaceRange(0x130, 0x198, achievementNotificationsData);
     bytes.replaceRange(0x19e, 0x1d2, achievementNotificationsDataPlus);
     bytes.replaceRange(0x2c2, 0x4c22, bestiaryData);
-    bytes.replaceRange(0x5018, 0x5024, _exportPartyData(logBuffer));
+    bytes.replaceRange(0x5018, 0x5024, _exportPartyData());
     bytes.replaceRange(0x540c, 0x54c6, generalGameData);
     bytes.replaceRange(0x54c6, 0x68b2, eventFlagData);
     bytes.replaceRange(0x7bd7, 0x7c13, mainInventoryFlagData);
@@ -208,7 +109,7 @@ class SaveFile {
     bytes.replaceRange(0x8538, 0x8718, subInventoryData);
     bytes.replaceRange(0x8790, 0x8858, materialInventoryData);
     bytes.replaceRange(0x89e8, 0x8b50, specialInventoryData);
-    bytes.replaceRange(0x9346, 0xce8e, characterData);
+    bytes.replaceRange(0x9346, 0xce8e, _exportCharacterData());
     bytes.replaceRange(0xce8e, 0x2ae8e, mainMapData);
     bytes.replaceRange(0x33e8e, 0x3ee8e, undergroundMapData);
     return _runSteamEncoding(bytes);
@@ -223,28 +124,38 @@ class SaveFile {
     ).values.toList();
   }
 
-  Iterable<int> _exportCharacterUnlockFlags(LogBuffer logBuffer) {
-    logBuffer.debug.writeln('Character unlock: $characterUnlockFlags');
+  Iterable<int> _exportCharacterUnlockFlags() {
+    logBuffer(LogLevel.debug, 'Character unlock: $characterUnlockFlags');
     return characterUnlockFlags.map<int>(
       (CharacterUnlockFlag flag) => (flag.isUnlocked) ? 0x1 : 0x0,
     );
   }
 
-  Iterable<int> _exportPartyData(LogBuffer logBuffer) {
-    logBuffer.debug.writeln('Party data: $partyData');
+  Iterable<int> _exportPartyData() {
+    logBuffer(LogLevel.debug, 'Party data: $partyData');
     return partyData.map<int>((PartySlot slot) => slot.toByte());
   }
 
-  void _setCharacterUnlockFlagsFromBytes(
-    List<int> bytes,
-    LogBuffer logBuffer,
-  ) {
+  Iterable<int> _exportCharacterData() {
+    logBuffer(LogLevel.debug, 'Party data: $characterData');
+    return characterData.fold<Iterable<int>>(
+      <int>[],
+      (Iterable<int> acc, CharacterData data) {
+        Iterable<int> bytes = data.toBytes(Endian.little);
+        return acc.followedBy(
+          bytes,
+        );
+      },
+    );
+  }
+
+  void _setCharacterUnlockFlagsFromBytes(List<int> bytes) {
     characterUnlockFlags = <CharacterUnlockFlag>[];
-    logBuffer.debug.writeln('Character unlock bytes: $bytes');
+    logBuffer(LogLevel.debug, 'Character unlock bytes: $bytes');
     for (int i = 0; i < bytes.length; i++) {
       characterUnlockFlags.add(
         CharacterUnlockFlag(
-          character: CharacterName.values.elementAt(i),
+          character: Character.values.elementAt(i),
           isUnlocked: bytes[i] > 0x0,
         ),
       );
@@ -257,16 +168,16 @@ class SaveFile {
   void _setAchievementDataPlus(List<int> bytes) => achievementDataPlus = bytes;
   // ignore: use_setters_to_change_properties
   void _setAchievementNotificationData(List<int> bytes) =>
-    achievementNotificationsData = bytes;
+      achievementNotificationsData = bytes;
   // ignore: use_setters_to_change_properties
   void _setAchievementNotificationDataPlus(List<int> bytes) =>
-    achievementNotificationsDataPlus = bytes;
+      achievementNotificationsDataPlus = bytes;
   // ignore: use_setters_to_change_properties
   void _setBestiaryData(List<int> bytes) => bestiaryData = bytes;
 
-  void _setPartyData(List<int> bytes, LogBuffer logBuffer) {
+  void _setPartyData(List<int> bytes) {
     partyData = <PartySlot>[];
-    logBuffer.debug.writeln('Party bytes: $bytes');
+    logBuffer(LogLevel.debug, 'Party bytes: $bytes');
     for (int i = 0; i < bytes.length; i++) {
       int byte = bytes[i];
       if (byte == 0) {
@@ -274,7 +185,8 @@ class SaveFile {
       } else if (byte <= 56) {
         partyData.add(PartySlot.filled(byte));
       } else {
-        logBuffer.error.writeln('Invalid party member at position $i: $byte');
+        logBuffer(LogLevel.error, 'Invalid party member at position $i: $byte');
+        loadedWithErrors = true;
       }
     }
   }
@@ -285,30 +197,56 @@ class SaveFile {
   void _setEventFlagData(List<int> bytes) => eventFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setMainInventoryFlagData(List<int> bytes) =>
-    mainInventoryFlagData = bytes;
+      mainInventoryFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setSubInventoryFlagData(List<int> bytes) =>
-    subInventoryFlagData = bytes;
+      subInventoryFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setMaterialInventoryFlagData(List<int> bytes) =>
-  materialInventoryFlagData = bytes;
+      materialInventoryFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setSpecialInventoryFlagData(List<int> bytes) =>
-  specialInventoryFlagData = bytes;
+      specialInventoryFlagData = bytes;
   // ignore: use_setters_to_change_properties
   void _setMainInventoryData(List<int> bytes) => mainInventoryData = bytes;
   // ignore: use_setters_to_change_properties
   void _setSubInventoryData(List<int> bytes) => subInventoryData = bytes;
   // ignore: use_setters_to_change_properties
   void _setMaterialInventoryData(List<int> bytes) =>
-  materialInventoryData = bytes;
+      materialInventoryData = bytes;
   // ignore: use_setters_to_change_properties
   void _setSpecialInventoryData(List<int> bytes) =>
-  specialInventoryData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setCharacterData(List<int> bytes) => characterData = bytes;
+      specialInventoryData = bytes;
+
+  void _setCharacterData(List<int> bytes) {
+    characterData = <CharacterData>[];
+    for (int i = 0; i < 56; i++) {
+      int start = i * characterDataLength;
+      int end = (i + 1) * characterDataLength;
+      List<int> characterBytes = bytes.sublist(start, end);
+      logBuffer(LogLevel.debug, 'Character $i bytes: $characterBytes');
+      characterData.add(
+        CharacterData.fromBytes(
+          index: i,
+          bytes: characterBytes,
+          endianness: Endian.little,
+        ),
+      );
+    }
+  }
+
   // ignore: use_setters_to_change_properties
   void _setMainMapData(List<int> bytes) => mainMapData = bytes;
   // ignore: use_setters_to_change_properties
   void _setUndergroundMapData(List<int> bytes) => undergroundMapData = bytes;
+}
+
+mixin SaveReader {
+  final SaveFileWrapper _saveFileWrapper = SaveFileWrapper();
+
+  SaveFile get saveFile => _saveFileWrapper.saveFile;
+}
+
+mixin SaveWriter on SaveReader {
+  set saveFile(SaveFile file) => _saveFileWrapper.saveFile = file;
 }

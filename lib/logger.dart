@@ -1,27 +1,32 @@
 import 'dart:io';
-import 'package:thlaby2_save_editor/settings.dart';
+import 'package:thlaby2_save_editor/views/settings.dart';
 
 enum LogLevel {
-  debug,
-  info,
-  warning,
-  error,
-  none,
+  debug('Debug (everything is logged)'),
+  info('Info (major actions and higher are logged)'),
+  warning('Warning (warnings and higher are logged)'),
+  error('Error (only errors are logged)'),
+  none('None (nothing is logged)');
+
+  final String dropdownText;
+
+  const LogLevel(this.dropdownText);
 }
 
 class Logger {
   static final Logger _logger = Logger._internal();
   static const String filename = './applicationlog.txt';
-  static const String version = '0.2.0';
+  static const String version = '0.3.0';
   LogLevel logLevel = LogLevel.info;
-  bool _hasInitialized = false;
   late IOSink sink;
 
-  String _currentTimestamp() {
-    return DateTime.now().toLocal().toIso8601String();
+  String get _currentTimestamp => DateTime.now().toLocal().toIso8601String();
+
+  factory Logger() {
+    return _logger;
   }
 
-  Future<void> _initializeLog() async {
+  Logger._internal() {
     try {
       File settingsFile = File('./settings.json');
       if (settingsFile.existsSync()) {
@@ -32,30 +37,28 @@ class Logger {
     }
     File logFile = File(filename);
     sink = logFile.openWrite();
-    sink.writeln('${_currentTimestamp()} | Save Editor v$version opened');
-    await sink.flush();
+    sink.writeln('$_currentTimestamp | Save Editor v$version opened');
   }
 
-  factory Logger() {
-    return _logger;
+  String _buildLogLine(LogLevel level, dynamic message) {
+    return '$_currentTimestamp | ${level.name.toUpperCase()} | $message';
   }
 
-  Logger._internal();
+  void logBuffer(LogLevel level, dynamic message) {
+    if (level.index >= logLevel.index) {
+      sink.writeln(_buildLogLine(level, message));
+    }
+  }
 
   Future<void> log(LogLevel level, dynamic message) async {
+    logBuffer(level, message);
+    return flush();
+  }
+
+  Future<void> flush() async {
     try {
-      if (level.index < logLevel.index) {
-        return;
-      }
-      if (!_hasInitialized) {
-        _hasInitialized = true;
-        await _initializeLog();
-      }
-      sink.write('${_currentTimestamp()} | ');
-      sink.write('${level.name.toUpperCase()} | ');
-      sink.writeln(message.toString());
       await sink.flush();
-    } on Exception catch(e, s) {
+    } on Exception catch (e, s) {
       // Can't do much - if I can't open the log file, I can't log the error
       // ignore: avoid_print
       print('Exception: $e');
@@ -63,4 +66,20 @@ class Logger {
       print('Stack Trace: $s');
     }
   }
+}
+
+mixin Loggable {
+  final Logger _logger = Logger();
+
+  Future<void> log(LogLevel level, dynamic message) {
+    return _logger.log(level, message);
+  }
+
+  void logBuffer(LogLevel level, dynamic message) {
+    _logger.logBuffer(level, message);
+  }
+
+  Future<void> logFlush() => _logger.flush();
+
+  set logLevel(LogLevel level) => _logger.logLevel = level;
 }

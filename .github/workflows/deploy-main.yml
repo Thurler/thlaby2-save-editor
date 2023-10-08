@@ -55,10 +55,10 @@ jobs:
       - name: Flutter Environment
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.10'
+          flutter-version: '3.7.12'
           cache: true
-          cache-key: 'flutter-3-3-10-windows'
-          cache-path: ${{ runner.tool_cache }}/flutter/windows-3-3-10
+          cache-key: 'flutter-3-7-12-windows'
+          cache-path: ${{ runner.tool_cache }}/flutter/windows-3-7-12
 
       - name: Flutter Config
         run: flutter config --enable-windows-desktop --no-analytics
@@ -93,10 +93,10 @@ jobs:
       - name: Flutter Environment
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.10'
+          flutter-version: '3.7.12'
           cache: true
-          cache-key: 'flutter-3-3-10-linux'
-          cache-path: ${{ runner.tool_cache }}/flutter/linux-3-3-10
+          cache-key: 'flutter-3-7-12-linux'
+          cache-path: ${{ runner.tool_cache }}/flutter/linux-3-7-12
 
       - name: Flutter Config
         run: flutter config --enable-linux-desktop --no-analytics

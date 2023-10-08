@@ -1,8 +1,10 @@
 Release Notes
 =============
 
-- Fully edit which characters are in your party
-- Added missing validations when importing and exporting a save file
-- Added proper logging with a configurable log level setting
-- Set minimum window width and height to prevent UI issues
+- Fully edit each character's data (except for equipment)
+  - Level, EXP, BP, Subclass
+  - Library points
+  - Level up bonuses
+  - Skill points / levels
+  - Tome and Gem investments
 - Several visual improvements
