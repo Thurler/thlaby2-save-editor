@@ -9,7 +9,13 @@ enum Subclass {
   ),
   guardian(
     'Guardian',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.guardianMastery,
+      CommonSkill.frontlineGuard,
+      CommonSkill.initiative,
+      CommonSkill.absoluteDefensiveLine,
+      CommonSkill.efficientConcentration,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.shieldBash,
       SubclassSpell.shieldDefense,
@@ -18,7 +24,13 @@ enum Subclass {
   ),
   monk(
     'Monk',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.monkMastery,
+      CommonSkill.bodyRevitalization,
+      CommonSkill.fastDash,
+      CommonSkill.dexterityTraining,
+      CommonSkill.areaNormalAttack,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.puncturingThrust,
       SubclassSpell.ironMountainCharge,
@@ -27,7 +39,14 @@ enum Subclass {
   ),
   warrior(
     'Warrior',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.warriorMastery,
+      CommonSkill.tensionUp,
+      CommonSkill.fastAttack,
+      CommonSkill.enhancedNormalAttack,
+      CommonSkill.mindBodyOne,
+      CommonSkill.enhancedRowAttack,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.severingFlash,
       SubclassSpell.explosiveFlameSword,
@@ -36,7 +55,14 @@ enum Subclass {
   ),
   sorcerer(
     'Sorcerer',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.sorcererMastery,
+      CommonSkill.magicBeating,
+      CommonSkill.mindAssault,
+      CommonSkill.enhancedNormalAttack,
+      CommonSkill.mindBodyOne,
+      CommonSkill.enhancedRowAttack,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.penetrator,
       SubclassSpell.aspirationSurge,
@@ -45,7 +71,13 @@ enum Subclass {
   ),
   healer(
     'Healer',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.healerMastery,
+      CommonSkill.efficientTreatment,
+      CommonSkill.highLevelTreatment,
+      CommonSkill.emergencyTreatment,
+      CommonSkill.devotedCare,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.prayerRecovery,
       SubclassSpell.prayerGoodHealth,
@@ -54,7 +86,12 @@ enum Subclass {
   ),
   enhancer(
     'Enhancer',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.enhancerMastery,
+      CommonSkill.heartCompassion,
+      CommonSkill.heartPrayers,
+      CommonSkill.enhancedBuffing,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.artBattlemage,
       SubclassSpell.ouncePrevention,
@@ -63,7 +100,12 @@ enum Subclass {
   ),
   hexer(
     'Hexer',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.hexerMastery,
+      CommonSkill.enhancedHexes,
+      CommonSkill.hexerDefense,
+      CommonSkill.hexerConversion,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.hexCrimson,
       SubclassSpell.hexDark,
@@ -73,7 +115,12 @@ enum Subclass {
   ),
   toxicologist(
     'Toxicologist',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.toxicologistMastery,
+      CommonSkill.enhancedToxins,
+      CommonSkill.toxicDefense,
+      CommonSkill.toxinConversion,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.poisonousIncense,
       SubclassSpell.paralyzingIncense,
@@ -84,7 +131,12 @@ enum Subclass {
   ),
   magician(
     'Magician',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.magicianMastery,
+      CommonSkill.magicSufficiency,
+      CommonSkill.magicConservation,
+      CommonSkill.entrustedWill,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.magicTransfer,
       SubclassSpell.magicCircuit,
@@ -93,7 +145,11 @@ enum Subclass {
   ),
   herbalist(
     'Herbalist',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.herbalistMastery,
+      CommonSkill.medicinalFragrance,
+      CommonSkill.morningDewHerbs,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.placeboEffect,
       SubclassSpell.incenseTreatment,
@@ -103,19 +159,34 @@ enum Subclass {
   ),
   strategist(
     'Strategist',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.strategistMastery,
+      CommonSkill.inspirationalPlan,
+      CommonSkill.furiousScheme,
+      CommonSkill.ironcladStrategy,
+      CommonSkill.raidManeuver,
+    ],
     spells: <SubclassSpell>[],
     isUnique: false,
   ),
   gambler(
     'Gambler',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.gamblerMastery,
+      CommonSkill.highStakes,
+      CommonSkill.allOrNothing,
+    ],
     spells: <SubclassSpell>[],
     isUnique: false,
   ),
   diva(
     'Diva',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.divaMastery,
+      CommonSkill.songDelight,
+      CommonSkill.silentMelody,
+      CommonSkill.melodyFortune,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.rhythmicDance,
       SubclassSpell.danceCochlea,
@@ -124,13 +195,20 @@ enum Subclass {
   ),
   transcendent(
     'Transcendent',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.transcendentMastery,
+      CommonSkill.bodyReinforcement,
+      CommonSkill.enhancedCombat,
+    ],
     spells: <SubclassSpell>[],
     isUnique: false,
   ),
   swordmaster(
     'Swordmaster',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.swordmasterMastery,
+      CommonSkill.asuraStance,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.severingFlash,
       SubclassSpell.explosiveFlameSword,
@@ -142,7 +220,10 @@ enum Subclass {
   ),
   archmage(
     'Archmage',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.archmageMastery,
+      CommonSkill.welcomeSpirituality,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.penetrator,
       SubclassSpell.aspirationSurge,
@@ -154,13 +235,25 @@ enum Subclass {
   ),
   appraiser(
     'Appraiser',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.appraiserMastery,
+      CommonSkill.dailyToils,
+      CommonSkill.basicsBusiness,
+      CommonSkill.aestheticSense,
+      CommonSkill.killBonusExp,
+      CommonSkill.killBonusMoney,
+      CommonSkill.killBonusDrops,
+    ],
     spells: <SubclassSpell>[],
     isUnique: false,
   ),
   elementalist(
     'Elementalist',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.elementalistMastery,
+      CommonSkill.elementMemoryDefense,
+      CommonSkill.elementAreaDefense,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.enchantSpinel,
       SubclassSpell.enchantLazurite,
@@ -171,7 +264,13 @@ enum Subclass {
   ),
   ninja(
     'Ninja',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.ninjaMastery,
+      CommonSkill.armorPierce,
+      CommonSkill.ironOxideCaltrops,
+      CommonSkill.lacqueredSpikedKnuckles,
+      CommonSkill.ruffianKnowledge,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.assassinationSword,
       SubclassSpell.swiftSpeed,
@@ -180,13 +279,26 @@ enum Subclass {
   ),
   oracle(
     'Oracle',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.oracleMastery,
+      CommonSkill.fakeOracleMachine,
+      CommonSkill.ecstaticalCeremony,
+      CommonSkill.prophetPrediction,
+      CommonSkill.heavenlyRevelation,
+      CommonSkill.worldLinkingIntuition,
+    ],
     spells: <SubclassSpell>[SubclassSpell.oracleTalisman],
     isUnique: false,
   ),
   holyblessing(
     'Holy Blessing',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.holyBlessing,
+      CommonSkill.oneOfThreeTreasures,
+      CommonSkill.ninigiSwordSheath,
+      CommonSkill.powerSupremeRuler,
+      CommonSkill.threeLegendarySwords,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.ameMurakumoSlash,
       SubclassSpell.startHeavenlyDemise,
@@ -196,13 +308,26 @@ enum Subclass {
   ),
   dragongodpower(
     "Dragon God's Power",
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.dragonGodPower,
+      CommonSkill.elementalProtection,
+      CommonSkill.flameBlessing,
+      CommonSkill.woodBlessing,
+      CommonSkill.waterBlessing,
+      CommonSkill.earthBlessing,
+      CommonSkill.metalBlessing,
+    ],
     spells: <SubclassSpell>[SubclassSpell.dragonGodSigh],
     isUnique: true,
   ),
   winner(
     '*WINNER*',
-    skills: <Skill>[],
+    skills: <Skill>[
+      CommonSkill.winnerTitle,
+      CommonSkill.autoRoller,
+      CommonSkill.elementalImmunity,
+      CommonSkill.magicArmor,
+    ],
     spells: <SubclassSpell>[
       SubclassSpell.vorpalBlade,
       SubclassSpell.manaStorm,
