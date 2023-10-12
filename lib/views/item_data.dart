@@ -6,6 +6,7 @@ import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/item_category.dart';
+import 'package:thlaby2_save_editor/widgets/item_form.dart';
 import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
@@ -83,23 +84,17 @@ class ItemDataState extends State<ItemDataWidget>
                 RoundedBorder(
                   color: TFormTitle.subtitleColor.withOpacity(0.5),
                   childPadding: const EdgeInsets.only(right: 15),
-                  child: TFormNumber(
-                    enabled: true,
-                    title: saveFile.mainInventoryData[i * 2].item.name,
-                    subtitle: 'Must be at most 200',
-                    initialValue:
-                        saveFile.mainInventoryData[i * 2].amount.toString(),
+                  child: TFormItem(
+                    itemSlot: saveFile.mainInventoryData[i * 2],
+                    onValueChanged: (String? value) => setState(() {}),
                   ),
                 ),
                 RoundedBorder(
                   color: TFormTitle.subtitleColor.withOpacity(0.5),
                   childPadding: const EdgeInsets.only(right: 15),
-                  child: TFormNumber(
-                    enabled: true,
-                    title: saveFile.mainInventoryData[i * 2 + 1].item.name,
-                    subtitle: 'Must be at most 200',
-                    initialValue:
-                        saveFile.mainInventoryData[i * 2 + 1].amount.toString(),
+                  child: TFormItem(
+                    itemSlot: saveFile.mainInventoryData[i * 2 + 1],
+                    onValueChanged: (String? value) => setState(() {}),
                   ),
                 ),
               ],

@@ -92,12 +92,14 @@ class TFormStringField extends TFormField {
   final String hintText;
   final TextEditingController controller;
   final List<TextInputFormatter> formatters;
+  final List<Widget> icons;
 
   const TFormStringField({
     required this.enabled,
     required this.hintText,
     required this.controller,
     required this.formatters,
+    this.icons = const <Widget>[],
     super.key,
   });
 
@@ -111,6 +113,13 @@ class TFormStringField extends TFormField {
       decoration: InputDecoration(
         hintText: hintText,
         contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+        suffixIcon: icons.isNotEmpty
+          ? SpacedRow(
+              mainAxisSize: MainAxisSize.min,
+              spacer: const SizedBox(width: 2),
+              children: icons,
+            )
+          : null,
       ),
     );
   }
@@ -340,13 +349,13 @@ class TFormStringState<T extends TFormString> extends TFormState<T> {
   @override
   set value(String newValue) {
     controller.text = newValue;
-    formatters = widget.formatters;
     super.value = newValue;
   }
 
   @override
   void initState() {
     super.initState();
+    formatters = widget.formatters;
     controller.text = widget.initialValue;
     controller.addListener(() {
       super.value = controller.text;
@@ -404,10 +413,10 @@ class TFormNumber extends TFormString {
   );
 
   @override
-  State<TFormNumber> createState() => TFormNumberState();
+  State<TFormNumber> createState() => TFormNumberState<TFormNumber>();
 }
 
-class TFormNumberState extends TFormStringState<TFormNumber> {
+class TFormNumberState<T extends TFormNumber> extends TFormStringState<T> {
   BigInt? _minValue;
   BigInt? _maxValue;
 

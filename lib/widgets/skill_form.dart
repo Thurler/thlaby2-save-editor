@@ -33,4 +33,4 @@ class TFormSkill extends TFormNumber {
   State<TFormNumber> createState() => TFormSkillState();
 }
 
-class TFormSkillState extends TFormNumberState {}
+class TFormSkillState extends TFormNumberState<TFormSkill> {}
