@@ -3,6 +3,7 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/item_category.dart';
@@ -75,6 +76,15 @@ class ItemDataState extends State<ItemDataWidget>
               Text('Page 1/3', style: TextStyle(fontSize: 20)),
               Icon(Icons.arrow_right, size: 40),
             ],
+          ),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            children: List<Widget>.generate(
+              10,
+              (int i) => TButton(text: 'Page ${i + 1}', usesMaxWidth: false),
+            ),
           ),
           ...List<Widget>.generate(
             10,
