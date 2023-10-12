@@ -137,14 +137,15 @@ class MenuState extends State<MenuWidget>
               )
             ],
           ),
-          const SpacedRow(
-            spacer: SizedBox(width: 20),
+          SpacedRow(
+            spacer: const SizedBox(width: 20),
             children: <Widget>[
               TButton(
                 text: 'Inventory Data',
                 icon: Icons.inventory_2_outlined,
+                onPressed: navigateToItemEdit,
               ),
-              TButton(
+              const TButton(
                 text: 'Map Data',
                 icon: Icons.map,
               ),
