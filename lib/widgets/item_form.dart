@@ -26,15 +26,23 @@ class TFormItem extends TFormNumber {
 }
 
 class TFormItemState extends TFormNumberState<TFormItem> {
+  late bool isUnlocked;
+
   void _toggleItemLock() {
-    widget.itemSlot.isUnlocked = !widget.itemSlot.isUnlocked;
-    if (widget.itemSlot.isUnlocked) {
+    isUnlocked = !isUnlocked;
+    if (isUnlocked) {
       maxValue = BigInt.from(200);
     } else {
       maxValue = BigInt.from(0);
       value = '0';
     }
     widget.onValueChanged?.call(value);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    isUnlocked = widget.itemSlot.isUnlocked;
   }
 
   @override
@@ -48,10 +56,8 @@ class TFormItemState extends TFormNumberState<TFormItem> {
         TClickable(
           onTap: _toggleItemLock,
           child: Icon(
-            widget.itemSlot.isUnlocked ? Icons.lock_open : Icons.lock,
-            color: widget.itemSlot.isUnlocked
-              ? Colors.green.shade300
-              : Colors.red.shade300,
+            isUnlocked ? Icons.lock_open : Icons.lock,
+            color: isUnlocked ? Colors.green.shade300 : Colors.red.shade300,
           ),
         ),
       ],
