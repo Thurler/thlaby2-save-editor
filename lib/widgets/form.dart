@@ -7,7 +7,7 @@ import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 typedef FormKey = GlobalKey<TFormState<TForm>>;
 typedef DropdownFormKey = GlobalKey<TFormDropdownState>;
 typedef StringFormKey = GlobalKey<TFormStringState<TFormString>>;
-typedef NumberFormKey = GlobalKey<TFormNumberState>;
+typedef NumberFormKey = GlobalKey<TFormNumberState<TFormNumber>>;
 typedef FixedFormKey = GlobalKey<TFormFixedState>;
 
 class TFormTitle extends StatelessWidget {

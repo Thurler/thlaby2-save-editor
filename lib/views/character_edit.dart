@@ -199,8 +199,9 @@ class CharacterEditState extends State<CharacterEditWidget>
       // The cap for each individual stat becomes whatever has been allocated,
       // plus whatever is left from the global cap
       for (String stat in stats) {
-        TFormNumberState state = _levelBonusFormsKeys[stat]!.currentState!;
-        state.maxValue = BigInt.from(remainingCap + state.intValue);
+        _levelBonusFormsKeys[stat]!.currentState!.maxValue = BigInt.from(
+          remainingCap + _levelBonusFormsKeys[stat]!.currentState!.intValue,
+        );
       }
       // The unused level up points form should be updated automatically
       _unusedLevelFormKey.currentState!.value = available.commaSeparate();
@@ -270,9 +271,8 @@ class CharacterEditState extends State<CharacterEditWidget>
         Skill base = boostSkills[i];
         Skill skill = commonSkills[i];
         TomeStat stat = TomeStat.values.elementAt(i);
-        TFormNumberState boostSkill = _skillsFormsKeys[base]!.currentState!;
         // The title is always updated to match the skill name
-        boostSkill.title = skill.name;
+        _skillsFormsKeys[base]!.currentState!.title = skill.name;
         // If the stat has no tomes attached to it and it is not a natural stat
         // for this character, we must zero out the corresponding skill and
         // update the subtitle to convey this new information
@@ -286,14 +286,14 @@ class CharacterEditState extends State<CharacterEditWidget>
           maxValue = BigInt.from(0);
           subtitle = 'Needs a Tome of Insight to unlock';
           // Also zero the value, since a locked skill can't have points
-          boostSkill.value = '0';
+          _skillsFormsKeys[base]!.currentState!.value = '0';
         } else {
           // Unlock the skill from the zero cap and return to regular subtitle
           maxValue = BigInt.from(skill.maxLevel);
           subtitle = TFormSkill.skillSubtitle(skill);
         }
-        boostSkill.subtitle = subtitle;
-        boostSkill.maxValue = maxValue;
+        _skillsFormsKeys[base]!.currentState!.subtitle = subtitle;
+        _skillsFormsKeys[base]!.currentState!.maxValue = maxValue;
       }
     });
   }
