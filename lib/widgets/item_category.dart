@@ -22,9 +22,23 @@ class ItemCategory extends StatelessWidget {
     return Column(
       children: <Widget>[
         TButton(text: text, onPressed: onPressed),
-        if (isSelected) const Divider(color: Colors.green),
-        if (hasChanges) const TBadge(text: 'Has Changes', color: Colors.green),
-      ].separateWith(SizedBox(height: isSelected ? 1 : 5)),
+        Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Opacity(
+              opacity: isSelected ? 1 : 0,
+              child: const Divider(color: Colors.green),
+            ),
+            Opacity(
+              opacity: hasChanges ? 1 : 0,
+              child: TBadge(
+                text: 'Has Changes',
+                color: Colors.green[300]!,
+              ),
+            ),
+          ],
+        ),
+      ].separateWith(const SizedBox(height: 8)),
     );
   }
 }
