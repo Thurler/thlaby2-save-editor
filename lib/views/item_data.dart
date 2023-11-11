@@ -89,14 +89,6 @@ class ItemDataState extends State<ItemDataWidget>
               ),
             ],
           ),
-          const SpacedRow(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.arrow_left, size: 40, color: Colors.grey),
-              Text('Page 1/3', style: TextStyle(fontSize: 20)),
-              Icon(Icons.arrow_right, size: 40),
-            ],
-          ),
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -130,13 +122,14 @@ class ItemDataState extends State<ItemDataWidget>
               ],
             ),
           ),
-          const SpacedRow(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(Icons.arrow_left, size: 40, color: Colors.grey),
-              Text('Page 1/3', style: TextStyle(fontSize: 20)),
-              Icon(Icons.arrow_right, size: 40),
-            ],
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            alignment: WrapAlignment.center,
+            children: List<Widget>.generate(
+              10,
+              (int i) => TButton(text: 'Page ${i + 1}', usesMaxWidth: false),
+            ),
           ),
         ],
       ),
