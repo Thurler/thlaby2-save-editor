@@ -42,6 +42,7 @@ class ItemDataState extends State<ItemDataWidget>
     title: 'Main Equips',
     items: saveFile.mainInventoryData,
     onHeaderPressed: widget.allowMain ? _changeToMainEquips : null,
+    onValueChanged: () => setState(() {}),
     key: mainEquipsKey,
   );
 
@@ -49,6 +50,7 @@ class ItemDataState extends State<ItemDataWidget>
     title: 'Sub Equips',
     items: saveFile.mainInventoryData,
     onHeaderPressed: widget.allowSub ? _changeToSubEquips : null,
+    onValueChanged: () => setState(() {}),
     key: subEquipsKey,
   );
 
@@ -56,6 +58,7 @@ class ItemDataState extends State<ItemDataWidget>
     title: 'Materials',
     items: saveFile.mainInventoryData,
     onHeaderPressed: widget.allowMaterial ? _changeToMaterials : null,
+    onValueChanged: () => setState(() {}),
     key: materialsKey,
   );
 
@@ -63,6 +66,7 @@ class ItemDataState extends State<ItemDataWidget>
     title: 'Special Items',
     items: saveFile.mainInventoryData,
     onHeaderPressed: widget.allowSpecial ? _changeToSpecials : null,
+    onValueChanged: () => setState(() {}),
     key: specialsKey,
   );
 
@@ -117,9 +121,9 @@ class ItemDataState extends State<ItemDataWidget>
   }
 
   @override
-  bool get hasChanges {
-    return false;
-  }
+  bool get hasChanges => categoryKeys.any(
+    (ItemCategoryKey key) => key.currentState?.hasChanges ?? false,
+  );
 
   @override
   Future<void> saveChanges() async {}
@@ -129,7 +133,6 @@ class ItemDataState extends State<ItemDataWidget>
     super.initState();
     selected = mainEquips;
     // Call setState one last time after build runs for the first time
-    // This causes the hasChanges and hasErrors to show up from initState
     WidgetsBinding.instance.addPostFrameCallback((Duration d) {
       setState(() {
         mainEquipsKey.currentState!.isSelected = true;
@@ -152,6 +155,7 @@ class ItemDataState extends State<ItemDataWidget>
               (ItemCategoryKey key) => key.currentState?.header ?? Container(),
             ).toList(),
           ),
+          const Divider(),
           IndexedStack(
             index: categories.indexOf(selected),
             children: categories,

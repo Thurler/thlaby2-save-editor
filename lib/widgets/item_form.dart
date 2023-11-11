@@ -26,23 +26,30 @@ class TFormItem extends TFormNumber {
 }
 
 class TFormItemState extends TFormNumberState<TFormItem> {
+  late bool initialUnlockedValue;
   late bool isUnlocked;
 
   void _toggleItemLock() {
-    isUnlocked = !isUnlocked;
-    if (isUnlocked) {
-      maxValue = BigInt.from(200);
-    } else {
-      maxValue = BigInt.from(0);
-      value = '0';
-    }
+    setState(() {
+      isUnlocked = !isUnlocked;
+      if (isUnlocked) {
+        maxValue = BigInt.from(200);
+      } else {
+        maxValue = BigInt.from(0);
+        value = '0';
+      }
+    });
     widget.onValueChanged?.call(value);
   }
+
+  @override
+  bool get hasChanges => super.hasChanges || initialUnlockedValue != isUnlocked;
 
   @override
   void initState() {
     super.initState();
     isUnlocked = widget.itemSlot.isUnlocked;
+    initialUnlockedValue = isUnlocked;
   }
 
   @override
