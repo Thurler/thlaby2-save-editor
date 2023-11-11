@@ -12,7 +12,18 @@ import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 class ItemDataWidget extends StatefulWidget {
-  const ItemDataWidget({super.key});
+  final bool allowMain;
+  final bool allowSub;
+  final bool allowMaterial;
+  final bool allowSpecial;
+
+  const ItemDataWidget({
+    this.allowMain = true,
+    this.allowSub = true,
+    this.allowMaterial = false,
+    this.allowSpecial = false,
+    super.key,
+  });
 
   @override
   State<ItemDataWidget> createState() => ItemDataState();
@@ -25,6 +36,12 @@ class ItemDataState extends State<ItemDataWidget>
         AlertHandler<ItemDataWidget>,
         DiscardableChanges<ItemDataWidget> {
   void _changeToMainEquips() {}
+
+  void _changeToSubEquips() {}
+
+  void _changeToMaterials() {}
+
+  void _changeToSpecials() {}
 
   @override
   bool get hasChanges {
@@ -50,22 +67,25 @@ class ItemDataState extends State<ItemDataWidget>
                 text: 'Main Equips',
                 hasChanges: true,
                 isSelected: true,
-                onPressed: _changeToMainEquips,
+                onPressed: widget.allowMain ? _changeToMainEquips : null,
               ),
-              const ItemCategory(
+              ItemCategory(
                 text: 'Sub Equips',
                 hasChanges: true,
                 isSelected: false,
+                onPressed: widget.allowSub ? _changeToSubEquips : null,
               ),
-              const ItemCategory(
+              ItemCategory(
                 text: 'Materials',
                 hasChanges: true,
                 isSelected: false,
+                onPressed: widget.allowMaterial ? _changeToMaterials : null,
               ),
-              const ItemCategory(
+              ItemCategory(
                 text: 'Special Items',
                 hasChanges: true,
                 isSelected: false,
+                onPressed: widget.allowSpecial ? _changeToSpecials : null,
               ),
             ],
           ),
