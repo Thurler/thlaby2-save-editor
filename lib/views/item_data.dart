@@ -3,12 +3,8 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
-import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/item_category.dart';
-import 'package:thlaby2_save_editor/widgets/item_form.dart';
-import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 class ItemDataWidget extends StatefulWidget {
@@ -20,8 +16,8 @@ class ItemDataWidget extends StatefulWidget {
   const ItemDataWidget({
     this.allowMain = true,
     this.allowSub = true,
-    this.allowMaterial = false,
-    this.allowSpecial = false,
+    this.allowMaterial = true,
+    this.allowSpecial = true,
     super.key,
   });
 
@@ -35,13 +31,90 @@ class ItemDataState extends State<ItemDataWidget>
         Loggable,
         AlertHandler<ItemDataWidget>,
         DiscardableChanges<ItemDataWidget> {
-  void _changeToMainEquips() {}
+  late ItemCategory selected;
 
-  void _changeToSubEquips() {}
+  final ItemCategoryKey mainEquipsKey = ItemCategoryKey();
+  final ItemCategoryKey subEquipsKey = ItemCategoryKey();
+  final ItemCategoryKey materialsKey = ItemCategoryKey();
+  final ItemCategoryKey specialsKey = ItemCategoryKey();
 
-  void _changeToMaterials() {}
+  late final ItemCategory mainEquips = ItemCategory(
+    title: 'Main Equips',
+    items: saveFile.mainInventoryData,
+    onHeaderPressed: widget.allowMain ? _changeToMainEquips : null,
+    key: mainEquipsKey,
+  );
 
-  void _changeToSpecials() {}
+  late final ItemCategory subEquips = ItemCategory(
+    title: 'Sub Equips',
+    items: saveFile.mainInventoryData,
+    onHeaderPressed: widget.allowSub ? _changeToSubEquips : null,
+    key: subEquipsKey,
+  );
+
+  late final ItemCategory materials = ItemCategory(
+    title: 'Materials',
+    items: saveFile.mainInventoryData,
+    onHeaderPressed: widget.allowMaterial ? _changeToMaterials : null,
+    key: materialsKey,
+  );
+
+  late final ItemCategory specials = ItemCategory(
+    title: 'Special Items',
+    items: saveFile.mainInventoryData,
+    onHeaderPressed: widget.allowSpecial ? _changeToSpecials : null,
+    key: specialsKey,
+  );
+
+  late final List<ItemCategory> categories = <ItemCategory>[
+    mainEquips,
+    subEquips,
+    materials,
+    specials,
+  ];
+
+  late final List<ItemCategoryKey> categoryKeys = <ItemCategoryKey>[
+    mainEquipsKey,
+    subEquipsKey,
+    materialsKey,
+    specialsKey,
+  ];
+
+  void _disableOtherKeys(ItemCategoryKey enabledKey) {
+    for (ItemCategoryKey key in categoryKeys) {
+      if (enabledKey != key) {
+        key.currentState!.deselect();
+      }
+    }
+  }
+
+  void _changeToMainEquips() {
+    _disableOtherKeys(mainEquipsKey);
+    setState(() {
+      selected = mainEquips;
+    });
+  }
+
+  void _changeToSubEquips() {
+    _disableOtherKeys(subEquipsKey);
+    setState(() {
+      selected = subEquips;
+    });
+  }
+
+  void _changeToMaterials() {
+    _disableOtherKeys(materialsKey);
+    setState(() {
+      selected = materials;
+    });
+  }
+
+  void _changeToSpecials() {
+    _disableOtherKeys(specialsKey);
+    setState(() {
+      selected = specials;
+    });
+  }
 
   @override
   bool get hasChanges {
@@ -50,6 +123,19 @@ class ItemDataState extends State<ItemDataWidget>
 
   @override
   Future<void> saveChanges() async {}
+
+  @override
+  void initState() {
+    super.initState();
+    selected = mainEquips;
+    // Call setState one last time after build runs for the first time
+    // This causes the hasChanges and hasErrors to show up from initState
+    WidgetsBinding.instance.addPostFrameCallback((Duration d) {
+      setState(() {
+        mainEquipsKey.currentState!.isSelected = true;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,74 +148,13 @@ class ItemDataState extends State<ItemDataWidget>
           SpacedRow(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacer: const SizedBox(width: 20),
-            children: <Widget>[
-              ItemCategory(
-                text: 'Main Equips',
-                hasChanges: true,
-                isSelected: true,
-                onPressed: widget.allowMain ? _changeToMainEquips : null,
-              ),
-              ItemCategory(
-                text: 'Sub Equips',
-                hasChanges: true,
-                isSelected: false,
-                onPressed: widget.allowSub ? _changeToSubEquips : null,
-              ),
-              ItemCategory(
-                text: 'Materials',
-                hasChanges: true,
-                isSelected: false,
-                onPressed: widget.allowMaterial ? _changeToMaterials : null,
-              ),
-              ItemCategory(
-                text: 'Special Items',
-                hasChanges: true,
-                isSelected: false,
-                onPressed: widget.allowSpecial ? _changeToSpecials : null,
-              ),
-            ],
+            children: categoryKeys.map(
+              (ItemCategoryKey key) => key.currentState?.header ?? Container(),
+            ).toList(),
           ),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            alignment: WrapAlignment.center,
-            children: List<Widget>.generate(
-              10,
-              (int i) => TButton(text: 'Page ${i + 1}', usesMaxWidth: false),
-            ),
-          ),
-          ...List<Widget>.generate(
-            10,
-            (int i) => SpacedRow(
-              spacer: const SizedBox(width: 20),
-              children: <Widget>[
-                RoundedBorder(
-                  color: TFormTitle.subtitleColor.withOpacity(0.5),
-                  childPadding: const EdgeInsets.only(right: 15),
-                  child: TFormItem(
-                    itemSlot: saveFile.mainInventoryData[i * 2],
-                    onValueChanged: (String? value) => setState(() {}),
-                  ),
-                ),
-                RoundedBorder(
-                  color: TFormTitle.subtitleColor.withOpacity(0.5),
-                  childPadding: const EdgeInsets.only(right: 15),
-                  child: TFormItem(
-                    itemSlot: saveFile.mainInventoryData[i * 2 + 1],
-                    onValueChanged: (String? value) => setState(() {}),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            alignment: WrapAlignment.center,
-            children: List<Widget>.generate(
-              10,
-              (int i) => TButton(text: 'Page ${i + 1}', usesMaxWidth: false),
-            ),
+          IndexedStack(
+            index: categories.indexOf(selected),
+            children: categories,
           ),
         ],
       ),
