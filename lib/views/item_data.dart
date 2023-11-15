@@ -48,7 +48,7 @@ class ItemDataState extends State<ItemDataWidget>
 
   late final ItemCategory subEquips = ItemCategory(
     title: 'Sub Equips',
-    items: saveFile.mainInventoryData,
+    items: saveFile.subInventoryData,
     onHeaderPressed: widget.allowSub ? _changeToSubEquips : null,
     onValueChanged: () => setState(() {}),
     key: subEquipsKey,
