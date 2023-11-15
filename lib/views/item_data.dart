@@ -56,7 +56,7 @@ class ItemDataState extends State<ItemDataWidget>
 
   late final ItemCategory materials = ItemCategory(
     title: 'Materials',
-    items: saveFile.mainInventoryData,
+    items: saveFile.materialInventoryData,
     onHeaderPressed: widget.allowMaterial ? _changeToMaterials : null,
     onValueChanged: () => setState(() {}),
     key: materialsKey,
@@ -64,7 +64,7 @@ class ItemDataState extends State<ItemDataWidget>
 
   late final ItemCategory specials = ItemCategory(
     title: 'Special Items',
-    items: saveFile.mainInventoryData,
+    items: saveFile.specialInventoryData,
     onHeaderPressed: widget.allowSpecial ? _changeToSpecials : null,
     onValueChanged: () => setState(() {}),
     key: specialsKey,

@@ -42,10 +42,8 @@ class SaveFile with Loggable {
   List<int> eventFlagData = <int>[];
   late List<ItemSlot> mainInventoryData;
   late List<ItemSlot> subInventoryData;
-  List<int> materialInventoryFlagData = <int>[];
-  List<int> specialInventoryFlagData = <int>[];
-  List<int> materialInventoryData = <int>[];
-  List<int> specialInventoryData = <int>[];
+  late List<ItemSlot> materialInventoryData;
+  late List<ItemSlot> specialInventoryData;
   late List<CharacterData> characterData;
   List<int> mainMapData = <int>[];
   List<int> undergroundMapData = <int>[];
@@ -103,12 +101,12 @@ class SaveFile with Loggable {
     bytes.replaceRange(0x54c6, 0x68b2, eventFlagData);
     bytes.replaceRange(0x7bd7, 0x7c13, _exportMainInventoryFlagData());
     bytes.replaceRange(0x7c9f, 0x7d8f, _exportSubInventoryFlagData());
-    bytes.replaceRange(0x7dcb, 0x7e2f, materialInventoryFlagData);
-    bytes.replaceRange(0x7ef7, 0x7fab, specialInventoryFlagData);
+    bytes.replaceRange(0x7dcb, 0x7e2f, _exportMaterialFlagData());
+    bytes.replaceRange(0x7ef7, 0x7fab, _exportSpecialItemFlagData());
     bytes.replaceRange(0x83a8, 0x8420, _exportMainInventoryAmountData());
     bytes.replaceRange(0x8538, 0x8718, _exportSubInventoryAmountData());
-    bytes.replaceRange(0x8790, 0x8858, materialInventoryData);
-    bytes.replaceRange(0x89e8, 0x8b50, specialInventoryData);
+    bytes.replaceRange(0x8790, 0x8858, _exportMaterialInventoryAmountData());
+    bytes.replaceRange(0x89e8, 0x8b50, _exportSpecialInventoryAmountData());
     bytes.replaceRange(0x9346, 0xce8e, _exportCharacterData());
     bytes.replaceRange(0xce8e, 0x2ae8e, mainMapData);
     bytes.replaceRange(0x33e8e, 0x3ee8e, undergroundMapData);
@@ -146,6 +144,16 @@ class SaveFile with Loggable {
     return subInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
   }
 
+  Iterable<int> _exportMaterialFlagData() {
+    logBuffer(LogLevel.debug, 'Inventory data: $materialInventoryData');
+    return materialInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+  }
+
+  Iterable<int> _exportSpecialItemFlagData() {
+    logBuffer(LogLevel.debug, 'Inventory data: $specialInventoryData');
+    return specialInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+  }
+
   Iterable<int> _exportMainInventoryAmountData() {
     return mainInventoryData.fold(
       <int>[],
@@ -157,6 +165,24 @@ class SaveFile with Loggable {
 
   Iterable<int> _exportSubInventoryAmountData() {
     return subInventoryData.fold(
+      <int>[],
+      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+        slot.toAmountBytes(Endian.little),
+      ),
+    );
+  }
+
+  Iterable<int> _exportMaterialInventoryAmountData() {
+    return materialInventoryData.fold(
+      <int>[],
+      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+        slot.toAmountBytes(Endian.little),
+      ),
+    );
+  }
+
+  Iterable<int> _exportSpecialInventoryAmountData() {
+    return specialInventoryData.fold(
       <int>[],
       (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
         slot.toAmountBytes(Endian.little),
@@ -247,12 +273,25 @@ class SaveFile with Loggable {
     }
   }
 
-  // ignore: use_setters_to_change_properties
-  void _setMaterialInventoryFlagData(List<int> bytes) =>
-      materialInventoryFlagData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setSpecialInventoryFlagData(List<int> bytes) =>
-      specialInventoryFlagData = bytes;
+  void _setMaterialInventoryFlagData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Material unlock flag bytes: $bytes');
+    materialInventoryData = <ItemSlot>[];
+    for (Material item in Material.values) {
+      materialInventoryData.add(
+        ItemSlot(item, isUnlocked: bytes[item.index] > 0),
+      );
+    }
+  }
+
+  void _setSpecialInventoryFlagData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Special item unlock flag bytes: $bytes');
+    specialInventoryData = <ItemSlot>[];
+    for (SpecialItem item in SpecialItem.values) {
+      specialInventoryData.add(
+        ItemSlot(item, isUnlocked: bytes[item.index] > 0),
+      );
+    }
+  }
 
   void _setMainInventoryData(List<int> bytes) {
     logBuffer(LogLevel.debug, 'Main Equip amount bytes: $bytes');
@@ -276,12 +315,27 @@ class SaveFile with Loggable {
     }
   }
 
-  // ignore: use_setters_to_change_properties
-  void _setMaterialInventoryData(List<int> bytes) =>
-      materialInventoryData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setSpecialInventoryData(List<int> bytes) =>
-      specialInventoryData = bytes;
+  void _setMaterialInventoryData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Material amount bytes: $bytes');
+    for (int i = 0; i < Material.values.length; i++) {
+      materialInventoryData[i].amountFromBytes(
+        bytes: bytes,
+        offset: i * 2,
+        endianness: Endian.little,
+      );
+    }
+  }
+
+  void _setSpecialInventoryData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Special item amount bytes: $bytes');
+    for (int i = 0; i < SpecialItem.values.length; i++) {
+      specialInventoryData[i].amountFromBytes(
+        bytes: bytes,
+        offset: i * 2,
+        endianness: Endian.little,
+      );
+    }
+  }
 
   void _setCharacterData(List<int> bytes) {
     characterData = <CharacterData>[];
