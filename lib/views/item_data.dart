@@ -158,7 +158,12 @@ class ItemDataState extends State<ItemDataWidget>
           const Divider(),
           IndexedStack(
             index: categories.indexOf(selected),
-            children: categories,
+            children: categories.map(
+              (ItemCategory category) => SizedBox(
+                height: category == selected ? null : 1,
+                child: category,
+              ),
+            ).toList(),
           ),
         ],
       ),
