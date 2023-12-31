@@ -86,7 +86,7 @@ class PartyDataState extends State<PartyDataWidget>
         return;
       }
     }
-    await log(LogLevel.info, 'Saved changes');
+    await log(LogLevel.info, 'Saved party data changes');
     setState(() {
       _original = _editable.deepCopyElements(PartySlot.from);
       saveFile.partyData = _original;

@@ -467,6 +467,7 @@ class CharacterEditState extends State<CharacterEditWidget>
       data.subEquips[i] = chosenSub;
     }
 
+    await log(LogLevel.info, 'Saved character data changes');
     // Refresh widget to get rid of the save symbol
     setState(() {});
   }

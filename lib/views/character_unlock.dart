@@ -104,7 +104,7 @@ class CharacterUnlockState extends State<CharacterUnlockWidget>
         return;
       }
     }
-    await log(LogLevel.info, 'Saved changes');
+    await log(LogLevel.info, 'Saved character unlock changes');
     setState(() {
       _original = _flags.deepCopyElements(CharacterUnlockFlag.from);
       saveFile.characterUnlockFlags = _original;

@@ -87,7 +87,7 @@ class SettingsState extends State<SettingsWidget>
       LogLevel.info,
       'Applying log level ${_settings.logLevel.name}',
     );
-    await log(LogLevel.info, 'Saved changes');
+    await log(LogLevel.info, 'Saved settings changes');
     logLevel = _settings.logLevel;
     // Reset initial value to remove the has changes flag
     _logLevelFormKey.currentState!.resetInitialValue();

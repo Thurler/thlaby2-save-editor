@@ -156,6 +156,7 @@ class ItemDataState extends State<ItemDataWidget>
     _iterateAndSaveItemSlots(materialsKey, saveFile.materialInventoryData);
     // Save information for special items
     _iterateAndSaveItemSlots(specialsKey, saveFile.specialInventoryData);
+    await log(LogLevel.info, 'Saved item data changes');
     // Refresh widget to get rid of the save symbol
     setState(() {});
   }
