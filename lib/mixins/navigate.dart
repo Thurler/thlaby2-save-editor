@@ -5,6 +5,7 @@ import 'package:thlaby2_save_editor/views/character_data.dart';
 import 'package:thlaby2_save_editor/views/character_edit.dart';
 import 'package:thlaby2_save_editor/views/character_select.dart';
 import 'package:thlaby2_save_editor/views/character_unlock.dart';
+import 'package:thlaby2_save_editor/views/item_data.dart';
 import 'package:thlaby2_save_editor/views/menu.dart';
 import 'package:thlaby2_save_editor/views/party_data.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
@@ -61,5 +62,9 @@ mixin Navigatable<T extends StatefulWidget> on Loggable, State<T> {
 
   Future<void> navigateToPartyEdit() async {
     return _navigate(const PartyDataWidget(), 'party data edit');
+  }
+
+  Future<void> navigateToItemEdit() async {
+    return _navigate(const ItemDataWidget(), 'item data edit');
   }
 }

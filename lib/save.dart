@@ -3,6 +3,8 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
+import 'package:thlaby2_save_editor/save/enums/item.dart';
+import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 
 class FileSizeException implements Exception {
@@ -38,14 +40,10 @@ class SaveFile with Loggable {
   late List<PartySlot> partyData;
   List<int> generalGameData = <int>[];
   List<int> eventFlagData = <int>[];
-  List<int> mainInventoryFlagData = <int>[];
-  List<int> subInventoryFlagData = <int>[];
-  List<int> materialInventoryFlagData = <int>[];
-  List<int> specialInventoryFlagData = <int>[];
-  List<int> mainInventoryData = <int>[];
-  List<int> subInventoryData = <int>[];
-  List<int> materialInventoryData = <int>[];
-  List<int> specialInventoryData = <int>[];
+  late List<ItemSlot> mainInventoryData;
+  late List<ItemSlot> subInventoryData;
+  late List<ItemSlot> materialInventoryData;
+  late List<ItemSlot> specialInventoryData;
   late List<CharacterData> characterData;
   List<int> mainMapData = <int>[];
   List<int> undergroundMapData = <int>[];
@@ -101,14 +99,14 @@ class SaveFile with Loggable {
     bytes.replaceRange(0x5018, 0x5024, _exportPartyData());
     bytes.replaceRange(0x540c, 0x54c6, generalGameData);
     bytes.replaceRange(0x54c6, 0x68b2, eventFlagData);
-    bytes.replaceRange(0x7bd7, 0x7c13, mainInventoryFlagData);
-    bytes.replaceRange(0x7c9f, 0x7d8f, subInventoryFlagData);
-    bytes.replaceRange(0x7dcb, 0x7e2f, materialInventoryFlagData);
-    bytes.replaceRange(0x7ef7, 0x7fab, specialInventoryFlagData);
-    bytes.replaceRange(0x83a8, 0x8420, mainInventoryData);
-    bytes.replaceRange(0x8538, 0x8718, subInventoryData);
-    bytes.replaceRange(0x8790, 0x8858, materialInventoryData);
-    bytes.replaceRange(0x89e8, 0x8b50, specialInventoryData);
+    bytes.replaceRange(0x7bd7, 0x7c13, _exportMainInventoryFlagData());
+    bytes.replaceRange(0x7c9f, 0x7d8f, _exportSubInventoryFlagData());
+    bytes.replaceRange(0x7dcb, 0x7e2f, _exportMaterialFlagData());
+    bytes.replaceRange(0x7ef7, 0x7fab, _exportSpecialItemFlagData());
+    bytes.replaceRange(0x83a8, 0x8420, _exportMainInventoryAmountData());
+    bytes.replaceRange(0x8538, 0x8718, _exportSubInventoryAmountData());
+    bytes.replaceRange(0x8790, 0x8858, _exportMaterialInventoryAmountData());
+    bytes.replaceRange(0x89e8, 0x8b50, _exportSpecialInventoryAmountData());
     bytes.replaceRange(0x9346, 0xce8e, _exportCharacterData());
     bytes.replaceRange(0xce8e, 0x2ae8e, mainMapData);
     bytes.replaceRange(0x33e8e, 0x3ee8e, undergroundMapData);
@@ -136,16 +134,69 @@ class SaveFile with Loggable {
     return partyData.map<int>((PartySlot slot) => slot.toByte());
   }
 
+  Iterable<int> _exportMainInventoryFlagData() {
+    logBuffer(LogLevel.debug, 'Inventory data: $mainInventoryData');
+    return mainInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+  }
+
+  Iterable<int> _exportSubInventoryFlagData() {
+    logBuffer(LogLevel.debug, 'Inventory data: $subInventoryData');
+    return subInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+  }
+
+  Iterable<int> _exportMaterialFlagData() {
+    logBuffer(LogLevel.debug, 'Inventory data: $materialInventoryData');
+    return materialInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+  }
+
+  Iterable<int> _exportSpecialItemFlagData() {
+    logBuffer(LogLevel.debug, 'Inventory data: $specialInventoryData');
+    return specialInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+  }
+
+  Iterable<int> _exportMainInventoryAmountData() {
+    return mainInventoryData.fold(
+      <int>[],
+      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+        slot.toAmountBytes(Endian.little),
+      ),
+    );
+  }
+
+  Iterable<int> _exportSubInventoryAmountData() {
+    return subInventoryData.fold(
+      <int>[],
+      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+        slot.toAmountBytes(Endian.little),
+      ),
+    );
+  }
+
+  Iterable<int> _exportMaterialInventoryAmountData() {
+    return materialInventoryData.fold(
+      <int>[],
+      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+        slot.toAmountBytes(Endian.little),
+      ),
+    );
+  }
+
+  Iterable<int> _exportSpecialInventoryAmountData() {
+    return specialInventoryData.fold(
+      <int>[],
+      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+        slot.toAmountBytes(Endian.little),
+      ),
+    );
+  }
+
   Iterable<int> _exportCharacterData() {
     logBuffer(LogLevel.debug, 'Party data: $characterData');
     return characterData.fold<Iterable<int>>(
       <int>[],
-      (Iterable<int> acc, CharacterData data) {
-        Iterable<int> bytes = data.toBytes(Endian.little);
-        return acc.followedBy(
-          bytes,
-        );
-      },
+      (Iterable<int> acc, CharacterData data) => acc.followedBy(
+        data.toBytes(Endian.little),
+      ),
     );
   }
 
@@ -195,28 +246,96 @@ class SaveFile with Loggable {
   void _setGeneralGameData(List<int> bytes) => generalGameData = bytes;
   // ignore: use_setters_to_change_properties
   void _setEventFlagData(List<int> bytes) => eventFlagData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setMainInventoryFlagData(List<int> bytes) =>
-      mainInventoryFlagData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setSubInventoryFlagData(List<int> bytes) =>
-      subInventoryFlagData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setMaterialInventoryFlagData(List<int> bytes) =>
-      materialInventoryFlagData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setSpecialInventoryFlagData(List<int> bytes) =>
-      specialInventoryFlagData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setMainInventoryData(List<int> bytes) => mainInventoryData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setSubInventoryData(List<int> bytes) => subInventoryData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setMaterialInventoryData(List<int> bytes) =>
-      materialInventoryData = bytes;
-  // ignore: use_setters_to_change_properties
-  void _setSpecialInventoryData(List<int> bytes) =>
-      specialInventoryData = bytes;
+
+  void _setMainInventoryFlagData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Main Equip unlock flag bytes: $bytes');
+    mainInventoryData = <ItemSlot>[];
+    for (MainEquip item in MainEquip.values) {
+      // Ignore the empty slot
+      if (item != MainEquip.slot0) {
+        mainInventoryData.add(
+          ItemSlot(item, isUnlocked: bytes[item.index - 1] > 0),
+        );
+      }
+    }
+  }
+
+  void _setSubInventoryFlagData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Sub Equip unlock flag bytes: $bytes');
+    subInventoryData = <ItemSlot>[];
+    for (SubEquip item in SubEquip.values) {
+      // Ignore the empty slot
+      if (item != SubEquip.slot0) {
+        subInventoryData.add(
+          ItemSlot(item, isUnlocked: bytes[item.index - 1] > 0),
+        );
+      }
+    }
+  }
+
+  void _setMaterialInventoryFlagData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Material unlock flag bytes: $bytes');
+    materialInventoryData = <ItemSlot>[];
+    for (Material item in Material.values) {
+      materialInventoryData.add(
+        ItemSlot(item, isUnlocked: bytes[item.index] > 0),
+      );
+    }
+  }
+
+  void _setSpecialInventoryFlagData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Special item unlock flag bytes: $bytes');
+    specialInventoryData = <ItemSlot>[];
+    for (SpecialItem item in SpecialItem.values) {
+      specialInventoryData.add(
+        ItemSlot(item, isUnlocked: bytes[item.index] > 0),
+      );
+    }
+  }
+
+  void _setMainInventoryData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Main Equip amount bytes: $bytes');
+    for (int i = 0; i < MainEquip.values.length - 1; i++) {
+      mainInventoryData[i].amountFromBytes(
+        bytes: bytes,
+        offset: i * 2,
+        endianness: Endian.little,
+      );
+    }
+  }
+
+  void _setSubInventoryData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Sub Equip amount bytes: $bytes');
+    for (int i = 0; i < SubEquip.values.length - 1; i++) {
+      subInventoryData[i].amountFromBytes(
+        bytes: bytes,
+        offset: i * 2,
+        endianness: Endian.little,
+      );
+    }
+  }
+
+  void _setMaterialInventoryData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Material amount bytes: $bytes');
+    for (int i = 0; i < Material.values.length; i++) {
+      materialInventoryData[i].amountFromBytes(
+        bytes: bytes,
+        offset: i * 2,
+        endianness: Endian.little,
+      );
+    }
+  }
+
+  void _setSpecialInventoryData(List<int> bytes) {
+    logBuffer(LogLevel.debug, 'Special item amount bytes: $bytes');
+    for (int i = 0; i < SpecialItem.values.length; i++) {
+      specialInventoryData[i].amountFromBytes(
+        bytes: bytes,
+        offset: i * 2,
+        endianness: Endian.little,
+      );
+    }
+  }
 
   void _setCharacterData(List<int> bytes) {
     characterData = <CharacterData>[];

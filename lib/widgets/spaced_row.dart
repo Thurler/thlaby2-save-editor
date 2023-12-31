@@ -7,9 +7,11 @@ class SpacedRow extends StatelessWidget {
   final Widget? spacer;
   final MainAxisSize mainAxisSize;
   final MainAxisAlignment mainAxisAlignment;
+  final CrossAxisAlignment crossAxisAlignment;
 
   const SpacedRow({
     required this.children,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.mainAxisSize = MainAxisSize.max,
     this.expanded = false,
@@ -20,6 +22,7 @@ class SpacedRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: crossAxisAlignment,
       mainAxisAlignment: mainAxisAlignment,
       mainAxisSize: mainAxisSize,
       children: children.map<Widget>(
