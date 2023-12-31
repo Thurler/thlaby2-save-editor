@@ -3,8 +3,10 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/item_category.dart';
+import 'package:thlaby2_save_editor/widgets/item_form.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 class ItemDataWidget extends StatefulWidget {
@@ -125,8 +127,38 @@ class ItemDataState extends State<ItemDataWidget>
     (ItemCategoryKey key) => key.currentState?.hasChanges ?? false,
   );
 
+  void _iterateAndSaveItemSlots(
+    ItemCategoryKey categoryKey,
+    List<ItemSlot> slots,
+  ) {
+    // Iterate on a category's pages and then on a page's items, saving each
+    // item's amount and unlock status. We must also call setState on each
+    // page and category, to refresh the Has Changes flag
+    int index = 0;
+    for (ItemPageKey pageKey in categoryKey.currentState!.pageKeys) {
+      for (ItemFormKey itemKey in pageKey.currentState!.itemFormKeys) {
+        slots[index].isUnlocked = itemKey.currentState!.saveUnlockValue();
+        slots[index].amount = itemKey.currentState!.saveIntValue();
+        index++;
+      }
+      pageKey.currentState!.setState(() {});
+    }
+    categoryKey.currentState!.setState(() {});
+  }
+
   @override
-  Future<void> saveChanges() async {}
+  Future<void> saveChanges() async {
+    // Save information for main equipment
+    _iterateAndSaveItemSlots(mainEquipsKey, saveFile.mainInventoryData);
+    // Save information for sub equipment
+    _iterateAndSaveItemSlots(subEquipsKey, saveFile.subInventoryData);
+    // Save information for materials
+    _iterateAndSaveItemSlots(materialsKey, saveFile.materialInventoryData);
+    // Save information for special items
+    _iterateAndSaveItemSlots(specialsKey, saveFile.specialInventoryData);
+    // Refresh widget to get rid of the save symbol
+    setState(() {});
+  }
 
   @override
   void initState() {

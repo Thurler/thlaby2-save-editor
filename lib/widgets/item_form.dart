@@ -42,6 +42,11 @@ class TFormItemState extends TFormNumberState<TFormItem> {
     widget.onValueChanged?.call(value);
   }
 
+  bool saveUnlockValue() {
+    initialUnlockedValue = isUnlocked;
+    return isUnlocked;
+  }
+
   @override
   bool get hasChanges => super.hasChanges || initialUnlockedValue != isUnlocked;
 
