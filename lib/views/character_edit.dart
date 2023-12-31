@@ -6,6 +6,7 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
+import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
@@ -38,6 +39,7 @@ class CharacterEditState extends State<CharacterEditWidget>
     with
         Loggable,
         SaveReader,
+        Navigatable<CharacterEditWidget>,
         AlertHandler<CharacterEditWidget>,
         DiscardableChanges<CharacterEditWidget>,
         BreakableChanges<CharacterEditWidget> {
@@ -296,6 +298,22 @@ class CharacterEditState extends State<CharacterEditWidget>
         _skillsFormsKeys[base]!.currentState!.maxValue = maxValue;
       }
     });
+  }
+
+  Future<void> _changeMainEquipment() async {
+    Item? selected = await navigateToItemSelect(saveFile.mainInventoryData);
+    if (selected == null) {
+      return;
+    }
+    _mainEquipFormKey.currentState!.value = selected.name;
+  }
+
+  Future<void> _changeSubEquipment(int i) async {
+    Item? selected = await navigateToItemSelect(saveFile.subInventoryData);
+    if (selected == null) {
+      return;
+    }
+    _subEquipFormKeys[i].currentState!.value = selected.name;
   }
 
   //
@@ -681,7 +699,7 @@ class CharacterEditState extends State<CharacterEditWidget>
             title: 'Main equipment',
             subtitle: 'Item occupying the main slot',
             initialValue: data.mainEquip.name,
-            setCallback: () {},
+            setCallback: _changeMainEquipment,
             onValueChanged: (String? value) => setState(() {}),
             emptyValue: MainEquip.slot0.name,
             key: _mainEquipFormKey,
@@ -694,7 +712,7 @@ class CharacterEditState extends State<CharacterEditWidget>
                 title: 'Sub equipment $i',
                 subtitle: 'Item occupying sub slot $i',
                 initialValue: data.subEquips[i - 1].name,
-                setCallback: () {},
+                setCallback: () async => _changeSubEquipment(i - 1),
                 onValueChanged: (String? value) => setState(() {}),
                 emptyValue: SubEquip.slot0.name,
                 key: _subEquipFormKeys[i - 1],
