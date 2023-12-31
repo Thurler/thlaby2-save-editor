@@ -1,10 +1,6 @@
 Release Notes
 =============
 
-- Fully edit each character's data (except for equipment)
-  - Level, EXP, BP, Subclass
-  - Library points
-  - Level up bonuses
-  - Skill points / levels
-  - Tome and Gem investments
-- Several visual improvements
+- Fully edit inventory unlock flag and item amount
+- Improved some log messages
+- Cleaned up some project files
