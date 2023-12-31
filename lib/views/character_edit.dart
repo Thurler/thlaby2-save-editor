@@ -473,15 +473,11 @@ class CharacterEditState extends State<CharacterEditWidget>
 
     // Equipment data
     String chosenName = _mainEquipFormKey.currentState!.saveValue();
-    MainEquip chosenMain = MainEquip.values.firstWhere(
-      (MainEquip e) => e.name == chosenName,
-    );
+    MainEquip chosenMain = MainEquip.fromName(chosenName);
     data.mainEquip = chosenMain;
     for (int i = 0; i < 3; i++) {
       chosenName = _subEquipFormKeys[i].currentState!.saveValue();
-      SubEquip chosenSub = SubEquip.values.firstWhere(
-        (SubEquip e) => e.name == chosenName,
-      );
+      SubEquip chosenSub = SubEquip.fromName(chosenName);
       data.subEquips[i] = chosenSub;
     }
 

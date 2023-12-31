@@ -11,6 +11,10 @@ enum LogLevel {
   final String dropdownText;
 
   const LogLevel(this.dropdownText);
+
+  factory LogLevel.fromName(String name) {
+    return LogLevel.values.firstWhere((LogLevel l) => l.name == name);
+  }
 }
 
 class Logger {

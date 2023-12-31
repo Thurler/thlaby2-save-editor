@@ -19,9 +19,7 @@ class Settings {
   Settings.fromJson(String raw) {
     Map<String, dynamic> jsonContents = json.decode(raw);
     if (jsonContents.containsKey('logLevel')) {
-      logLevel = LogLevel.values.firstWhere(
-        (LogLevel l) => l.name == jsonContents['logLevel'],
-      );
+      logLevel = LogLevel.fromName(jsonContents['logLevel']);
     } else {
       logLevel = LogLevel.info;
     }
