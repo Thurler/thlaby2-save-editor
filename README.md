@@ -45,6 +45,10 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
   - MacOS support
   - Japanese translation
   - Chinese translation
+  - Add more in-game validation checks
+    - Changing library points changes current money
+    - Changing training manuals / tomes / gems changes current item amounts
+    - Changing equipment changes current item amounts
 
 ## Contributing
 
