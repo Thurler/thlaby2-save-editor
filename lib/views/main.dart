@@ -106,6 +106,7 @@ class MainState extends State<MainWidget>
       settingsLink: navigateToSettings,
       children: <Widget>[
         Image.asset('img/title.png'),
+        const Text('Version ${Logger.version}'),
         SpacedRow(
           spacer: const SizedBox(width: 20),
           children: <Widget>[

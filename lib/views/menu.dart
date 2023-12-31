@@ -166,6 +166,7 @@ class MenuState extends State<MenuWidget>
               ),
             ],
           ),
+          const Text('Version ${Logger.version}'),
         ],
       ),
     );
