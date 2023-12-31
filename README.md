@@ -27,10 +27,11 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
   - Logging for debugging purposes
 - Version 0.5.0
   - Edit character equipment 
+  - Automatic update checking
 - Version 0.6.0
-  - Edit achievement data
-- Version 0.7.0
   - Edit general data (money amount, play time, IC floor, FOE kills, etc)
+- Version 0.7.0
+  - Edit achievement data
 - Version 0.8.0
   - Edit map data
 - Version 0.9.0
