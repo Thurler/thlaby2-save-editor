@@ -81,6 +81,7 @@ class FormSectionHeader extends StatelessWidget {
 class ItemOption extends StatelessWidget {
   final TFormItem item;
   final bool editable;
+  final bool allowLockedSelection;
   final TFormItem? highlighted;
   final void Function(TFormItem)? onTap;
   final void Function(TFormItem)? onEnter;
@@ -88,6 +89,7 @@ class ItemOption extends StatelessWidget {
 
   const ItemOption({
     required this.item,
+    this.allowLockedSelection = false,
     this.editable = true,
     this.highlighted,
     this.onTap,
@@ -98,7 +100,11 @@ class ItemOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isHighlighted = item == highlighted;
+    bool isUnlocked = item.itemSlot.isUnlocked;
+    bool isHighlighted = false;
+    if (isUnlocked || allowLockedSelection) {
+      isHighlighted = item == highlighted;
+    }
     Widget border = RoundedBorder(
       color: isHighlighted
         ? Colors.green
@@ -110,6 +116,7 @@ class ItemOption extends StatelessWidget {
       return border;
     }
     return TClickable(
+      enabled: isUnlocked || allowLockedSelection,
       onTap: () => onTap?.call(item),
       onEnter: (_) => onEnter?.call(item),
       onExit: (_) => onExit?.call(),
@@ -142,6 +149,7 @@ class ItemPage extends StatefulWidget {
 
 class ItemPageState extends State<ItemPage> {
   bool isSelected = false;
+  bool allowLockedSelection = false;
   late final List<TFormItem> itemForms;
   late final List<ItemFormKey> itemFormKeys;
   TFormItem? _hover;
@@ -173,6 +181,12 @@ class ItemPageState extends State<ItemPage> {
   void _hoverExit() {
     setState(() {
       _hover = null;
+    });
+  }
+
+  void changeLockedItemToggle({required bool value}) {
+    setState(() {
+      allowLockedSelection = value;
     });
   }
 
@@ -216,6 +230,7 @@ class ItemPageState extends State<ItemPage> {
           children: <Widget>[
             ItemOption(
               item: itemForms[i * 2],
+              allowLockedSelection: allowLockedSelection,
               editable: widget.editable,
               highlighted: _hover,
               onEnter: _hoverEnter,
@@ -224,6 +239,7 @@ class ItemPageState extends State<ItemPage> {
             ),
             ItemOption(
               item: itemForms[(i * 2) + 1],
+              allowLockedSelection: allowLockedSelection,
               editable: widget.editable,
               highlighted: _hover,
               onEnter: _hoverEnter,
@@ -294,6 +310,12 @@ class ItemCategoryState extends State<ItemCategory> {
     setState(() {
       isSelected = false;
     });
+  }
+
+  void changeLockedItemToggle({required bool value}) {
+    for (ItemPageKey pageKey in pageKeys) {
+      pageKey.currentState!.changeLockedItemToggle(value: value);
+    }
   }
 
   bool get hasChanges => pageKeys.any(
