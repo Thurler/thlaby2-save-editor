@@ -10,18 +10,7 @@ import 'package:thlaby2_save_editor/widgets/item_form.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 class ItemDataWidget extends StatefulWidget {
-  final bool allowMain;
-  final bool allowSub;
-  final bool allowMaterial;
-  final bool allowSpecial;
-
-  const ItemDataWidget({
-    this.allowMain = true,
-    this.allowSub = true,
-    this.allowMaterial = true,
-    this.allowSpecial = true,
-    super.key,
-  });
+  const ItemDataWidget({super.key});
 
   @override
   State<ItemDataWidget> createState() => ItemDataState();
@@ -43,7 +32,7 @@ class ItemDataState extends State<ItemDataWidget>
   late final ItemCategory mainEquips = ItemCategory(
     title: 'Main Equips',
     items: saveFile.mainInventoryData,
-    onHeaderPressed: widget.allowMain ? _changeToMainEquips : null,
+    onHeaderPressed: _changeToMainEquips,
     onValueChanged: () => setState(() {}),
     key: mainEquipsKey,
   );
@@ -51,7 +40,7 @@ class ItemDataState extends State<ItemDataWidget>
   late final ItemCategory subEquips = ItemCategory(
     title: 'Sub Equips',
     items: saveFile.subInventoryData,
-    onHeaderPressed: widget.allowSub ? _changeToSubEquips : null,
+    onHeaderPressed: _changeToSubEquips,
     onValueChanged: () => setState(() {}),
     key: subEquipsKey,
   );
@@ -59,7 +48,7 @@ class ItemDataState extends State<ItemDataWidget>
   late final ItemCategory materials = ItemCategory(
     title: 'Materials',
     items: saveFile.materialInventoryData,
-    onHeaderPressed: widget.allowMaterial ? _changeToMaterials : null,
+    onHeaderPressed: _changeToMaterials,
     onValueChanged: () => setState(() {}),
     key: materialsKey,
   );
@@ -67,7 +56,7 @@ class ItemDataState extends State<ItemDataWidget>
   late final ItemCategory specials = ItemCategory(
     title: 'Special Items',
     items: saveFile.specialInventoryData,
-    onHeaderPressed: widget.allowSpecial ? _changeToSpecials : null,
+    onHeaderPressed: _changeToSpecials,
     onValueChanged: () => setState(() {}),
     key: specialsKey,
   );

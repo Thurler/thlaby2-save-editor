@@ -6,12 +6,14 @@ import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
+import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 import 'package:thlaby2_save_editor/save/enums/skill.dart';
 import 'package:thlaby2_save_editor/save/enums/subclass.dart';
+import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/save/library.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
@@ -26,6 +28,13 @@ typedef NumberFormKeyMap = Map<String, NumberFormKey>;
 typedef SkillFormKeyMap = Map<Skill, SkillFormKey>;
 typedef FixedFormKeyMap = Map<String, FixedFormKey>;
 
+class CharacterValidationMessage {
+  final String message;
+  final Function()? fixFunction;
+
+  CharacterValidationMessage({required this.message, this.fixFunction});
+}
+
 class CharacterEditWidget extends StatefulWidget {
   final Character character;
   const CharacterEditWidget({required this.character, super.key});
@@ -38,6 +47,7 @@ class CharacterEditState extends State<CharacterEditWidget>
     with
         Loggable,
         SaveReader,
+        Navigatable<CharacterEditWidget>,
         AlertHandler<CharacterEditWidget>,
         DiscardableChanges<CharacterEditWidget>,
         BreakableChanges<CharacterEditWidget> {
@@ -298,6 +308,22 @@ class CharacterEditState extends State<CharacterEditWidget>
     });
   }
 
+  Future<void> _changeMainEquipment() async {
+    Item? selected = await navigateToItemSelect(saveFile.mainInventoryData);
+    if (selected == null) {
+      return;
+    }
+    _mainEquipFormKey.currentState!.value = selected.name;
+  }
+
+  Future<void> _changeSubEquipment(int i) async {
+    Item? selected = await navigateToItemSelect(saveFile.subInventoryData);
+    if (selected == null) {
+      return;
+    }
+    _subEquipFormKeys[i].currentState!.value = selected.name;
+  }
+
   //
   // Properly check for and validate changes, save/commit them
   //
@@ -321,6 +347,35 @@ class CharacterEditState extends State<CharacterEditWidget>
     return '$overlapName already has this subclass';
   }
 
+  String _checkForLockedMainEquip(String value) {
+    MainEquip chosen = MainEquip.fromName(value);
+    bool isUnlocked = true; // Empty slot is always unlocked
+    if (chosen.id > 0) {
+      isUnlocked = saveFile.mainInventoryData.firstWhere(
+        (ItemSlot slot) => slot.item == chosen,
+      ).isUnlocked;
+    }
+    return isUnlocked ? '' : 'Main equip has not been unlocked';
+  }
+
+  String _checkForLockedSubEquip(String value) {
+    SubEquip chosen = SubEquip.fromName(value);
+    bool isUnlocked = true; // Empty slot is always unlocked
+    if (chosen.id > 0) {
+      isUnlocked = saveFile.subInventoryData.firstWhere(
+        (ItemSlot slot) => slot.item == chosen,
+      ).isUnlocked;
+    }
+    return isUnlocked ? '' : 'Sub equip has not been unlocked';
+  }
+
+  void _fixLockedEquip(List<ItemSlot> slots, FixedFormKey formKey) {
+    ItemSlot chosen = slots.firstWhere(
+      (ItemSlot slot) => slot.item.name == formKey.currentState!.value,
+    );
+    chosen.isUnlocked = true;
+  }
+
   @override
   bool get hasChanges => _expansionGroups.any(
     (TFormGroup group) => group.hasChanges,
@@ -330,27 +385,59 @@ class CharacterEditState extends State<CharacterEditWidget>
     (TFormGroup group) => group.hasErrors,
   );
 
-  List<String> _validateMessages() {
-    List<String> messages = <String>[];
+  List<CharacterValidationMessage> _validateMessages() {
+    List<CharacterValidationMessage> messages = <CharacterValidationMessage>[];
     // Subclass validation - do nothing, simply warn
     String subclassError = _subclassFormKey.currentState!.errorMessage;
     if (subclassError != '') {
-      messages.add('$subclassError - no action will be taken');
+      messages.add(
+        CharacterValidationMessage(
+          message: '$subclassError - no action will be taken',
+        ),
+      );
+    }
+    // Equipment validation - properly unlock the locked equips
+    String mainEquipError = _mainEquipFormKey.currentState!.errorMessage;
+    if (mainEquipError != '') {
+      messages.add(
+        CharacterValidationMessage(
+          message: '$mainEquipError - it will be unlocked automatically',
+          fixFunction: () => _fixLockedEquip(
+            saveFile.mainInventoryData,
+            _mainEquipFormKey,
+          ),
+        ),
+      );
+    }
+    for (FixedFormKey formKey in _subEquipFormKeys) {
+      String subEquipError = formKey.currentState!.errorMessage;
+      if (subEquipError != '') {
+        messages.add(
+          CharacterValidationMessage(
+            message: '$subEquipError - it will be unlocked automatically',
+            fixFunction: () => _fixLockedEquip(
+              saveFile.subInventoryData,
+              formKey,
+            ),
+          ),
+        );
+      }
     }
     return messages;
   }
-
-  void _fixValidationErrors() {}
 
   @override
   Future<void> saveChanges() async {
     // Check if there are invalid fields, properly show them to user
     if (_hasErrors) {
       await log(LogLevel.warning, 'Attempting to save invalid data');
-      List<String> messages = _validateMessages();
+      List<CharacterValidationMessage> messages = _validateMessages();
+      String textMessages = messages.map(
+        (CharacterValidationMessage message) => message.message,
+      ).join('\n');
       bool doSave = await showSaveWarningDialog(
         'Some validation errors were detected, and some of them might require '
-        'an action to be taken in order to save:\n\n${messages.join('\n')}\n\n '
+        'an action to be taken in order to save:\n\n$textMessages\n\n '
         'Please make sure you are fine with the actions above',
         breaking: false,
       );
@@ -359,7 +446,9 @@ class CharacterEditState extends State<CharacterEditWidget>
       }
       // If user wants to save anyway, we must convert the invalid values that
       // will cause errors back into valid values that closely match the input
-      _fixValidationErrors();
+      for (CharacterValidationMessage message in messages) {
+        message.fixFunction?.call();
+      }
     }
 
     // Get save file reference and commit changes to forms
@@ -453,18 +542,17 @@ class CharacterEditState extends State<CharacterEditWidget>
       );
     }
 
-    // Equipment data
+    // Equipment data - reset invalid flags as they have been taken care of
     String chosenName = _mainEquipFormKey.currentState!.saveValue();
-    MainEquip chosenMain = MainEquip.values.firstWhere(
-      (MainEquip e) => e.name == chosenName,
-    );
+    MainEquip chosenMain = MainEquip.fromName(chosenName);
     data.mainEquip = chosenMain;
+    _mainEquipFormKey.currentState!.validate();
     for (int i = 0; i < 3; i++) {
+      _subEquipFormKeys[i].currentState!.validate();
       chosenName = _subEquipFormKeys[i].currentState!.saveValue();
-      SubEquip chosenSub = SubEquip.values.firstWhere(
-        (SubEquip e) => e.name == chosenName,
-      );
+      SubEquip chosenSub = SubEquip.fromName(chosenName);
       data.subEquips[i] = chosenSub;
+      _subEquipFormKeys[i].currentState!.validate();
     }
 
     await log(LogLevel.info, 'Saved character data changes');
@@ -681,8 +769,9 @@ class CharacterEditState extends State<CharacterEditWidget>
             title: 'Main equipment',
             subtitle: 'Item occupying the main slot',
             initialValue: data.mainEquip.name,
-            setCallback: () {},
+            setCallback: _changeMainEquipment,
             onValueChanged: (String? value) => setState(() {}),
+            validationCallback: _checkForLockedMainEquip,
             emptyValue: MainEquip.slot0.name,
             key: _mainEquipFormKey,
           ),
@@ -694,8 +783,9 @@ class CharacterEditState extends State<CharacterEditWidget>
                 title: 'Sub equipment $i',
                 subtitle: 'Item occupying sub slot $i',
                 initialValue: data.subEquips[i - 1].name,
-                setCallback: () {},
+                setCallback: () async => _changeSubEquipment(i - 1),
                 onValueChanged: (String? value) => setState(() {}),
+                validationCallback: _checkForLockedSubEquip,
                 emptyValue: SubEquip.slot0.name,
                 key: _subEquipFormKeys[i - 1],
               ),
