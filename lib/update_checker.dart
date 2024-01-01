@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/widgets/clickable.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UpdateStatus extends StatelessWidget {
   final bool hasCheckedForUpdates;
@@ -63,6 +66,7 @@ class UpdateStatus extends StatelessWidget {
 class UpdateCheck with Loggable {
   static final UpdateCheck _checker = UpdateCheck._internal();
 
+  String latestVersionUrl = '';
   String latestVersion = Logger.version;
   bool hasCheckedForUpdates = false;
   bool updateCheckSucceeded = false;
@@ -79,10 +83,36 @@ class UpdateCheck with Loggable {
     if (hasCheckedForUpdates) {
       return;
     }
+    try {
+      http.Response response = await http.get(
+        Uri.parse(
+          'https://api.github.com/repos/thurler/thlaby2-save-editor/releases/latest',
+        ),
+      ).timeout(const Duration(seconds: 5));
+      Map<String, dynamic> body = json.decode(response.body);
+      if (!body.containsKey('tag_name') || !body.containsKey('html_url')) {
+        updateCheckSucceeded = false;
+      } else {
+        latestVersionUrl = body['html_url'];
+        latestVersion = body['tag_name'];
+        latestVersion = '0.5.0';
+        hasUpdate = latestVersion != Logger.version;
+        updateCheckSucceeded = true;
+      }
+    } catch (e) {
+      // If any exception happens with the request or json parse, set error flag
+      updateCheckSucceeded = false;
+    }
+    hasCheckedForUpdates = true;
     callback();
   }
 
-  Future<void> openLatestVersion() async {}
+  Future<void> openLatestVersion() async {
+    if (latestVersionUrl == '') {
+      return;
+    }
+    if (!await launchUrl(Uri.parse(latestVersionUrl))) {}
+  }
 }
 
 mixin UpdateChecker {
