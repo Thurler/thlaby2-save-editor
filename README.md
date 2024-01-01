@@ -13,20 +13,19 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
 
 ## Features and Roadmap
 
-- Current release (0.4.0)
+- Current release (0.5.0)
   - Edit character parameters
     - Level, EXP, BP, Subclass
     - Library points
     - Level bonuses
     - Skill points and levels
     - Tome and Gem investments
+    - Equipment
   - Edit which characters are in the party
   - Edit character unlock flags
   - Edit inventory unlock flags and amount
   - Steam format compatibility
   - Logging for debugging purposes
-- Version 0.5.0
-  - Edit character equipment 
   - Automatic update checking
 - Version 0.6.0
   - Edit general data (money amount, play time, IC floor, FOE kills, etc)

@@ -1,6 +1,5 @@
 Release Notes
 =============
 
-- Fully edit inventory unlock flag and item amount
-- Improved some log messages
-- Cleaned up some project files
+- Added character equipment editing
+- Added automatic update checking
