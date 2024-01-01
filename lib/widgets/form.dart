@@ -4,7 +4,7 @@ import 'package:thlaby2_save_editor/text_formatter.dart';
 import 'package:thlaby2_save_editor/widgets/clickable.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
-typedef FormKey = GlobalKey<TFormState<TForm>>;
+typedef FormKey<T> = GlobalKey<TFormState<T, TForm<T>>>;
 typedef DropdownFormKey = GlobalKey<TFormDropdownState>;
 typedef StringFormKey = GlobalKey<TFormStringState<TFormString>>;
 typedef NumberFormKey = GlobalKey<TFormNumberState<TFormNumber>>;
@@ -171,16 +171,16 @@ class TFormFixedField extends TFormField {
   }
 }
 
-abstract class TForm extends StatefulWidget {
-  static String _alwaysValid(String value) => '';
+abstract class TForm<U> extends StatefulWidget {
+  static String _alwaysValid(dynamic value) => '';
 
   final bool enabled;
   final String title;
   final String subtitle;
   final String errorMessage;
-  final String initialValue;
-  final String Function(String) validationCallback;
-  final ValueChanged<String?>? onValueChanged;
+  final U initialValue;
+  final String Function(U) validationCallback;
+  final ValueChanged<U?>? onValueChanged;
 
   const TForm({
     required this.enabled,
@@ -194,9 +194,9 @@ abstract class TForm extends StatefulWidget {
   });
 }
 
-abstract class TFormState<T extends TForm> extends State<T> {
+abstract class TFormState<U, T extends TForm<U>> extends State<T> {
   String errorMessage = '';
-  String initialValue = '';
+  late U initialValue;
 
   String _title = '';
   String get title => _title;
@@ -219,15 +219,15 @@ abstract class TFormState<T extends TForm> extends State<T> {
   bool get hasChanges => value != initialValue;
   bool get hasErrors => errorMessage != '';
 
-  String _value = '';
-  String get value => _value;
-  set value(String newValue) {
+  late U _value;
+  U get value => _value;
+  set value(U newValue) {
     _value = newValue;
     validate();
   }
 
-  int get intValue => int.parse(_value.replaceAll(',', ''));
-  BigInt get bigIntValue => BigInt.parse(_value.replaceAll(',', ''));
+  int get intValue;
+  BigInt get bigIntValue;
 
   void validate() {
     setState(() {
@@ -239,7 +239,7 @@ abstract class TFormState<T extends TForm> extends State<T> {
     initialValue = value;
   }
 
-  String saveValue() {
+  U saveValue() {
     resetInitialValue();
     return value;
   }
@@ -279,7 +279,7 @@ abstract class TFormState<T extends TForm> extends State<T> {
   }
 }
 
-class TFormDropdown extends TForm {
+class TFormDropdown extends TForm<String> {
   final List<String> options;
   final String hintText;
 
@@ -300,7 +300,7 @@ class TFormDropdown extends TForm {
   State<TFormDropdown> createState() => TFormDropdownState();
 }
 
-class TFormDropdownState extends TFormState<TFormDropdown> {
+class TFormDropdownState extends TFormState<String, TFormDropdown> {
   void _updateValue(String? value) {
     if (value == null) {
       return;
@@ -319,9 +319,15 @@ class TFormDropdownState extends TFormState<TFormDropdown> {
     options: widget.options,
     updateValue: _updateValue,
   );
+
+  @override
+  int get intValue => 0;
+
+  @override
+  BigInt get bigIntValue => BigInt.zero;
 }
 
-class TFormString extends TForm {
+class TFormString extends TForm<String> {
   final List<TextInputFormatter> formatters;
   final String hintText;
 
@@ -342,7 +348,7 @@ class TFormString extends TForm {
   State<TFormString> createState() => TFormStringState<TFormString>();
 }
 
-class TFormStringState<T extends TFormString> extends TFormState<T> {
+class TFormStringState<T extends TFormString> extends TFormState<String, T> {
   final TextEditingController controller = TextEditingController();
   late List<TextInputFormatter> formatters;
 
@@ -370,6 +376,12 @@ class TFormStringState<T extends TFormString> extends TFormState<T> {
     controller: controller,
     formatters: formatters,
   );
+
+  @override
+  int get intValue => int.parse(_value.replaceAll(',', ''));
+
+  @override
+  BigInt get bigIntValue => BigInt.parse(_value.replaceAll(',', ''));
 }
 
 class TFormNumber extends TFormString {

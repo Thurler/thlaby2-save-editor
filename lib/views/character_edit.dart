@@ -157,13 +157,13 @@ class CharacterEditState extends State<CharacterEditWidget>
     FixedFormKey(),
   ];
 
-  late final List<TFormGroup> _expansionGroups;
+  late final List<TFormGroup<String>> _expansionGroups;
 
   late final SubclassFormGroup subclassFormGroup;
 
-  Iterable<MapEntry<FormKey, TForm>> _formMapEntriesFromList({
+  Iterable<MapEntry<FormKey<String>, TForm<String>>> _formMapEntriesFromList({
     required List<String> names,
-    required Map<String, FormKey> keys,
+    required Map<String, FormKey<String>> keys,
     required String Function(String) titleBuilder,
     required String Function(String) subtitleBuilder,
     required int Function(int) initialValueBuilder,
@@ -172,7 +172,7 @@ class CharacterEditState extends State<CharacterEditWidget>
     void Function(String?)? onValueChanged,
   }) {
     return names.asMap().keys.map(
-      (int i) => MapEntry<FormKey, TForm>(
+      (int i) => MapEntry<FormKey<String>, TForm<String>>(
         keys[names[i]]!,
         TFormNumber(
           enabled: true,
@@ -378,11 +378,11 @@ class CharacterEditState extends State<CharacterEditWidget>
 
   @override
   bool get hasChanges => _expansionGroups.any(
-    (TFormGroup group) => group.hasChanges,
+    (TFormGroup<String> group) => group.hasChanges,
   );
 
   bool get _hasErrors => _expansionGroups.any(
-    (TFormGroup group) => group.hasErrors,
+    (TFormGroup<String> group) => group.hasErrors,
   );
 
   List<CharacterValidationMessage> _validateMessages() {
@@ -584,11 +584,11 @@ class CharacterEditState extends State<CharacterEditWidget>
       initialValueBuilder: (int i) => data.skills.subclassSkills[i],
     );
 
-    _expansionGroups = <TFormGroup>[
+    _expansionGroups = <TFormGroup<String>>[
       // Basic info - level, exp, bp, subclass
-      TFormGroup(
+      TFormGroup<String>(
         title: 'Level, EXP, BP, Subclass',
-        forms: <FormKey, TForm>{
+        forms: <FormKey<String>, TForm<String>>{
           _levelFormKey: TFormNumber(
             enabled: true,
             title: 'Level',
@@ -633,9 +633,9 @@ class CharacterEditState extends State<CharacterEditWidget>
         },
       ),
       // Library info
-      TFormGroup(
+      TFormGroup<String>(
         title: 'Library points',
-        forms: Map<FormKey, TForm>.fromEntries(
+        forms: Map<FormKey<String>, TForm<String>>.fromEntries(
           _formMapEntriesFromList(
             names: stats,
             keys: _libraryFormsKeys,
@@ -656,9 +656,9 @@ class CharacterEditState extends State<CharacterEditWidget>
         ),
       ),
       // Level up info and unused level bonus
-      TFormGroup(
+      TFormGroup<String>(
         title: 'Level up bonuses',
-        forms: <FormKey, TForm>{
+        forms: <FormKey<String>, TForm<String>>{
           _unusedLevelFormKey: TFormNumber(
             enabled: false,
             title: 'Unused points',
@@ -681,9 +681,9 @@ class CharacterEditState extends State<CharacterEditWidget>
         ),
       ),
       // Skill points info and training manuals
-      TFormGroup(
+      TFormGroup<String>(
         title: 'Skill points',
-        forms: <FormKey, TForm>{
+        forms: <FormKey<String>, TForm<String>>{
           _unusedSkillPointsFormKey: TFormNumber(
             enabled: false,
             title: 'Unused skill points',
@@ -727,11 +727,11 @@ class CharacterEditState extends State<CharacterEditWidget>
       // Subclass skill data
       subclassFormGroup,
       // Tome level data
-      TFormGroup(
+      TFormGroup<String>(
         title: 'Tomes',
-        forms: Map<FormKey, TForm>.fromEntries(
+        forms: Map<FormKey<String>, TForm<String>>.fromEntries(
           tomeStats.map(
-            (TomeStat stat) => MapEntry<FormKey, TForm>(
+            (TomeStat stat) => MapEntry<FormKey<String>, TForm<String>>(
               _tomeFormsKeys[stat.name]!,
               TFormDropdown(
                 enabled: true,
@@ -748,9 +748,9 @@ class CharacterEditState extends State<CharacterEditWidget>
         ),
       ),
       // Gem level data
-      TFormGroup(
+      TFormGroup<String>(
         title: 'Gems',
-        forms: Map<FormKey, TForm>.fromEntries(
+        forms: Map<FormKey<String>, TForm<String>>.fromEntries(
           _formMapEntriesFromList(
             names: gemStats,
             keys: _gemFormsKeys,
@@ -762,9 +762,9 @@ class CharacterEditState extends State<CharacterEditWidget>
         ),
       ),
       // Equipment data
-      TFormGroup(
+      TFormGroup<String>(
         title: 'Equipment',
-        forms: <FormKey, TForm>{
+        forms: <FormKey<String>, TForm<String>>{
           _mainEquipFormKey: TFormFixed(
             title: 'Main equipment',
             subtitle: 'Item occupying the main slot',
@@ -777,7 +777,7 @@ class CharacterEditState extends State<CharacterEditWidget>
           ),
         }..addEntries(
           <int>[1, 2, 3].map(
-            (int i) => MapEntry<FormKey, TForm>(
+            (int i) => MapEntry<FormKey<String>, TForm<String>>(
               _subEquipFormKeys[i - 1],
               TFormFixed(
                 title: 'Sub equipment $i',
@@ -830,7 +830,7 @@ class CharacterEditState extends State<CharacterEditWidget>
               });
             },
             children: _expansionGroups.map(
-              (TFormGroup group) => group.expansionPanel,
+              (TFormGroup<String> group) => group.expansionPanel,
             ).toList(),
           ),
         ],

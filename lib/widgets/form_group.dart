@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/widgets/badge.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 
-class TFormGroup {
+class TFormGroup<T> {
   final String title;
-  final Map<FormKey, TForm> forms;
+  final Map<FormKey<T>, TForm<T>> forms;
   bool expanded;
 
   TFormGroup({
@@ -16,11 +16,11 @@ class TFormGroup {
   void toggleExpanded() => expanded = !expanded;
 
   bool get hasChanges => forms.keys.any(
-    (FormKey formKey) => formKey.currentState?.hasChanges ?? false,
+    (FormKey<T> formKey) => formKey.currentState?.hasChanges ?? false,
   );
 
   bool get hasErrors => forms.keys.any(
-    (FormKey formKey) => formKey.currentState?.hasErrors ?? false,
+    (FormKey<T> formKey) => formKey.currentState?.hasErrors ?? false,
   );
 
   ExpansionPanel get expansionPanel => ExpansionPanel(
