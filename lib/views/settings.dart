@@ -144,8 +144,8 @@ class SettingsState extends State<SettingsWidget>
     );
     _checkUpdatesForm = TFormSwitch(
       enabled: true,
-      title: 'Check for updates',
-      subtitle: 'Whether to check for updates on startup',
+      title: 'Check for updates on startup',
+      subtitle: 'A message is displayed if an update is available',
       offText: "Don't check for updates",
       onText: 'Check for updates',
       onValueChanged: _changeUpdateCheck,
