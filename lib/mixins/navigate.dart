@@ -29,7 +29,7 @@ mixin Navigatable<T extends StatefulWidget> on Loggable, State<T> {
     return result;
   }
 
-  Future<void> navigateToSettings() async {
+  Future<void> navigateToSettings() {
     return _navigate(const SettingsWidget(), 'settings');
   }
 
@@ -37,7 +37,7 @@ mixin Navigatable<T extends StatefulWidget> on Loggable, State<T> {
     return _navigate(const MenuWidget(), 'main menu');
   }
 
-  Future<void> navigateToCharacterData() async {
+  Future<void> navigateToCharacterData() {
     return _navigate(const CharacterDataWidget(), 'character data');
   }
 
@@ -45,7 +45,7 @@ mixin Navigatable<T extends StatefulWidget> on Loggable, State<T> {
     return _navigate(const CharacterUnlockWidget(), 'character unlock edit');
   }
 
-  Future<void> navigateToCharacterEdit(Character character) async {
+  Future<void> navigateToCharacterEdit(Character character) {
     return _navigate(
       CharacterEditWidget(character: character),
       'character data edit',
@@ -63,11 +63,11 @@ mixin Navigatable<T extends StatefulWidget> on Loggable, State<T> {
     return selected;
   }
 
-  Future<void> navigateToPartyEdit() async {
+  Future<void> navigateToPartyEdit() {
     return _navigate(const PartyDataWidget(), 'party data edit');
   }
 
-  Future<void> navigateToItemEdit() async {
+  Future<void> navigateToItemEdit() {
     return _navigate(const ItemDataWidget(), 'item data edit');
   }
 

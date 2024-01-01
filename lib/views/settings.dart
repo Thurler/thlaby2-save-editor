@@ -179,7 +179,7 @@ class SettingsState extends State<SettingsWidget>
 }
 
 mixin SettingsReader {
-  late final Settings settings;
+  late Settings settings;
 
   void loadSettings() {
     try {

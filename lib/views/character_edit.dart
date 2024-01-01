@@ -30,7 +30,7 @@ typedef FixedFormKeyMap = Map<String, FixedFormKey>;
 
 class CharacterValidationMessage {
   final String message;
-  final Function()? fixFunction;
+  final void Function()? fixFunction;
 
   CharacterValidationMessage({required this.message, this.fixFunction});
 }
