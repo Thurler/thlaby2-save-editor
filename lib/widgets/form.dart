@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:thlaby2_save_editor/text_formatter.dart';
 import 'package:thlaby2_save_editor/widgets/clickable.dart';
 import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
+import 'package:thlaby2_save_editor/widgets/switch.dart';
 
 typedef FormKey<T> = GlobalKey<TFormState<T, TForm<T>>>;
 typedef DropdownFormKey = GlobalKey<TFormDropdownState>;
@@ -46,6 +47,33 @@ class TFormTitle extends StatelessWidget {
 
 abstract class TFormField extends StatelessWidget {
   const TFormField({super.key});
+}
+
+class TFormSwitchField extends TFormField {
+  final bool enabled;
+  final bool value;
+  final String offText;
+  final String onText;
+  final void Function(bool value) updateValue;
+
+  const TFormSwitchField({
+    required this.enabled,
+    required this.value,
+    required this.offText,
+    required this.onText,
+    required this.updateValue,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TSwitch(
+      onChanged: enabled ? updateValue : null,
+      offText: offText,
+      onText: onText,
+      value: value,
+    );
+  }
 }
 
 class TFormDropdownField extends TFormField {
@@ -277,6 +305,51 @@ abstract class TFormState<U, T extends TForm<U>> extends State<T> {
       ],
     );
   }
+}
+
+class TFormSwitch extends TForm<bool> {
+  final String offText;
+  final String onText;
+
+  const TFormSwitch({
+    required this.offText,
+    required this.onText,
+    required super.enabled,
+    required super.title,
+    required super.subtitle,
+    required super.initialValue,
+    super.validationCallback,
+    super.onValueChanged,
+    super.errorMessage,
+    super.key,
+  });
+
+  @override
+  State<TFormSwitch> createState() => TFormSwitchState();
+}
+
+class TFormSwitchState extends TFormState<bool, TFormSwitch> {
+  void _updateValue(bool value) {
+    setState(() {
+      super.value = value;
+    });
+    widget.onValueChanged?.call(value);
+  }
+
+  @override
+  TFormField get field => TFormSwitchField(
+    enabled: widget.enabled,
+    offText: widget.offText,
+    onText: widget.onText,
+    updateValue: _updateValue,
+    value: super.value,
+  );
+
+  @override
+  int get intValue => value ? 1 : 0;
+
+  @override
+  BigInt get bigIntValue => value ? BigInt.one : BigInt.zero;
 }
 
 class TFormDropdown extends TForm<String> {

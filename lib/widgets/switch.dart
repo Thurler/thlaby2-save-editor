@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class TSwitch extends StatelessWidget {
   final TextStyle titleStyle = const TextStyle(fontWeight: FontWeight.w700);
   final TextStyle disableStyle = const TextStyle(color: Colors.grey);
-  final void Function(bool) onChanged;
+  final void Function(bool)? onChanged;
   final String offText;
   final String onText;
   final String title;
@@ -11,12 +11,12 @@ class TSwitch extends StatelessWidget {
   final bool expanded;
 
   const TSwitch({
-    required this.onChanged,
     required this.value,
     this.expanded = true,
     this.offText = '',
     this.onText = '',
     this.title = '',
+    this.onChanged,
     super.key,
   });
 
