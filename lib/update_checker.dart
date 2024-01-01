@@ -91,6 +91,7 @@ class UpdateCheck with Loggable {
       ).timeout(const Duration(seconds: 5));
       Map<String, dynamic> body = json.decode(response.body);
       if (!body.containsKey('tag_name') || !body.containsKey('html_url')) {
+        await log(LogLevel.warning, 'Invalid body when checking for updates');
         updateCheckSucceeded = false;
       } else {
         latestVersionUrl = body['html_url'];
@@ -101,6 +102,7 @@ class UpdateCheck with Loggable {
       }
     } catch (e) {
       // If any exception happens with the request or json parse, set error flag
+      await log(LogLevel.warning, 'Exception when checking for updates: $e');
       updateCheckSucceeded = false;
     }
     hasCheckedForUpdates = true;
