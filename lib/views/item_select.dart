@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/item_category.dart';
+import 'package:thlaby2_save_editor/widgets/switch.dart';
 
 class ItemSelectWidget extends StatefulWidget {
   final List<ItemSlot> items;
@@ -48,7 +49,7 @@ class ItemSelectState extends State<ItemSelectWidget> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Switch(
+            TSwitch(
               value: lockedItemToggle,
               onChanged: _changeLockedItemToggle,
             ),
