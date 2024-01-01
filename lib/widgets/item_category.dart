@@ -3,6 +3,7 @@ import 'package:thlaby2_save_editor/extensions/iterable_extension.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/widgets/badge.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/widgets/clickable.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/item_form.dart';
 import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
@@ -77,17 +78,68 @@ class FormSectionHeader extends StatelessWidget {
   }
 }
 
+class ItemOption extends StatelessWidget {
+  final TFormItem item;
+  final bool editable;
+  final bool allowLockedSelection;
+  final TFormItem? highlighted;
+  final void Function(TFormItem)? onTap;
+  final void Function(TFormItem)? onEnter;
+  final void Function()? onExit;
+
+  const ItemOption({
+    required this.item,
+    this.allowLockedSelection = false,
+    this.editable = true,
+    this.highlighted,
+    this.onTap,
+    this.onEnter,
+    this.onExit,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    bool isUnlocked = item.itemSlot.isUnlocked;
+    bool isHighlighted = false;
+    if (isUnlocked || allowLockedSelection) {
+      isHighlighted = item == highlighted;
+    }
+    Widget border = RoundedBorder(
+      color: isHighlighted
+        ? Colors.green
+        : TFormTitle.subtitleColor.withOpacity(0.5),
+      childPadding: const EdgeInsets.only(right: 15),
+      child: item,
+    );
+    if (editable) {
+      return border;
+    }
+    return TClickable(
+      enabled: isUnlocked || allowLockedSelection,
+      onTap: () => onTap?.call(item),
+      onEnter: (_) => onEnter?.call(item),
+      onExit: (_) => onExit?.call(),
+      child: border,
+    );
+  }
+}
+
 class ItemPage extends StatefulWidget {
   final int pageNumber;
   final List<ItemSlot> items;
   final void Function()? onHeaderPressed;
   final void Function()? onValueChanged;
+  final void Function(ItemSlot)? onTap;
+  final bool editable;
 
   const ItemPage({
     required this.pageNumber,
     required this.items,
     required this.onHeaderPressed,
     required this.onValueChanged,
+    required this.onTap,
+    this.editable = true,
     super.key,
   });
 
@@ -97,8 +149,10 @@ class ItemPage extends StatefulWidget {
 
 class ItemPageState extends State<ItemPage> {
   bool isSelected = false;
+  bool allowLockedSelection = false;
   late final List<TFormItem> itemForms;
   late final List<ItemFormKey> itemFormKeys;
+  TFormItem? _hover;
 
   void onHeaderPressed() {
     setState(() {
@@ -115,6 +169,24 @@ class ItemPageState extends State<ItemPage> {
   void deselect() {
     setState(() {
       isSelected = false;
+    });
+  }
+
+  void _hoverEnter(TFormItem item) {
+    setState(() {
+      _hover = item;
+    });
+  }
+
+  void _hoverExit() {
+    setState(() {
+      _hover = null;
+    });
+  }
+
+  void changeLockedItemToggle({required bool value}) {
+    setState(() {
+      allowLockedSelection = value;
     });
   }
 
@@ -142,6 +214,7 @@ class ItemPageState extends State<ItemPage> {
       (int i) => TFormItem(
         itemSlot: widget.items[i],
         onValueChanged: onValueChanged,
+        enabled: widget.editable,
         key: itemFormKeys[i],
       ),
     ).toList();
@@ -155,15 +228,23 @@ class ItemPageState extends State<ItemPage> {
         (int i) => SpacedRow(
           spacer: const SizedBox(width: 20),
           children: <Widget>[
-            RoundedBorder(
-              color: TFormTitle.subtitleColor.withOpacity(0.5),
-              childPadding: const EdgeInsets.only(right: 15),
-              child: itemForms[i * 2],
+            ItemOption(
+              item: itemForms[i * 2],
+              allowLockedSelection: allowLockedSelection,
+              editable: widget.editable,
+              highlighted: _hover,
+              onEnter: _hoverEnter,
+              onExit: _hoverExit,
+              onTap: (TFormItem form) => widget.onTap?.call(form.itemSlot),
             ),
-            RoundedBorder(
-              color: TFormTitle.subtitleColor.withOpacity(0.5),
-              childPadding: const EdgeInsets.only(right: 15),
-              child: itemForms[(i * 2) + 1],
+            ItemOption(
+              item: itemForms[(i * 2) + 1],
+              allowLockedSelection: allowLockedSelection,
+              editable: widget.editable,
+              highlighted: _hover,
+              onEnter: _hoverEnter,
+              onExit: _hoverExit,
+              onTap: (TFormItem form) => widget.onTap?.call(form.itemSlot),
             ),
           ],
         ),
@@ -177,12 +258,16 @@ class ItemCategory extends StatefulWidget {
   final List<ItemSlot> items;
   final void Function()? onHeaderPressed;
   final void Function()? onValueChanged;
+  final void Function(ItemSlot)? onTap;
+  final bool editable;
 
   const ItemCategory({
     required this.title,
     required this.items,
-    required this.onHeaderPressed,
-    required this.onValueChanged,
+    this.editable = true,
+    this.onHeaderPressed,
+    this.onValueChanged,
+    this.onTap,
     super.key,
   });
 
@@ -227,6 +312,12 @@ class ItemCategoryState extends State<ItemCategory> {
     });
   }
 
+  void changeLockedItemToggle({required bool value}) {
+    for (ItemPageKey pageKey in pageKeys) {
+      pageKey.currentState!.changeLockedItemToggle(value: value);
+    }
+  }
+
   bool get hasChanges => pageKeys.any(
     (ItemPageKey key) => key.currentState?.hasChanges ?? false,
   );
@@ -253,6 +344,8 @@ class ItemCategoryState extends State<ItemCategory> {
         items: widget.items.sublist(i * 20, (i + 1) * 20),
         onHeaderPressed: () => onPagePressed(i),
         onValueChanged: () => onValueChanged(),
+        onTap: widget.onTap,
+        editable: widget.editable,
         key: pageKeys[i],
       ),
     );

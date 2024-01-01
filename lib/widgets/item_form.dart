@@ -10,10 +10,10 @@ class TFormItem extends TFormNumber {
 
   TFormItem({
     required this.itemSlot,
+    super.enabled = true,
     super.onValueChanged,
     super.key,
   }) : super(
-    enabled: true,
     title: itemSlot.item.name,
     subtitle: 'Must be at most 200',
     minValue: BigInt.from(0),

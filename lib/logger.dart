@@ -11,12 +11,16 @@ enum LogLevel {
   final String dropdownText;
 
   const LogLevel(this.dropdownText);
+
+  factory LogLevel.fromName(String name) {
+    return LogLevel.values.firstWhere((LogLevel l) => l.name == name);
+  }
 }
 
-class Logger {
+class Logger with SettingsReader {
   static final Logger _logger = Logger._internal();
   static const String filename = './applicationlog.txt';
-  static const String version = '0.4.0';
+  static const String version = '0.5.0';
   LogLevel logLevel = LogLevel.info;
   late IOSink sink;
 
@@ -27,14 +31,8 @@ class Logger {
   }
 
   Logger._internal() {
-    try {
-      File settingsFile = File('./settings.json');
-      if (settingsFile.existsSync()) {
-        logLevel = Settings.fromJson(settingsFile.readAsStringSync()).logLevel;
-      }
-    } catch (e) {
-      // If we fail to load the settings file, keep going with default settings
-    }
+    loadSettings();
+    logLevel = settings.logLevel;
     File logFile = File(filename);
     sink = logFile.openWrite();
     sink.writeln('$_currentTimestamp | Save Editor v$version opened');

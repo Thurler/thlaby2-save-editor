@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/exception.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
+import 'package:thlaby2_save_editor/update_checker.dart';
+import 'package:thlaby2_save_editor/views/settings.dart';
 import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/character_roster.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
@@ -23,6 +26,8 @@ class MenuState extends State<MenuWidget>
     with
         SaveReader,
         Loggable,
+        SettingsReader,
+        UpdateChecker,
         AlertHandler<MenuWidget>,
         ExceptionHandler<MenuWidget>,
         Navigatable<MenuWidget> {
@@ -83,9 +88,28 @@ class MenuState extends State<MenuWidget>
   }
 
   @override
+  void updateCheckCallback() => setState(() {});
+
+  @override
+  Future<void> navigateToSettings() async {
+    await super.navigateToSettings();
+    setState(() {
+      loadSettings();
+    });
+    unawaited(checkForUpdates());
+  }
+
+  @override
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
     await CharacterRoster.precachePortraits(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadSettings();
+    unawaited(checkForUpdates());
   }
 
   @override
@@ -166,6 +190,15 @@ class MenuState extends State<MenuWidget>
               ),
             ],
           ),
+          const Text('Version ${Logger.version}'),
+          if (settings.checkUpdates)
+            UpdateStatus(
+              hasCheckedForUpdates: updateChecker.hasCheckedForUpdates,
+              updateCheckSucceeded: updateChecker.updateCheckSucceeded,
+              hasUpdate: updateChecker.hasUpdate,
+              latestVersion: updateChecker.latestVersion,
+              onUpdateTap: updateChecker.openLatestVersion,
+            ),
         ],
       ),
     );
