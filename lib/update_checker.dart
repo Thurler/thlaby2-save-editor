@@ -96,7 +96,6 @@ class UpdateCheck with Loggable {
       } else {
         latestVersionUrl = body['html_url'];
         latestVersion = body['tag_name'];
-        latestVersion = '0.5.0';
         hasUpdate = latestVersion != Logger.version;
         updateCheckSucceeded = true;
       }
