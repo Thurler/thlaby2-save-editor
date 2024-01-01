@@ -47,6 +47,7 @@ class SettingsWidget extends StatefulWidget {
 
 class SettingsState extends State<SettingsWidget>
     with
+        SettingsReader,
         Loggable,
         AlertHandler<SettingsWidget>,
         ExceptionHandler<SettingsWidget>,
@@ -54,8 +55,6 @@ class SettingsState extends State<SettingsWidget>
   final List<String> _options = LogLevel.values.map(
     (LogLevel level) => level.dropdownText,
   ).toList();
-
-  late Settings _settings;
 
   late TFormDropdown _logLevelForm;
   final DropdownFormKey _logLevelFormKey = DropdownFormKey();
@@ -80,11 +79,11 @@ class SettingsState extends State<SettingsWidget>
   @override
   Future<void> saveChanges() async {
     String chosenLogLevel = _logLevelFormKey.currentState!.value;
-    _settings.logLevel = LogLevel.values[_options.indexOf(chosenLogLevel)];
-    _settings.checkUpdates = _checkUpdatesFormKey.currentState!.value;
+    settings.logLevel = LogLevel.values[_options.indexOf(chosenLogLevel)];
+    settings.checkUpdates = _checkUpdatesFormKey.currentState!.value;
     try {
       File settingsFile = File('./settings.json');
-      settingsFile.writeAsStringSync('${_settings.toJson()}\n');
+      settingsFile.writeAsStringSync('${settings.toJson()}\n');
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);
       return;
@@ -94,10 +93,10 @@ class SettingsState extends State<SettingsWidget>
     }
     await log(
       LogLevel.info,
-      'Applying log level ${_settings.logLevel.name}',
+      'Applying log level ${settings.logLevel.name}',
     );
     await log(LogLevel.info, 'Saved settings changes');
-    logLevel = _settings.logLevel;
+    logLevel = settings.logLevel;
     // Reset initial value to remove the has changes flag
     _logLevelFormKey.currentState!.resetInitialValue();
     _checkUpdatesFormKey.currentState!.resetInitialValue();
@@ -132,22 +131,14 @@ class SettingsState extends State<SettingsWidget>
   @override
   void initState() {
     super.initState();
-    _settings = Settings.fromDefault();
-    try {
-      File settingsFile = File('./settings.json');
-      if (settingsFile.existsSync()) {
-        _settings = Settings.fromJson(settingsFile.readAsStringSync());
-      }
-    } catch (e) {
-      // If we fail to load the settings file, keep going with default settings
-    }
+    loadSettings();
     _logLevelForm = TFormDropdown(
       enabled: true,
       title: 'Log level',
       subtitle: 'Specifies severity of information to be logged',
       hintText: 'Select a log level',
       options: _options,
-      initialValue: _options[_settings.logLevel.index],
+      initialValue: _options[settings.logLevel.index],
       onValueChanged: _changeLogLevel,
       key: _logLevelFormKey,
     );
@@ -158,7 +149,7 @@ class SettingsState extends State<SettingsWidget>
       offText: "Don't check for updates",
       onText: 'Check for updates',
       onValueChanged: _changeUpdateCheck,
-      initialValue: _settings.checkUpdates,
+      initialValue: settings.checkUpdates,
       key: _checkUpdatesFormKey,
     );
   }
@@ -184,5 +175,21 @@ class SettingsState extends State<SettingsWidget>
         ],
       ),
     );
+  }
+}
+
+mixin SettingsReader {
+  late final Settings settings;
+
+  void loadSettings() {
+    try {
+      File settingsFile = File('./settings.json');
+      if (settingsFile.existsSync()) {
+        settings = Settings.fromJson(settingsFile.readAsStringSync());
+      }
+    } catch (e) {
+      // If we fail to load the settings file, keep going with default settings
+      settings = Settings.fromDefault();
+    }
   }
 }

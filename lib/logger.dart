@@ -17,7 +17,7 @@ enum LogLevel {
   }
 }
 
-class Logger {
+class Logger with SettingsReader {
   static final Logger _logger = Logger._internal();
   static const String filename = './applicationlog.txt';
   static const String version = '0.4.0';
@@ -31,14 +31,8 @@ class Logger {
   }
 
   Logger._internal() {
-    try {
-      File settingsFile = File('./settings.json');
-      if (settingsFile.existsSync()) {
-        logLevel = Settings.fromJson(settingsFile.readAsStringSync()).logLevel;
-      }
-    } catch (e) {
-      // If we fail to load the settings file, keep going with default settings
-    }
+    loadSettings();
+    logLevel = settings.logLevel;
     File logFile = File(filename);
     sink = logFile.openWrite();
     sink.writeln('$_currentTimestamp | Save Editor v$version opened');
