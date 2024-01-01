@@ -6,6 +6,7 @@ import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 import 'package:thlaby2_save_editor/widgets/switch.dart';
 
 typedef FormKey<T> = GlobalKey<TFormState<T, TForm<T>>>;
+typedef SwitchFormKey = GlobalKey<TFormSwitchState>;
 typedef DropdownFormKey = GlobalKey<TFormDropdownState>;
 typedef StringFormKey = GlobalKey<TFormStringState<TFormString>>;
 typedef NumberFormKey = GlobalKey<TFormNumberState<TFormNumber>>;

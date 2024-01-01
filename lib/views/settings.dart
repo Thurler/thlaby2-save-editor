@@ -10,24 +10,29 @@ import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
 
 class Settings {
-  late LogLevel logLevel;
+  LogLevel logLevel = LogLevel.info;
+  bool checkUpdates = true;
 
-  Settings.from(Settings other) : logLevel = other.logLevel;
+  Settings.from(Settings other) :
+    logLevel = other.logLevel,
+    checkUpdates = other.checkUpdates;
 
-  Settings.fromDefault() : logLevel = LogLevel.info;
+  Settings.fromDefault();
 
   Settings.fromJson(String raw) {
     Map<String, dynamic> jsonContents = json.decode(raw);
     if (jsonContents.containsKey('logLevel')) {
       logLevel = LogLevel.fromName(jsonContents['logLevel']);
-    } else {
-      logLevel = LogLevel.info;
+    }
+    if (jsonContents.containsKey('checkUpdates')) {
+      checkUpdates = jsonContents['checkUpdates'];
     }
   }
 
   String toJson() {
     Map<String, dynamic> result = <String, dynamic>{
       'logLevel': logLevel.name,
+      'checkUpdates': checkUpdates,
     };
     return json.encode(result);
   }
@@ -55,8 +60,13 @@ class SettingsState extends State<SettingsWidget>
   late TFormDropdown _logLevelForm;
   final DropdownFormKey _logLevelFormKey = DropdownFormKey();
 
+  late TFormSwitch _checkUpdatesForm;
+  final SwitchFormKey _checkUpdatesFormKey = SwitchFormKey();
+
   @override
-  bool get hasChanges => _logLevelFormKey.currentState?.hasChanges ?? false;
+  bool get hasChanges =>
+      (_logLevelFormKey.currentState?.hasChanges ?? false) ||
+      (_checkUpdatesFormKey.currentState?.hasChanges ?? false);
 
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(
@@ -69,8 +79,9 @@ class SettingsState extends State<SettingsWidget>
 
   @override
   Future<void> saveChanges() async {
-    String chosenOption = _logLevelFormKey.currentState!.value;
-    _settings.logLevel = LogLevel.values[_options.indexOf(chosenOption)];
+    String chosenLogLevel = _logLevelFormKey.currentState!.value;
+    _settings.logLevel = LogLevel.values[_options.indexOf(chosenLogLevel)];
+    _settings.checkUpdates = _checkUpdatesFormKey.currentState!.value;
     try {
       File settingsFile = File('./settings.json');
       settingsFile.writeAsStringSync('${_settings.toJson()}\n');
@@ -89,6 +100,7 @@ class SettingsState extends State<SettingsWidget>
     logLevel = _settings.logLevel;
     // Reset initial value to remove the has changes flag
     _logLevelFormKey.currentState!.resetInitialValue();
+    _checkUpdatesFormKey.currentState!.resetInitialValue();
     setState(() {});
   }
 
@@ -100,6 +112,18 @@ class SettingsState extends State<SettingsWidget>
     await log(
       LogLevel.debug,
       'Log level changed to ${chosenLevel.name}',
+    );
+    // Refresh has changes flag
+    setState(() {});
+  }
+
+  Future<void> _changeUpdateCheck(bool? chosen) async {
+    if (chosen == null) {
+      return;
+    }
+    await log(
+      LogLevel.debug,
+      'Auto update checks ${chosen ? 'enabled' : 'disabled'}',
     );
     // Refresh has changes flag
     setState(() {});
@@ -127,6 +151,16 @@ class SettingsState extends State<SettingsWidget>
       onValueChanged: _changeLogLevel,
       key: _logLevelFormKey,
     );
+    _checkUpdatesForm = TFormSwitch(
+      enabled: true,
+      title: 'Check for updates',
+      subtitle: 'Whether to check for updates on startup',
+      offText: "Don't check for updates",
+      onText: 'Check for updates',
+      onValueChanged: _changeUpdateCheck,
+      initialValue: _settings.checkUpdates,
+      key: _checkUpdatesFormKey,
+    );
   }
 
   @override
@@ -141,6 +175,11 @@ class SettingsState extends State<SettingsWidget>
             color: TFormTitle.subtitleColor,
             childPadding: const EdgeInsets.only(right: 15),
             child: _logLevelForm,
+          ),
+          RoundedBorder(
+            color: TFormTitle.subtitleColor,
+            childPadding: const EdgeInsets.only(right: 15),
+            child: _checkUpdatesForm,
           ),
         ],
       ),
