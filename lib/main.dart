@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:thlaby2_save_editor/mixins/exception.dart';
 import 'package:thlaby2_save_editor/views/main.dart';
 import 'package:thlaby2_save_editor/views/settings.dart';
 import 'package:window_size/window_size.dart';
@@ -42,6 +43,12 @@ class MyApp extends StatelessWidget {
       ),
       home: const MainWidget(),
       debugShowCheckedModeBanner: false,
+      builder: (BuildContext context, Widget? widget) {
+        ErrorWidget.builder = (FlutterErrorDetails details) {
+          return ExceptionWidget(details: details);
+        };
+        return widget!;
+      },
     );
   }
 }

@@ -1,5 +1,4 @@
 Release Notes
 =============
 
-- Added character equipment editing
-- Added automatic update checking
+- Fixed a bug where app would error if settings file wasn't loaded properly

@@ -1,49 +1,11 @@
-name: Add Tag, Build Windows and Linux
+name: Build test version
 
 on:
   push:
     branches:
-      - 'main'
+      - 'test/branch'
 
 jobs:
-  make-tag:
-    name: Add Tag and Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Code Checkout
-        uses: actions/checkout@v3
-
-      - name: Determine Tag
-        run: |
-          echo "RELEASE_TAG=$(cat pubspec.yaml | grep version | awk -F ' ' '{print $2}')" >> $GITHUB_ENV
-
-      - name: Determine Tag Message
-        run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "TAG_MESSAGE<<$EOF" >> $GITHUB_ENV
-          cat latest-notes.txt >> $GITHUB_ENV
-          echo "$EOF" >> $GITHUB_ENV
-
-      - name: Create Release
-        uses: actions/github-script@v6
-        with:
-          github-token: "${{ secrets.RELEASE_TOKEN }}"
-          script: |
-            try {
-              const response = await github.rest.repos.createRelease({
-                tag_name: process.env.RELEASE_TAG,
-                name: process.env.RELEASE_TAG,
-                body: process.env.TAG_MESSAGE,
-                draft: false,
-                prerelease: false,
-                generate_release_notes: true,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-              });
-            } catch (error) {
-              core.setFailed(error.message);
-            }
-
   build-windows:
     name: Windows Native Build
     runs-on: windows-latest
@@ -56,9 +18,6 @@ jobs:
         uses: subosito/flutter-action@v2.12.0
         with:
           flutter-version: '3.7.12'
-          cache: true
-          cache-key: 'flutter-3-7-12-windows'
-          cache-path: ${{ runner.tool_cache }}/flutter/windows-3-7-12
 
       - name: Flutter Config
         run: flutter config --enable-windows-desktop --no-analytics
