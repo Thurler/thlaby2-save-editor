@@ -186,6 +186,8 @@ mixin SettingsReader {
       File settingsFile = File('./settings.json');
       if (settingsFile.existsSync()) {
         settings = Settings.fromJson(settingsFile.readAsStringSync());
+      } else {
+        settings = Settings.fromDefault();
       }
     } catch (e) {
       // If we fail to load the settings file, keep going with default settings
