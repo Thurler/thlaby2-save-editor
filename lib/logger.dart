@@ -20,7 +20,7 @@ enum LogLevel {
 class Logger with SettingsReader {
   static final Logger _logger = Logger._internal();
   static const String filename = './applicationlog.txt';
-  static const String version = '0.5.0';
+  static const String version = '0.5.1';
   LogLevel logLevel = LogLevel.info;
   late IOSink sink;
 
