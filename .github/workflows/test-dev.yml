@@ -3,7 +3,7 @@ name: Build test version
 on:
   push:
     branches:
-      - 'development'
+      - 'test/branch'
 
 jobs:
   build-windows:
