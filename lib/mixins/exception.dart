@@ -40,6 +40,9 @@ class ExceptionWidget extends StatelessWidget {
 
   const ExceptionWidget({required this.details, super.key});
 
+  String get detailMessage => '${details.exception}}\n${details.summary}\n'
+      '$details\n\n${details.stack}';
+
   @override
   Widget build(BuildContext context) {
     return CommonScaffold(
@@ -50,7 +53,7 @@ class ExceptionWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SelectableText('Please include the below information as well:'),
-        SelectableText('${details.summary}\n${details.stack}'),
+        SelectableText(detailMessage),
       ].separateWith(const SizedBox(height: 10)),
     );
   }
