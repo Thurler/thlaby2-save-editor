@@ -4,6 +4,7 @@ import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
+import 'package:thlaby2_save_editor/save/general.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 
@@ -38,7 +39,7 @@ class SaveFile with Loggable {
   List<int> achievementNotificationsDataPlus = <int>[];
   List<int> bestiaryData = <int>[];
   late List<PartySlot> partyData;
-  List<int> generalGameData = <int>[];
+  late GeneralData generalGameData;
   List<int> eventFlagData = <int>[];
   late List<ItemSlot> mainInventoryData;
   late List<ItemSlot> subInventoryData;
@@ -97,7 +98,7 @@ class SaveFile with Loggable {
     bytes.replaceRange(0x19e, 0x1d2, achievementNotificationsDataPlus);
     bytes.replaceRange(0x2c2, 0x4c22, bestiaryData);
     bytes.replaceRange(0x5018, 0x5024, _exportPartyData());
-    bytes.replaceRange(0x540c, 0x54c6, generalGameData);
+    bytes.replaceRange(0x540c, 0x54c6, _exportGeneralGameData());
     bytes.replaceRange(0x54c6, 0x68b2, eventFlagData);
     bytes.replaceRange(0x7bd7, 0x7c13, _exportMainInventoryFlagData());
     bytes.replaceRange(0x7c9f, 0x7d8f, _exportSubInventoryFlagData());
@@ -132,6 +133,10 @@ class SaveFile with Loggable {
   Iterable<int> _exportPartyData() {
     logBuffer(LogLevel.debug, 'Party data: $partyData');
     return partyData.map<int>((PartySlot slot) => slot.toByte());
+  }
+
+  Iterable<int> _exportGeneralGameData() {
+    return generalGameData.toBytes(Endian.little);
   }
 
   Iterable<int> _exportMainInventoryFlagData() {
@@ -242,8 +247,13 @@ class SaveFile with Loggable {
     }
   }
 
-  // ignore: use_setters_to_change_properties
-  void _setGeneralGameData(List<int> bytes) => generalGameData = bytes;
+  void _setGeneralGameData(List<int> bytes) {
+    generalGameData = GeneralData.fromBytes(
+      endianness: Endian.little,
+      bytes: bytes,
+    );
+  }
+
   // ignore: use_setters_to_change_properties
   void _setEventFlagData(List<int> bytes) => eventFlagData = bytes;
 
