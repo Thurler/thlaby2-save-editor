@@ -1,6 +1,6 @@
+import 'package:tfields/widgets/form/base.dart';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 import 'package:thlaby2_save_editor/save/enums/skill.dart';
-import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/form_group.dart';
 import 'package:thlaby2_save_editor/widgets/skill_form.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/mixins/exception.dart';
+import 'package:tfields/settings.dart';
 import 'package:thlaby2_save_editor/views/main.dart';
-import 'package:thlaby2_save_editor/views/settings.dart';
+import 'package:thlaby2_save_editor/widgets/exception.dart';
 import 'package:window_size/window_size.dart';
 
 /// Globally access the minimum window width/height constraints
@@ -20,7 +20,7 @@ void main() {
   File settingsFile = File('./settings.json');
   try {
     if (!settingsFile.existsSync()) {
-      Settings settings = Settings.fromDefault();
+      CommonSettings settings = CommonSettings.fromDefault();
       settingsFile.writeAsStringSync('${settings.toJson()}\n');
     }
   } catch (e) {

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/logger.dart';
+import 'package:tfields/mixins/alert.dart';
+import 'package:tfields/mixins/discardable_changes.dart';
+import 'package:tfields/mixins/loggable.dart';
+import 'package:tfields/widgets/common_scaffold.dart';
+import 'package:tfields/widgets/form/base.dart';
+import 'package:tfields/widgets/form/dropdown.dart';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
-import 'package:thlaby2_save_editor/logger.dart';
-import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
-import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
@@ -16,7 +20,6 @@ import 'package:thlaby2_save_editor/save/enums/subclass.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/save/library.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
-import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/form_group.dart';
 import 'package:thlaby2_save_editor/widgets/skill_form.dart';
@@ -522,8 +525,8 @@ class CharacterEditState extends State<CharacterEditWidget>
 
     // Unused skill points and training manuals used
     data.usedManuals = _trainingManualFormKey.currentState!.saveIntValue();
-    data.unusedSkillPoints = _unusedSkillPointsFormKey
-        .currentState!.saveIntValue();
+    data.unusedSkillPoints =
+        _unusedSkillPointsFormKey.currentState!.saveIntValue();
 
     // Tome data
     for (TomeStat stat in tomeStats) {
@@ -806,8 +809,9 @@ class CharacterEditState extends State<CharacterEditWidget>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: checkChangesAndConfirm,
+    return PopScope(
+      canPop: !hasChanges,
+      onPopInvokedWithResult: onPopInvoked,
       child: CommonScaffold(
         title: "Edit ${character.name.upperCaseFirstChar()}'s data",
         floatingActionButton: saveButton,

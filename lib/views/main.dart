@@ -2,19 +2,31 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/logger.dart';
-import 'package:thlaby2_save_editor/mixins/alert.dart';
-import 'package:thlaby2_save_editor/mixins/exception.dart';
+import 'package:tfields/logger.dart';
+import 'package:tfields/mixins/alert.dart';
+import 'package:tfields/mixins/loggable.dart';
+import 'package:tfields/mixins/settings_reader.dart';
+import 'package:tfields/mixins/update_checker.dart';
+import 'package:tfields/settings.dart';
+import 'package:tfields/update_checker.dart';
+import 'package:tfields/widgets/button.dart';
+import 'package:tfields/widgets/common_scaffold.dart';
+import 'package:tfields/widgets/dialog.dart';
+import 'package:tfields/widgets/spaced_row.dart';
+import 'package:tfields/widgets/update_status.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/update_checker.dart';
-import 'package:thlaby2_save_editor/views/settings.dart';
-import 'package:thlaby2_save_editor/widgets/button.dart';
-import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
-import 'package:thlaby2_save_editor/widgets/dialog.dart';
-import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
+import 'package:thlaby2_save_editor/widgets/exception.dart';
+
+class MainUpdateCheck extends UpdateCheck {
+  @override
+  String get githubEndpoint =>
+      'https://api.github.com/repos/thurler/thlaby2-save-editor/releases/latest';
+}
 
 class MainWidget extends StatefulWidget {
+  static const String version = '0.5.1';
+
   const MainWidget({super.key});
 
   @override
@@ -26,10 +38,10 @@ class MainState extends State<MainWidget>
         SaveReader,
         SaveWriter,
         Loggable,
-        SettingsReader,
-        UpdateChecker,
+        SettingsReader<CommonSettings>,
+        CommonSettingsReader,
+        UpdateChecker<MainUpdateCheck>,
         AlertHandler<MainWidget>,
-        ExceptionHandler<MainWidget>,
         Navigatable<MainWidget> {
   @override
   void updateCheckCallback() => setState(() {});
@@ -40,8 +52,11 @@ class MainState extends State<MainWidget>
     setState(() {
       loadSettings();
     });
-    unawaited(checkForUpdates());
+    unawaited(checkForUpdates(MainWidget.version));
   }
+
+  @override
+  MainUpdateCheck get updateChecker => MainUpdateCheck();
 
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(
@@ -95,14 +110,18 @@ class MainState extends State<MainWidget>
       );
       return;
     } on Exception catch (e, s) {
-      await handleUnexpectedException(e, s);
+      await handleUnexpectedException(
+        e,
+        s,
+        dialogBody: ExceptionWidget.dialogBody,
+      );
       return;
     }
     if (saveFile.loadedWithErrors) {
       await showCommonDialog(
-        const TWarningDialog(
-          title: 'The loaded save file had errors',
-          body: 'Some of the data that was read seemed to contain invalid '
+        TDialog.warning(
+          titleText: 'The loaded save file had errors',
+          bodyText: 'Some of the data that was read seemed to contain invalid '
               'values. Please check the "applicationlog.txt" file for more '
               'information.\n\nIf you are sure the uploaded file was not '
               'tampered with, please report this as an issue at the link '
@@ -120,7 +139,7 @@ class MainState extends State<MainWidget>
   void initState() {
     super.initState();
     loadSettings();
-    unawaited(checkForUpdates());
+    unawaited(checkForUpdates(MainWidget.version));
   }
 
   @override
@@ -130,7 +149,7 @@ class MainState extends State<MainWidget>
       settingsLink: navigateToSettings,
       children: <Widget>[
         Image.asset('img/title.png'),
-        const Text('Version ${Logger.version}'),
+        const Text('Version ${MainWidget.version}'),
         if (settings.checkUpdates)
           UpdateStatus(
             hasCheckedForUpdates: updateChecker.hasCheckedForUpdates,
@@ -139,7 +158,7 @@ class MainState extends State<MainWidget>
             latestVersion: updateChecker.latestVersion,
             onUpdateTap: updateChecker.openLatestVersion,
           ),
-        SpacedRow(
+        TSpacedRow(
           spacer: const SizedBox(width: 20),
           children: <Widget>[
             const TButton(

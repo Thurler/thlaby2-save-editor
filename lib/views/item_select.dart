@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/widgets/common_scaffold.dart';
+import 'package:tfields/widgets/switch.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
-import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/item_category.dart';
-import 'package:thlaby2_save_editor/widgets/switch.dart';
 
 class ItemSelectWidget extends StatefulWidget {
   final List<ItemSlot> items;

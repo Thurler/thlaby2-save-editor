@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/widgets/clickable.dart';
+import 'package:tfields/widgets/clickable.dart';
 
 class PartyRemoveButton extends StatelessWidget {
   final bool enabled;

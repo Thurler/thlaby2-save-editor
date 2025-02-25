@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tfields/extensions/iterable.dart';
+import 'package:tfields/widgets/button.dart';
+import 'package:tfields/widgets/clickable.dart';
+import 'package:tfields/widgets/form/base.dart';
+import 'package:tfields/widgets/rounded_border.dart';
+import 'package:tfields/widgets/spaced_row.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/widgets/badge.dart';
-import 'package:thlaby2_save_editor/widgets/button.dart';
-import 'package:thlaby2_save_editor/widgets/clickable.dart';
-import 'package:thlaby2_save_editor/widgets/form.dart';
 import 'package:thlaby2_save_editor/widgets/item_form.dart';
-import 'package:thlaby2_save_editor/widgets/rounded_border.dart';
-import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 typedef ItemCategoryKey = GlobalKey<ItemCategoryState>;
 typedef ItemPageKey = GlobalKey<ItemPageState>;
@@ -105,7 +105,7 @@ class ItemOption extends StatelessWidget {
     if (isUnlocked || allowLockedSelection) {
       isHighlighted = item == highlighted;
     }
-    Widget border = RoundedBorder(
+    Widget border = TRoundedBorder(
       color: isHighlighted
         ? Colors.green
         : TFormTitle.subtitleColor.withOpacity(0.5),
@@ -225,7 +225,7 @@ class ItemPageState extends State<ItemPage> {
     return Column(
       children: List<Widget>.generate(
         (itemForms.length / 2).ceil(),
-        (int i) => SpacedRow(
+        (int i) => TSpacedRow(
           spacer: const SizedBox(width: 20),
           children: <Widget>[
             ItemOption(

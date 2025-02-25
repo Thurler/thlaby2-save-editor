@@ -34,7 +34,10 @@ class CharacterRoster extends StatelessWidget {
     }
     // Also precache the empty portrait!
     if (state.mounted) {
-      await precacheImage(CharacterBox.imageFromName('Empty').image, context);
+      await precacheImage(
+        CharacterBox.imageFromName('Empty').image,
+        state.context,
+      );
     }
   }
 

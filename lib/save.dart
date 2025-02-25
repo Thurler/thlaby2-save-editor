@@ -1,5 +1,6 @@
 import 'dart:typed_data';
-import 'package:thlaby2_save_editor/logger.dart';
+import 'package:tfields/logger.dart';
+import 'package:tfields/mixins/loggable.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';

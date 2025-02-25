@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/logger.dart';
-import 'package:thlaby2_save_editor/mixins/alert.dart';
-import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
+import 'package:tfields/logger.dart';
+import 'package:tfields/mixins/alert.dart';
+import 'package:tfields/mixins/discardable_changes.dart';
+import 'package:tfields/mixins/loggable.dart';
+import 'package:tfields/widgets/common_scaffold.dart';
+import 'package:tfields/widgets/spaced_row.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
-import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/widgets/item_category.dart';
 import 'package:thlaby2_save_editor/widgets/item_form.dart';
-import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 class ItemDataWidget extends StatefulWidget {
   const ItemDataWidget({super.key});
@@ -164,13 +165,14 @@ class ItemDataState extends State<ItemDataWidget>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: checkChangesAndConfirm,
+    return PopScope(
+      canPop: !hasChanges,
+      onPopInvokedWithResult: onPopInvoked,
       child: CommonScaffold(
         title: 'Edit item unlock flags and amounts',
         floatingActionButton: saveButton,
         children: <Widget>[
-          SpacedRow(
+          TSpacedRow(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacer: const SizedBox(width: 20),
             children: categoryKeys.map(

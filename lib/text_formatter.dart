@@ -7,7 +7,7 @@ class NumberInputFormatter extends TextInputFormatter {
   final int? maxLength;
   final String Function(String value) validationCallback;
 
-  NumberInputFormatter({
+  const NumberInputFormatter({
     required this.validationCallback,
     this.maxLength,
   }) : super();

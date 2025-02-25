@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/logger.dart';
+import 'package:tfields/logger.dart';
+import 'package:tfields/mixins/loggable.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
@@ -30,7 +31,12 @@ mixin Navigatable<T extends StatefulWidget> on Loggable, State<T> {
   }
 
   Future<void> navigateToSettings() {
-    return _navigate(const SettingsWidget(), 'settings');
+    return _navigate(
+      const CommonSettingsWidget(
+        title: 'Touhou Labyrinth 2 Save Editor - Settings',
+      ),
+      'settings',
+    );
   }
 
   Future<void> navigateToMainMenu() {

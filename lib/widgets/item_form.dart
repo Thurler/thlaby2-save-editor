@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/widgets/clickable.dart';
+import 'package:tfields/widgets/form/base.dart';
+import 'package:tfields/widgets/form/string.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
-import 'package:thlaby2_save_editor/widgets/clickable.dart';
 import 'package:thlaby2_save_editor/widgets/form.dart';
 
 typedef ItemFormKey = GlobalKey<TFormItemState>;

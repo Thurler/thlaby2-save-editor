@@ -2,18 +2,23 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/logger.dart';
-import 'package:thlaby2_save_editor/mixins/alert.dart';
-import 'package:thlaby2_save_editor/mixins/exception.dart';
+import 'package:tfields/logger.dart';
+import 'package:tfields/mixins/alert.dart';
+import 'package:tfields/mixins/discardable_changes.dart';
+import 'package:tfields/mixins/loggable.dart';
+import 'package:tfields/mixins/settings_reader.dart';
+import 'package:tfields/mixins/update_checker.dart';
+import 'package:tfields/settings.dart';
+import 'package:tfields/widgets/button.dart';
+import 'package:tfields/widgets/common_scaffold.dart';
+import 'package:tfields/widgets/dialog.dart';
+import 'package:tfields/widgets/spaced_row.dart';
+import 'package:tfields/widgets/update_status.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/update_checker.dart';
-import 'package:thlaby2_save_editor/views/settings.dart';
-import 'package:thlaby2_save_editor/widgets/button.dart';
+import 'package:thlaby2_save_editor/views/main.dart';
 import 'package:thlaby2_save_editor/widgets/character_roster.dart';
-import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
-import 'package:thlaby2_save_editor/widgets/dialog.dart';
-import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
+import 'package:thlaby2_save_editor/widgets/exception.dart';
 
 class MenuWidget extends StatefulWidget {
   const MenuWidget({super.key});
@@ -26,29 +31,12 @@ class MenuState extends State<MenuWidget>
     with
         SaveReader,
         Loggable,
-        SettingsReader,
-        UpdateChecker,
+        SettingsReader<CommonSettings>,
+        CommonSettingsReader,
+        UpdateChecker<MainUpdateCheck>,
         AlertHandler<MenuWidget>,
-        ExceptionHandler<MenuWidget>,
+        DiscardableChanges<MenuWidget>,
         Navigatable<MenuWidget> {
-  Future<bool> _alertUnexportedChanges() async {
-    TBoolDialog dialog = const TBoolDialog(
-      title: 'Did you export your changes?',
-      body: 'Are you sure you want to go back and load a different save file? '
-          'Any changes that have not been exported will be discarded!',
-      confirmText: 'Yes, change files',
-      cancelText: 'No, keep me here',
-    );
-    bool canReturn = await showBoolDialog(dialog);
-    if (canReturn) {
-      await log(
-        LogLevel.info,
-        'User confirmed going back to file select without exporting',
-      );
-    }
-    return canReturn;
-  }
-
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(
       logMessage: 'FileSystem Exception when exporting file: ${e.message}',
@@ -78,17 +66,49 @@ class MenuState extends State<MenuWidget>
       await _handleFileSystemException(e);
       return;
     } on Exception catch (e, s) {
-      await handleUnexpectedException(e, s);
+      await handleUnexpectedException(
+        e,
+        s,
+        dialogBody: ExceptionWidget.dialogBody,
+      );
       return;
     }
     await log(LogLevel.info, 'Steam save file exported successfully');
     await showCommonDialog(
-      const TSuccessDialog(title: 'Save file exported successfully'),
+      TDialog.success(titleText: 'Save file exported successfully'),
     );
   }
 
   @override
+  MainUpdateCheck get updateChecker => MainUpdateCheck();
+
+  @override
   void updateCheckCallback() => setState(() {});
+
+  @override
+  Future<bool> showUnsavedChangesDialog() async {
+    TDialog dialog = TDialog.boolWarning(
+      titleText: 'Did you export your changes?',
+      bodyText: 'Are you sure you want to go back and load a different save '
+          'file? Any changes that have not been exported will be discarded!',
+      confirmText: 'Yes, change files',
+      cancelText: 'No, keep me here',
+    );
+    bool canReturn = await showBoolDialog(dialog);
+    if (canReturn) {
+      await log(
+        LogLevel.info,
+        'User confirmed going back to file select without exporting',
+      );
+    }
+    return canReturn;
+  }
+
+  @override
+  bool get hasChanges => true;
+
+  @override
+  Future<void> saveChanges() async {}
 
   @override
   Future<void> navigateToSettings() async {
@@ -96,7 +116,7 @@ class MenuState extends State<MenuWidget>
     setState(() {
       loadSettings();
     });
-    unawaited(checkForUpdates());
+    unawaited(checkForUpdates(MainWidget.version));
   }
 
   @override
@@ -109,18 +129,19 @@ class MenuState extends State<MenuWidget>
   void initState() {
     super.initState();
     loadSettings();
-    unawaited(checkForUpdates());
+    unawaited(checkForUpdates(MainWidget.version));
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _alertUnexportedChanges,
+    return PopScope(
+      canPop: !hasChanges,
+      onPopInvokedWithResult: onPopInvoked,
       child: CommonScaffold(
         title: 'Touhou Labyrinth 2 Save Editor - Menu',
         settingsLink: navigateToSettings,
         children: <Widget>[
-          const SpacedRow(
+          const TSpacedRow(
             spacer: SizedBox(width: 20),
             children: <Widget>[
               TButton(
@@ -133,7 +154,7 @@ class MenuState extends State<MenuWidget>
               ),
             ],
           ),
-          SpacedRow(
+          TSpacedRow(
             spacer: const SizedBox(width: 20),
             children: <Widget>[
               TButton(
@@ -148,7 +169,7 @@ class MenuState extends State<MenuWidget>
               ),
             ],
           ),
-          const SpacedRow(
+          const TSpacedRow(
             spacer: SizedBox(width: 20),
             children: <Widget>[
               TButton(
@@ -158,10 +179,10 @@ class MenuState extends State<MenuWidget>
               TButton(
                 text: 'Bestiary Data',
                 icon: Icons.school_outlined,
-              )
+              ),
             ],
           ),
-          SpacedRow(
+          TSpacedRow(
             spacer: const SizedBox(width: 20),
             children: <Widget>[
               TButton(
@@ -176,7 +197,7 @@ class MenuState extends State<MenuWidget>
             ],
           ),
           const Divider(),
-          SpacedRow(
+          TSpacedRow(
             spacer: const SizedBox(width: 20),
             children: <Widget>[
               const TButton(
@@ -190,7 +211,7 @@ class MenuState extends State<MenuWidget>
               ),
             ],
           ),
-          const Text('Version ${Logger.version}'),
+          const Text('Version ${MainWidget.version}'),
           if (settings.checkUpdates)
             UpdateStatus(
               hasCheckedForUpdates: updateChecker.hasCheckedForUpdates,

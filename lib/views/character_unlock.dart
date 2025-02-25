@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/logger.dart';
+import 'package:tfields/mixins/alert.dart';
+import 'package:tfields/mixins/discardable_changes.dart';
+import 'package:tfields/mixins/loggable.dart';
+import 'package:tfields/widgets/button.dart';
+import 'package:tfields/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
-import 'package:thlaby2_save_editor/logger.dart';
-import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
-import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
-import 'package:thlaby2_save_editor/widgets/button.dart';
 import 'package:thlaby2_save_editor/widgets/character_box_title_unlock.dart';
 import 'package:thlaby2_save_editor/widgets/character_roster.dart';
-import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 
 class CharacterUnlockWidget extends StatefulWidget {
   const CharacterUnlockWidget({super.key});
@@ -162,8 +163,9 @@ class CharacterUnlockState extends State<CharacterUnlockWidget>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: checkChangesAndConfirm,
+    return PopScope(
+      canPop: !hasChanges,
+      onPopInvokedWithResult: onPopInvoked,
       child: CommonScaffold(
         title: 'Edit which characters are unlocked',
         floatingActionButton: saveButton,

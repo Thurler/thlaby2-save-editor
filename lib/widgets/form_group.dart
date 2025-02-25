@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/widgets/form/base.dart';
 import 'package:thlaby2_save_editor/widgets/badge.dart';
-import 'package:thlaby2_save_editor/widgets/form.dart';
 
 class TFormGroup<T> {
   final String title;

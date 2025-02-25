@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/widgets/spaced_row.dart';
 import 'package:thlaby2_save_editor/extensions/string_extension.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 import 'package:thlaby2_save_editor/widgets/character_box.dart';
 import 'package:thlaby2_save_editor/widgets/party_remove_button.dart';
-import 'package:thlaby2_save_editor/widgets/spaced_row.dart';
 
 class PartyRow extends StatelessWidget {
   final List<PartySlot> slots;
@@ -31,7 +31,7 @@ class PartyRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SpacedRow(
+    return TSpacedRow(
       mainAxisAlignment: MainAxisAlignment.center,
       spacer: const SizedBox(width: 20),
       children: slots.map(

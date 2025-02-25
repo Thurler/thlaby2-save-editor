@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/widgets/common_scaffold.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/widgets/character_roster.dart';
-import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
 
 class CharacterSelectWidget extends StatefulWidget {
   const CharacterSelectWidget({super.key});
