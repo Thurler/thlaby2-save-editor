@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/extensions/iterable_extension.dart';
+import 'package:tfields/extensions/iterable.dart';
 import 'package:thlaby2_save_editor/logger.dart';
 import 'package:thlaby2_save_editor/mixins/alert.dart';
 import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';

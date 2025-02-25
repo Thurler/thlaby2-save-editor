@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/extensions/iterable_extension.dart';
+import 'package:tfields/extensions/iterable.dart';
 
 class SpacedRow extends StatelessWidget {
   final List<Widget> children;
