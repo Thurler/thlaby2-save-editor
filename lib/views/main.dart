@@ -56,7 +56,7 @@ class MainState extends State<MainWidget>
   }
 
   @override
-  MainUpdateCheck get updateChecker => MainUpdateCheck();
+  MainUpdateCheck updateChecker = MainUpdateCheck();
 
   Future<void> _handleFileSystemException(FileSystemException e) {
     return handleException(

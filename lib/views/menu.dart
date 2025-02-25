@@ -80,7 +80,7 @@ class MenuState extends State<MenuWidget>
   }
 
   @override
-  MainUpdateCheck get updateChecker => MainUpdateCheck();
+  MainUpdateCheck updateChecker = MainUpdateCheck();
 
   @override
   void updateCheckCallback() => setState(() {});
