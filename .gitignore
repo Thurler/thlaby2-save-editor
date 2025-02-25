@@ -4,6 +4,7 @@ applicationlog.txt
 settings.json
 .flutter-plugins-dependencies
 .vscode
+pubspec.lock
 
 # Miscellaneous
 *.class
