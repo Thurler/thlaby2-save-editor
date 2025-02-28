@@ -36,7 +36,7 @@ class GemData {
     }
   }
 
-  GemData.fromBytes(List<int> bytes, int offset) {
+  GemData.fromBytes(Uint8List bytes, int offset) {
     hp = bytes[offset];
     mp = bytes[offset + 2];
     tp = bytes[offset + 4];

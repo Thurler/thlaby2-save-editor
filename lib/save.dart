@@ -33,29 +33,29 @@ class SaveFile with Loggable {
   static const int characterDataLength = 271;
 
   late List<CharacterUnlockFlag> characterUnlockFlags;
-  List<int> achievementData = <int>[];
-  List<int> achievementDataPlus = <int>[];
-  List<int> achievementNotificationsData = <int>[];
-  List<int> achievementNotificationsDataPlus = <int>[];
-  List<int> bestiaryData = <int>[];
+  Uint8List achievementData = Uint8List(0);
+  Uint8List achievementDataPlus = Uint8List(0);
+  Uint8List achievementNotificationsData = Uint8List(0);
+  Uint8List achievementNotificationsDataPlus = Uint8List(0);
+  Uint8List bestiaryData = Uint8List(0);
   late List<PartySlot> partyData;
-  List<int> generalGameData = <int>[];
-  List<int> eventFlagData = <int>[];
+  Uint8List generalGameData = Uint8List(0);
+  Uint8List eventFlagData = Uint8List(0);
   late List<ItemSlot> mainInventoryData;
   late List<ItemSlot> subInventoryData;
   late List<ItemSlot> materialInventoryData;
   late List<ItemSlot> specialInventoryData;
   late List<CharacterData> characterData;
-  List<int> mainMapData = <int>[];
-  List<int> undergroundMapData = <int>[];
+  Uint8List mainMapData = Uint8List(0);
+  Uint8List undergroundMapData = Uint8List(0);
 
   bool loadedWithErrors = false;
 
-  SaveFile.fromSteamBytes(List<int> bytes) {
+  SaveFile.fromSteamBytes(Uint8List bytes) {
     if (bytes.length != steamFileSize) {
       throw const FileSizeException();
     }
-    List<int> decrypted = _runSteamEncoding(bytes);
+    Uint8List decrypted = _runSteamEncoding(bytes);
     if (
       decrypted[0] != 0x42 ||
       decrypted[1] != 0x4c ||
@@ -87,40 +87,39 @@ class SaveFile with Loggable {
     _setUndergroundMapData(decrypted.sublist(0x33e8e, 0x3ee8e));
   }
 
-  List<int> exportSteam() {
-    List<int> bytes = List<int>.filled(steamFileSize, 0, growable: true);
+  Uint8List exportSteam() {
+    Uint8List bytes = Uint8List(steamFileSize);
     bytes[0x67] = 0x1;
-    bytes.replaceRange(0x0, 0x4, <int>[0x42, 0x4c, 0x48, 0x54]);
-    bytes.replaceRange(0x5, 0x3d, _exportCharacterUnlockFlags());
-    bytes.replaceRange(0x68, 0xd0, achievementData);
-    bytes.replaceRange(0xd6, 0x10a, achievementDataPlus);
-    bytes.replaceRange(0x130, 0x198, achievementNotificationsData);
-    bytes.replaceRange(0x19e, 0x1d2, achievementNotificationsDataPlus);
-    bytes.replaceRange(0x2c2, 0x4c22, bestiaryData);
-    bytes.replaceRange(0x5018, 0x5024, _exportPartyData());
-    bytes.replaceRange(0x540c, 0x54c6, generalGameData);
-    bytes.replaceRange(0x54c6, 0x68b2, eventFlagData);
-    bytes.replaceRange(0x7bd7, 0x7c13, _exportMainInventoryFlagData());
-    bytes.replaceRange(0x7c9f, 0x7d8f, _exportSubInventoryFlagData());
-    bytes.replaceRange(0x7dcb, 0x7e2f, _exportMaterialFlagData());
-    bytes.replaceRange(0x7ef7, 0x7fab, _exportSpecialItemFlagData());
-    bytes.replaceRange(0x83a8, 0x8420, _exportMainInventoryAmountData());
-    bytes.replaceRange(0x8538, 0x8718, _exportSubInventoryAmountData());
-    bytes.replaceRange(0x8790, 0x8858, _exportMaterialInventoryAmountData());
-    bytes.replaceRange(0x89e8, 0x8b50, _exportSpecialInventoryAmountData());
-    bytes.replaceRange(0x9346, 0xce8e, _exportCharacterData());
-    bytes.replaceRange(0xce8e, 0x2ae8e, mainMapData);
-    bytes.replaceRange(0x33e8e, 0x3ee8e, undergroundMapData);
+    bytes.setRange(0x0, 0x4, <int>[0x42, 0x4c, 0x48, 0x54]);
+    bytes.setRange(0x5, 0x3d, _exportCharacterUnlockFlags());
+    bytes.setRange(0x68, 0xd0, achievementData);
+    bytes.setRange(0xd6, 0x10a, achievementDataPlus);
+    bytes.setRange(0x130, 0x198, achievementNotificationsData);
+    bytes.setRange(0x19e, 0x1d2, achievementNotificationsDataPlus);
+    bytes.setRange(0x2c2, 0x4c22, bestiaryData);
+    bytes.setRange(0x5018, 0x5024, _exportPartyData());
+    bytes.setRange(0x540c, 0x54c6, generalGameData);
+    bytes.setRange(0x54c6, 0x68b2, eventFlagData);
+    bytes.setRange(0x7bd7, 0x7c13, _exportMainInventoryFlagData());
+    bytes.setRange(0x7c9f, 0x7d8f, _exportSubInventoryFlagData());
+    bytes.setRange(0x7dcb, 0x7e2f, _exportMaterialFlagData());
+    bytes.setRange(0x7ef7, 0x7fab, _exportSpecialItemFlagData());
+    bytes.setRange(0x83a8, 0x8420, _exportMainInventoryAmountData());
+    bytes.setRange(0x8538, 0x8718, _exportSubInventoryAmountData());
+    bytes.setRange(0x8790, 0x8858, _exportMaterialInventoryAmountData());
+    bytes.setRange(0x89e8, 0x8b50, _exportSpecialInventoryAmountData());
+    bytes.setRange(0x9346, 0xce8e, _exportCharacterData());
+    bytes.setRange(0xce8e, 0x2ae8e, mainMapData);
+    bytes.setRange(0x33e8e, 0x3ee8e, undergroundMapData);
     return _runSteamEncoding(bytes);
   }
 
-  List<int> _runSteamEncoding(List<int> bytes) {
-    return bytes.asMap().map(
-      (int index, int value) => MapEntry<int, int>(
-        index,
-        (index & 0xff) ^ value,
-      ),
-    ).values.toList();
+  Uint8List _runSteamEncoding(Uint8List bytes) {
+    Uint8List result = Uint8List(bytes.length);
+    for (int i = 0; i < bytes.length; i++) {
+      result[i] = (i & 0xff) ^ bytes[i];
+    }
+    return result;
   }
 
   Iterable<int> _exportCharacterUnlockFlags() {
@@ -201,7 +200,7 @@ class SaveFile with Loggable {
     );
   }
 
-  void _setCharacterUnlockFlagsFromBytes(List<int> bytes) {
+  void _setCharacterUnlockFlagsFromBytes(Uint8List bytes) {
     characterUnlockFlags = <CharacterUnlockFlag>[];
     logBuffer(LogLevel.debug, 'Character unlock bytes: $bytes');
     for (int i = 0; i < bytes.length; i++) {
@@ -215,19 +214,19 @@ class SaveFile with Loggable {
   }
 
   // ignore: use_setters_to_change_properties
-  void _setAchievementData(List<int> bytes) => achievementData = bytes;
+  void _setAchievementData(Uint8List bytes) => achievementData = bytes;
   // ignore: use_setters_to_change_properties
-  void _setAchievementDataPlus(List<int> bytes) => achievementDataPlus = bytes;
+  void _setAchievementDataPlus(Uint8List bytes) => achievementDataPlus = bytes;
   // ignore: use_setters_to_change_properties
-  void _setAchievementNotificationData(List<int> bytes) =>
+  void _setAchievementNotificationData(Uint8List bytes) =>
       achievementNotificationsData = bytes;
   // ignore: use_setters_to_change_properties
-  void _setAchievementNotificationDataPlus(List<int> bytes) =>
+  void _setAchievementNotificationDataPlus(Uint8List bytes) =>
       achievementNotificationsDataPlus = bytes;
   // ignore: use_setters_to_change_properties
-  void _setBestiaryData(List<int> bytes) => bestiaryData = bytes;
+  void _setBestiaryData(Uint8List bytes) => bestiaryData = bytes;
 
-  void _setPartyData(List<int> bytes) {
+  void _setPartyData(Uint8List bytes) {
     partyData = <PartySlot>[];
     logBuffer(LogLevel.debug, 'Party bytes: $bytes');
     for (int i = 0; i < bytes.length; i++) {
@@ -244,11 +243,11 @@ class SaveFile with Loggable {
   }
 
   // ignore: use_setters_to_change_properties
-  void _setGeneralGameData(List<int> bytes) => generalGameData = bytes;
+  void _setGeneralGameData(Uint8List bytes) => generalGameData = bytes;
   // ignore: use_setters_to_change_properties
-  void _setEventFlagData(List<int> bytes) => eventFlagData = bytes;
+  void _setEventFlagData(Uint8List bytes) => eventFlagData = bytes;
 
-  void _setMainInventoryFlagData(List<int> bytes) {
+  void _setMainInventoryFlagData(Uint8List bytes) {
     logBuffer(LogLevel.debug, 'Main Equip unlock flag bytes: $bytes');
     mainInventoryData = <ItemSlot>[];
     for (MainEquip item in MainEquip.values) {
@@ -261,7 +260,7 @@ class SaveFile with Loggable {
     }
   }
 
-  void _setSubInventoryFlagData(List<int> bytes) {
+  void _setSubInventoryFlagData(Uint8List bytes) {
     logBuffer(LogLevel.debug, 'Sub Equip unlock flag bytes: $bytes');
     subInventoryData = <ItemSlot>[];
     for (SubEquip item in SubEquip.values) {
@@ -274,7 +273,7 @@ class SaveFile with Loggable {
     }
   }
 
-  void _setMaterialInventoryFlagData(List<int> bytes) {
+  void _setMaterialInventoryFlagData(Uint8List bytes) {
     logBuffer(LogLevel.debug, 'Material unlock flag bytes: $bytes');
     materialInventoryData = <ItemSlot>[];
     for (Material item in Material.values) {
@@ -284,7 +283,7 @@ class SaveFile with Loggable {
     }
   }
 
-  void _setSpecialInventoryFlagData(List<int> bytes) {
+  void _setSpecialInventoryFlagData(Uint8List bytes) {
     logBuffer(LogLevel.debug, 'Special item unlock flag bytes: $bytes');
     specialInventoryData = <ItemSlot>[];
     for (SpecialItem item in SpecialItem.values) {
@@ -294,7 +293,7 @@ class SaveFile with Loggable {
     }
   }
 
-  void _setMainInventoryData(List<int> bytes) {
+  void _setMainInventoryData(Uint8List bytes) {
     logBuffer(LogLevel.debug, 'Main Equip amount bytes: $bytes');
     for (int i = 0; i < MainEquip.values.length - 1; i++) {
       mainInventoryData[i].amountFromBytes(
@@ -305,7 +304,7 @@ class SaveFile with Loggable {
     }
   }
 
-  void _setSubInventoryData(List<int> bytes) {
+  void _setSubInventoryData(Uint8List bytes) {
     logBuffer(LogLevel.debug, 'Sub Equip amount bytes: $bytes');
     for (int i = 0; i < SubEquip.values.length - 1; i++) {
       subInventoryData[i].amountFromBytes(
@@ -316,7 +315,7 @@ class SaveFile with Loggable {
     }
   }
 
-  void _setMaterialInventoryData(List<int> bytes) {
+  void _setMaterialInventoryData(Uint8List bytes) {
     logBuffer(LogLevel.debug, 'Material amount bytes: $bytes');
     for (int i = 0; i < Material.values.length; i++) {
       materialInventoryData[i].amountFromBytes(
@@ -327,7 +326,7 @@ class SaveFile with Loggable {
     }
   }
 
-  void _setSpecialInventoryData(List<int> bytes) {
+  void _setSpecialInventoryData(Uint8List bytes) {
     logBuffer(LogLevel.debug, 'Special item amount bytes: $bytes');
     for (int i = 0; i < SpecialItem.values.length; i++) {
       specialInventoryData[i].amountFromBytes(
@@ -338,12 +337,12 @@ class SaveFile with Loggable {
     }
   }
 
-  void _setCharacterData(List<int> bytes) {
+  void _setCharacterData(Uint8List bytes) {
     characterData = <CharacterData>[];
     for (int i = 0; i < 56; i++) {
       int start = i * characterDataLength;
       int end = (i + 1) * characterDataLength;
-      List<int> characterBytes = bytes.sublist(start, end);
+      Uint8List characterBytes = bytes.sublist(start, end);
       logBuffer(LogLevel.debug, 'Character $i bytes: $characterBytes');
       characterData.add(
         CharacterData.fromBytes(
@@ -356,9 +355,9 @@ class SaveFile with Loggable {
   }
 
   // ignore: use_setters_to_change_properties
-  void _setMainMapData(List<int> bytes) => mainMapData = bytes;
+  void _setMainMapData(Uint8List bytes) => mainMapData = bytes;
   // ignore: use_setters_to_change_properties
-  void _setUndergroundMapData(List<int> bytes) => undergroundMapData = bytes;
+  void _setUndergroundMapData(Uint8List bytes) => undergroundMapData = bytes;
 }
 
 mixin SaveReader {

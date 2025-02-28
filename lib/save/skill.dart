@@ -79,7 +79,7 @@ class SkillData {
     }
   }
 
-  SkillData.fromBytes(List<int> bytes, int offset) {
+  SkillData.fromBytes(Uint8List bytes, int offset) {
     hpBoost = bytes[offset];
     mpBoost = bytes[offset + 2];
     tpBoost = bytes[offset + 4];

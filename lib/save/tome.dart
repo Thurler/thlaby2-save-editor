@@ -117,7 +117,7 @@ class TomeData {
     }
   }
 
-  TomeData.fromBytes(List<int> bytes, int offset) {
+  TomeData.fromBytes(Uint8List bytes, int offset) {
     hp = _levelFromBytes(bytes[offset], bytes[offset + 12]);
     mp = _levelFromBytes(bytes[offset + 1], bytes[offset + 13]);
     tp = _levelFromBytes(bytes[offset + 2], bytes[offset + 14]);

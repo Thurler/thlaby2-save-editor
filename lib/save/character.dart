@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
 import 'package:thlaby2_save_editor/extensions/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/uint8list_extension.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 import 'package:thlaby2_save_editor/save/enums/skill.dart';
@@ -69,7 +70,7 @@ class CharacterData {
   CharacterData.fromBytes({
     required Endian endianness,
     required int index,
-    required List<int> bytes,
+    required Uint8List bytes,
   }) {
     character = Character.values.elementAt(index);
     level = bytes.getU32(endianness);

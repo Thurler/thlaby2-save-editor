@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:thlaby2_save_editor/extensions/int_extension.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
+import 'package:thlaby2_save_editor/extensions/uint8list_extension.dart';
 
 class LibraryData {
   late int hp;
@@ -64,7 +64,7 @@ class LibraryData {
     }
   }
 
-  LibraryData.fromBytes(Endian endianness, List<int> bytes, int offset) {
+  LibraryData.fromBytes(Endian endianness, Uint8List bytes, int offset) {
     hp = bytes.getU32(endianness, offset: offset);
     atk = bytes.getU32(endianness, offset: offset + 4);
     def = bytes.getU32(endianness, offset: offset + 8);

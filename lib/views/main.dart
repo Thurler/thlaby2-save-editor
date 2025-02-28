@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tfields/logger.dart';
@@ -92,7 +93,7 @@ class MainState extends State<MainWidget>
       String name = path.split('/').last.split(r'\').last;
       await log(LogLevel.debug, 'File selected: $name');
       File rawFile = File(path);
-      List<int> bytes = await rawFile.readAsBytes();
+      Uint8List bytes = await rawFile.readAsBytes();
       saveFile = SaveFile.fromSteamBytes(bytes);
       await logFlush();
       await log(LogLevel.info, 'Steam save file loaded successfully');

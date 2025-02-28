@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tfields/logger.dart';
@@ -59,7 +60,7 @@ class MenuState extends State<MenuWidget>
     await log(LogLevel.debug, 'Exporting save file in Steam format');
     try {
       File rawFile = File(result);
-      List<int> contents = saveFile.exportSteam();
+      Uint8List contents = saveFile.exportSteam();
       await logFlush();
       await rawFile.writeAsBytes(contents);
     } on FileSystemException catch (e) {
