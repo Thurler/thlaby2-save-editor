@@ -14,7 +14,9 @@ dependencies:
   flutter:
     sdk: flutter
   tfields:
-    path: ../tfields
+    git:
+      url: https://github.com/thurler/tfields
+      ref: 1.0.0
   url_launcher: ^6.3.1
   window_size:
     git:
