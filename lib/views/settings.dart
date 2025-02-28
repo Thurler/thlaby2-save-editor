@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:tfields/settings.dart';
 import 'package:tfields/views/settings.dart';
@@ -14,7 +16,7 @@ class CommonSettingsState
     extends AbstractSettingsState<CommonSettings, CommonSettingsWidget> {
   @override
   CommonSettings settingsFromJson(String fileContents) =>
-      CommonSettings.fromJson(fileContents);
+      CommonSettings.fromJson(json.decode(fileContents));
 
   @override
   CommonSettings settingsFromDefault() => CommonSettings.fromDefault();
