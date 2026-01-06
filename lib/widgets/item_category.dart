@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tfields/extensions/iterable.dart';
-import 'package:tfields/widgets/button.dart';
-import 'package:tfields/widgets/clickable.dart';
-import 'package:tfields/widgets/form/base.dart';
-import 'package:tfields/widgets/rounded_border.dart';
-import 'package:tfields/widgets/spaced_row.dart';
+import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/widgets/badge.dart';
 import 'package:thlaby2_save_editor/widgets/item_form.dart';
@@ -53,8 +48,9 @@ class FormSectionHeader extends StatelessWidget {
         minWidth: 150,
       ),
       child: Column(
+        spacing: 8,
         children: <Widget>[
-          TButton(text: text, onPressed: onPressed),
+          TButton.elevated(text: text, onPressed: onPressed),
           Stack(
             alignment: Alignment.center,
             children: <Widget>[
@@ -71,7 +67,7 @@ class FormSectionHeader extends StatelessWidget {
               ),
             ],
           ),
-        ].separateWith(const SizedBox(height: 8)),
+        ],
       ),
     );
     return usesMaxWidth ? ret : IntrinsicWidth(child: ret);
@@ -108,7 +104,9 @@ class ItemOption extends StatelessWidget {
     Widget border = TRoundedBorder(
       color: isHighlighted
         ? Colors.green
-        : TFormTitle.subtitleColor.withOpacity(0.5),
+        : Theme.of(context).inputDecorationTheme.hintStyle?.color?.withValues(
+            alpha: 0.5,
+          ),
       childPadding: const EdgeInsets.only(right: 15),
       child: item,
     );
@@ -223,10 +221,11 @@ class ItemPageState extends State<ItemPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 10,
       children: List<Widget>.generate(
         (itemForms.length / 2).ceil(),
-        (int i) => TSpacedRow(
-          spacer: const SizedBox(width: 20),
+        (int i) => Row(
+          spacing: 20,
           children: <Widget>[
             ItemOption(
               item: itemForms[i * 2],
@@ -248,7 +247,7 @@ class ItemPageState extends State<ItemPage> {
             ),
           ],
         ),
-      ).separateWith(const SizedBox(height: 10)),
+      ),
     );
   }
 }
@@ -361,16 +360,12 @@ class ItemCategoryState extends State<ItemCategory> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 20,
       children: <Widget>[
         PageSelector(pageKeys: pageKeys),
-        IndexedStack(
-          index: pages.indexOf(selected),
-          children: pages,
-        ),
+        IndexedStack(index: pages.indexOf(selected), children: pages),
         PageSelector(pageKeys: pageKeys),
-      ].separateWith(
-        const SizedBox(height: 20),
-      ),
+      ],
     );
   }
 }

@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
 enum TomeStat {
-  hp('HP', multiLevel: true),
-  mp('MP', multiLevel: true),
-  tp('TP', multiLevel: true),
-  atk('ATK', multiLevel: true),
-  def('DEF', multiLevel: true),
-  mag('MAG', multiLevel: true),
-  mnd('MND', multiLevel: true),
-  spd('SPD', multiLevel: true),
+  hp('HP'),
+  mp('MP'),
+  tp('TP'),
+  atk('ATK'),
+  def('DEF'),
+  mag('MAG'),
+  mnd('MND'),
+  spd('SPD'),
   eva('EVA', multiLevel: false),
   acc('ACC', multiLevel: false),
   aff('Affinity', multiLevel: false),
@@ -17,7 +17,7 @@ enum TomeStat {
   final String name;
   final bool multiLevel;
 
-  const TomeStat(this.name, {required this.multiLevel});
+  const TomeStat(this.name, {this.multiLevel = true});
 }
 
 enum TomeLevel {
@@ -36,18 +36,18 @@ enum TomeLevel {
 }
 
 class TomeData {
-  late TomeLevel hp;
-  late TomeLevel mp;
-  late TomeLevel tp;
-  late TomeLevel atk;
-  late TomeLevel def;
-  late TomeLevel mag;
-  late TomeLevel mnd;
-  late TomeLevel spd;
-  late TomeLevel eva;
-  late TomeLevel acc;
-  late TomeLevel aff;
-  late TomeLevel res;
+  TomeLevel hp;
+  TomeLevel mp;
+  TomeLevel tp;
+  TomeLevel atk;
+  TomeLevel def;
+  TomeLevel mag;
+  TomeLevel mnd;
+  TomeLevel spd;
+  TomeLevel eva;
+  TomeLevel acc;
+  TomeLevel aff;
+  TomeLevel res;
 
   static TomeLevel levelFromString(String value, {required bool isNatural}) {
     Iterable<TomeLevel> matches = TomeLevel.values.where(
@@ -59,22 +59,20 @@ class TomeData {
     return matches.first;
   }
 
-  TomeLevel getStatData(int index) {
-    return <TomeLevel>[
-      hp,
-      mp,
-      tp,
-      atk,
-      def,
-      mag,
-      mnd,
-      spd,
-      eva,
-      acc,
-      aff,
-      res,
-    ][index];
-  }
+  TomeLevel getStatData(int index) => <TomeLevel>[
+    hp,
+    mp,
+    tp,
+    atk,
+    def,
+    mag,
+    mnd,
+    spd,
+    eva,
+    acc,
+    aff,
+    res,
+  ][index];
 
   void setStatData(int index, String raw, {required bool isNatural}) {
     TomeLevel value = levelFromString(raw, isNatural: isNatural);
@@ -106,42 +104,39 @@ class TomeData {
     }
   }
 
-  TomeLevel _levelFromBytes(int flag, int level) {
-    bool flagSet = flag > 0;
-    if (level == 0) {
-      return flagSet ? TomeLevel.insight : TomeLevel.unused;
-    } else if (level == 2) {
-      return flagSet ? TomeLevel.spartan : TomeLevel.spartanNatural;
-    } else {
-      return flagSet ? TomeLevel.veteran : TomeLevel.veteranNatural;
-    }
-  }
+  static TomeLevel _levelFromBytes(int flag, int level) => switch (level) {
+    0 => flag > 0 ? TomeLevel.insight : TomeLevel.unused,
+    2 => flag > 0 ? TomeLevel.spartan : TomeLevel.spartanNatural,
+    _ => flag > 0 ? TomeLevel.veteran : TomeLevel.veteranNatural,
+  };
 
-  TomeData.fromBytes(Uint8List bytes, int offset) {
-    hp = _levelFromBytes(bytes[offset], bytes[offset + 12]);
-    mp = _levelFromBytes(bytes[offset + 1], bytes[offset + 13]);
-    tp = _levelFromBytes(bytes[offset + 2], bytes[offset + 14]);
-    atk = _levelFromBytes(bytes[offset + 3], bytes[offset + 15]);
-    def = _levelFromBytes(bytes[offset + 4], bytes[offset + 16]);
-    mag = _levelFromBytes(bytes[offset + 5], bytes[offset + 17]);
-    mnd = _levelFromBytes(bytes[offset + 6], bytes[offset + 18]);
-    spd = _levelFromBytes(bytes[offset + 7], bytes[offset + 19]);
-    eva = _levelFromBytes(bytes[offset + 8], 0);
-    acc = _levelFromBytes(bytes[offset + 9], 0);
-    aff = _levelFromBytes(bytes[offset + 10], 0);
+  TomeData.fromBytes(Uint8List bytes, int offset) :
+    hp = _levelFromBytes(bytes[offset], bytes[offset + 12]),
+    mp = _levelFromBytes(bytes[offset + 1], bytes[offset + 13]),
+    tp = _levelFromBytes(bytes[offset + 2], bytes[offset + 14]),
+    atk = _levelFromBytes(bytes[offset + 3], bytes[offset + 15]),
+    def = _levelFromBytes(bytes[offset + 4], bytes[offset + 16]),
+    mag = _levelFromBytes(bytes[offset + 5], bytes[offset + 17]),
+    mnd = _levelFromBytes(bytes[offset + 6], bytes[offset + 18]),
+    spd = _levelFromBytes(bytes[offset + 7], bytes[offset + 19]),
+    eva = _levelFromBytes(bytes[offset + 8], 0),
+    acc = _levelFromBytes(bytes[offset + 9], 0),
+    aff = _levelFromBytes(bytes[offset + 10], 0),
     res = _levelFromBytes(bytes[offset + 11], 0);
-  }
 
-  TomeData.from(TomeData other) {
-    hp = other.hp;
-    mp = other.mp;
-    tp = other.tp;
-    atk = other.atk;
-    def = other.def;
-    mag = other.mag;
-    mnd = other.mnd;
-    spd = other.spd;
-  }
+  TomeData.from(TomeData other) :
+    hp = other.hp,
+    mp = other.mp,
+    tp = other.tp,
+    atk = other.atk,
+    def = other.def,
+    mag = other.mag,
+    mnd = other.mnd,
+    spd = other.spd,
+    eva = other.eva,
+    acc = other.acc,
+    aff = other.aff,
+    res = other.res;
 
   Iterable<int> toBytes(Endian endianness) {
     List<TomeLevel> stats = <TomeLevel>[hp, mp, tp, atk, def, mag, mnd, spd];

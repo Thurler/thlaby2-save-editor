@@ -1,6 +1,5 @@
 import 'dart:typed_data';
-import 'package:tfields/logger.dart';
-import 'package:tfields/mixins/loggable.dart';
+import 'package:tfields/logging.dart';
 import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
@@ -16,19 +15,7 @@ class InvalidHeaderException implements Exception {
   const InvalidHeaderException() : super();
 }
 
-class SaveFileWrapper {
-  static final SaveFileWrapper _saveFileWrapper = SaveFileWrapper._internal();
-
-  late SaveFile saveFile;
-
-  factory SaveFileWrapper() {
-    return _saveFileWrapper;
-  }
-
-  SaveFileWrapper._internal();
-}
-
-class SaveFile with Loggable {
+class SaveFile with TLoggable {
   static const int steamFileSize = 257678;
   static const int characterDataLength = 271;
 
@@ -123,34 +110,34 @@ class SaveFile with Loggable {
   }
 
   Iterable<int> _exportCharacterUnlockFlags() {
-    logBuffer(LogLevel.debug, 'Character unlock: $characterUnlockFlags');
+    logBuffer(TLogLevel.debug, 'Character unlock: $characterUnlockFlags');
     return characterUnlockFlags.map<int>(
       (CharacterUnlockFlag flag) => (flag.isUnlocked) ? 0x1 : 0x0,
     );
   }
 
   Iterable<int> _exportPartyData() {
-    logBuffer(LogLevel.debug, 'Party data: $partyData');
+    logBuffer(TLogLevel.debug, 'Party data: $partyData');
     return partyData.map<int>((PartySlot slot) => slot.toByte());
   }
 
   Iterable<int> _exportMainInventoryFlagData() {
-    logBuffer(LogLevel.debug, 'Inventory data: $mainInventoryData');
+    logBuffer(TLogLevel.debug, 'Inventory data: $mainInventoryData');
     return mainInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
   }
 
   Iterable<int> _exportSubInventoryFlagData() {
-    logBuffer(LogLevel.debug, 'Inventory data: $subInventoryData');
+    logBuffer(TLogLevel.debug, 'Inventory data: $subInventoryData');
     return subInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
   }
 
   Iterable<int> _exportMaterialFlagData() {
-    logBuffer(LogLevel.debug, 'Inventory data: $materialInventoryData');
+    logBuffer(TLogLevel.debug, 'Inventory data: $materialInventoryData');
     return materialInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
   }
 
   Iterable<int> _exportSpecialItemFlagData() {
-    logBuffer(LogLevel.debug, 'Inventory data: $specialInventoryData');
+    logBuffer(TLogLevel.debug, 'Inventory data: $specialInventoryData');
     return specialInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
   }
 
@@ -191,7 +178,7 @@ class SaveFile with Loggable {
   }
 
   Iterable<int> _exportCharacterData() {
-    logBuffer(LogLevel.debug, 'Party data: $characterData');
+    logBuffer(TLogLevel.debug, 'Party data: $characterData');
     return characterData.fold<Iterable<int>>(
       <int>[],
       (Iterable<int> acc, CharacterData data) => acc.followedBy(
@@ -202,7 +189,7 @@ class SaveFile with Loggable {
 
   void _setCharacterUnlockFlagsFromBytes(Uint8List bytes) {
     characterUnlockFlags = <CharacterUnlockFlag>[];
-    logBuffer(LogLevel.debug, 'Character unlock bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Character unlock bytes: $bytes');
     for (int i = 0; i < bytes.length; i++) {
       characterUnlockFlags.add(
         CharacterUnlockFlag(
@@ -228,7 +215,7 @@ class SaveFile with Loggable {
 
   void _setPartyData(Uint8List bytes) {
     partyData = <PartySlot>[];
-    logBuffer(LogLevel.debug, 'Party bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Party bytes: $bytes');
     for (int i = 0; i < bytes.length; i++) {
       int byte = bytes[i];
       if (byte == 0) {
@@ -236,7 +223,10 @@ class SaveFile with Loggable {
       } else if (byte <= 56) {
         partyData.add(PartySlot.filled(byte));
       } else {
-        logBuffer(LogLevel.error, 'Invalid party member at position $i: $byte');
+        logBuffer(
+          TLogLevel.error,
+          'Invalid party member at position $i: $byte',
+        );
         loadedWithErrors = true;
       }
     }
@@ -248,7 +238,7 @@ class SaveFile with Loggable {
   void _setEventFlagData(Uint8List bytes) => eventFlagData = bytes;
 
   void _setMainInventoryFlagData(Uint8List bytes) {
-    logBuffer(LogLevel.debug, 'Main Equip unlock flag bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Main Equip unlock flag bytes: $bytes');
     mainInventoryData = <ItemSlot>[];
     for (MainEquip item in MainEquip.values) {
       // Ignore the empty slot
@@ -261,7 +251,7 @@ class SaveFile with Loggable {
   }
 
   void _setSubInventoryFlagData(Uint8List bytes) {
-    logBuffer(LogLevel.debug, 'Sub Equip unlock flag bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Sub Equip unlock flag bytes: $bytes');
     subInventoryData = <ItemSlot>[];
     for (SubEquip item in SubEquip.values) {
       // Ignore the empty slot
@@ -274,7 +264,7 @@ class SaveFile with Loggable {
   }
 
   void _setMaterialInventoryFlagData(Uint8List bytes) {
-    logBuffer(LogLevel.debug, 'Material unlock flag bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Material unlock flag bytes: $bytes');
     materialInventoryData = <ItemSlot>[];
     for (Material item in Material.values) {
       materialInventoryData.add(
@@ -284,7 +274,7 @@ class SaveFile with Loggable {
   }
 
   void _setSpecialInventoryFlagData(Uint8List bytes) {
-    logBuffer(LogLevel.debug, 'Special item unlock flag bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Special item unlock flag bytes: $bytes');
     specialInventoryData = <ItemSlot>[];
     for (SpecialItem item in SpecialItem.values) {
       specialInventoryData.add(
@@ -294,7 +284,7 @@ class SaveFile with Loggable {
   }
 
   void _setMainInventoryData(Uint8List bytes) {
-    logBuffer(LogLevel.debug, 'Main Equip amount bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Main Equip amount bytes: $bytes');
     for (int i = 0; i < MainEquip.values.length - 1; i++) {
       mainInventoryData[i].amountFromBytes(
         bytes: bytes,
@@ -305,7 +295,7 @@ class SaveFile with Loggable {
   }
 
   void _setSubInventoryData(Uint8List bytes) {
-    logBuffer(LogLevel.debug, 'Sub Equip amount bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Sub Equip amount bytes: $bytes');
     for (int i = 0; i < SubEquip.values.length - 1; i++) {
       subInventoryData[i].amountFromBytes(
         bytes: bytes,
@@ -316,7 +306,7 @@ class SaveFile with Loggable {
   }
 
   void _setMaterialInventoryData(Uint8List bytes) {
-    logBuffer(LogLevel.debug, 'Material amount bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Material amount bytes: $bytes');
     for (int i = 0; i < Material.values.length; i++) {
       materialInventoryData[i].amountFromBytes(
         bytes: bytes,
@@ -327,7 +317,7 @@ class SaveFile with Loggable {
   }
 
   void _setSpecialInventoryData(Uint8List bytes) {
-    logBuffer(LogLevel.debug, 'Special item amount bytes: $bytes');
+    logBuffer(TLogLevel.debug, 'Special item amount bytes: $bytes');
     for (int i = 0; i < SpecialItem.values.length; i++) {
       specialInventoryData[i].amountFromBytes(
         bytes: bytes,
@@ -343,7 +333,7 @@ class SaveFile with Loggable {
       int start = i * characterDataLength;
       int end = (i + 1) * characterDataLength;
       Uint8List characterBytes = bytes.sublist(start, end);
-      logBuffer(LogLevel.debug, 'Character $i bytes: $characterBytes');
+      logBuffer(TLogLevel.debug, 'Character $i bytes: $characterBytes');
       characterData.add(
         CharacterData.fromBytes(
           index: i,
@@ -360,12 +350,22 @@ class SaveFile with Loggable {
   void _setUndergroundMapData(Uint8List bytes) => undergroundMapData = bytes;
 }
 
-mixin SaveReader {
-  final SaveFileWrapper _saveFileWrapper = SaveFileWrapper();
+class _SaveFileWrapper {
+  static final _SaveFileWrapper _saveFileWrapper = _SaveFileWrapper._internal();
+
+  late SaveFile saveFile;
+
+  factory _SaveFileWrapper() => _saveFileWrapper;
+
+  _SaveFileWrapper._internal();
+}
+
+mixin SaveEditor {
+  final _SaveFileWrapper _saveFileWrapper = _SaveFileWrapper();
 
   SaveFile get saveFile => _saveFileWrapper.saveFile;
 }
 
-mixin SaveWriter on SaveReader {
+mixin SaveLoader on SaveEditor {
   set saveFile(SaveFile file) => _saveFileWrapper.saveFile = file;
 }

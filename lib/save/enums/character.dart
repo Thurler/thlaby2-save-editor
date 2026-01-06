@@ -1202,22 +1202,15 @@ enum Character {
   List<Skill> get allSkills => skills + spells + awakeningSpells;
 
   List<String> tomeDropdownOptions(TomeStat stat) {
-    List<TomeLevel> levels = <TomeLevel>[TomeLevel.unused];
     bool isNatural = isNaturalTomeStat(stat);
-    if (!isNatural) {
-      levels.add(TomeLevel.insight);
-    }
-    if (stat.multiLevel && isNatural) {
-      if (this != rinnosuke) {
-        levels.add(TomeLevel.spartanNatural);
-      }
-      levels.add(TomeLevel.veteranNatural);
-    } else if (stat.multiLevel) {
-      if (this != rinnosuke) {
-        levels.add(TomeLevel.spartan);
-      }
-      levels.add(TomeLevel.veteran);
-    }
+    List<TomeLevel> levels = <TomeLevel>[
+      TomeLevel.unused,
+      if (!isNatural) TomeLevel.insight,
+      if (stat.multiLevel && this != rinnosuke)
+        isNatural ? TomeLevel.spartanNatural : TomeLevel.spartan,
+      if (stat.multiLevel)
+        isNatural ? TomeLevel.veteranNatural : TomeLevel.veteran,
+    ];
     return levels.map((TomeLevel l) => l.name).toList();
   }
 }

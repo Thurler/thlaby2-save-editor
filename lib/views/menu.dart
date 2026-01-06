@@ -3,18 +3,10 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:tfields/logger.dart';
-import 'package:tfields/mixins/alert.dart';
-import 'package:tfields/mixins/discardable_changes.dart';
-import 'package:tfields/mixins/loggable.dart';
-import 'package:tfields/mixins/settings_reader.dart';
-import 'package:tfields/mixins/update_checker.dart';
+import 'package:tfields/logging.dart';
 import 'package:tfields/settings.dart';
-import 'package:tfields/widgets/button.dart';
-import 'package:tfields/widgets/common_scaffold.dart';
-import 'package:tfields/widgets/dialog.dart';
-import 'package:tfields/widgets/spaced_row.dart';
-import 'package:tfields/widgets/update_status.dart';
+import 'package:tfields/update_check.dart';
+import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/views/main.dart';
@@ -30,34 +22,34 @@ class MenuWidget extends StatefulWidget {
 
 class MenuState extends State<MenuWidget>
     with
-        SaveReader,
-        Loggable,
-        SettingsReader<CommonSettings>,
-        CommonSettingsReader,
-        UpdateChecker<MainUpdateCheck>,
-        AlertHandler<MenuWidget>,
-        DiscardableChanges<MenuWidget>,
+        SaveEditor,
+        TLoggable,
+        TSettingsJsonReader<TCommonSettings>,
+        TCommonSettingsDeserializer,
+        TUpdateChecker<MainUpdateCheck>,
+        TDialogDisplayer<MenuWidget>,
+        TDiscardableChanges<MenuWidget>,
         Navigatable<MenuWidget> {
   Future<void> _handleFileSystemException(FileSystemException e) {
-    return handleException(
+    return showException(
+      'An error occured when exporting the file!',
       logMessage: 'FileSystem Exception when exporting file: ${e.message}',
-      dialogTitle: 'An error occured when exporting the file!',
-      dialogBody: 'Make sure your user has permission to write the file in '
-          'the folder you chose.',
+      body: 'Make sure your user has permission to write the file in the '
+          'folder you chose.',
     );
   }
 
   Future<void> _saveSteamSaveFile() async {
-    await log(LogLevel.debug, 'Export Steam Save File called');
+    await log(TLogLevel.debug, 'Export Steam Save File called');
     String? result = await FilePicker.platform.saveFile(
       dialogTitle: 'Please select where to save the file:',
       fileName: 'steam.dat',
     );
     if (result == null) {
-      await log(LogLevel.debug, 'No file selected');
+      await log(TLogLevel.debug, 'No file selected');
       return;
     }
-    await log(LogLevel.debug, 'Exporting save file in Steam format');
+    await log(TLogLevel.debug, 'Exporting save file in Steam format');
     try {
       File rawFile = File(result);
       Uint8List contents = saveFile.exportSteam();
@@ -67,17 +59,11 @@ class MenuState extends State<MenuWidget>
       await _handleFileSystemException(e);
       return;
     } on Exception catch (e, s) {
-      await handleUnexpectedException(
-        e,
-        s,
-        dialogBody: ExceptionWidget.dialogBody,
-      );
+      await showUnexpectedException(e, s, body: ExceptionWidget.dialogBody);
       return;
     }
-    await log(LogLevel.info, 'Steam save file exported successfully');
-    await showCommonDialog(
-      TDialog.success(titleText: 'Save file exported successfully'),
-    );
+    await log(TLogLevel.info, 'Steam save file exported successfully');
+    await showSuccess('Save file exported successfully');
   }
 
   @override
@@ -88,19 +74,15 @@ class MenuState extends State<MenuWidget>
 
   @override
   Future<bool> showUnsavedChangesDialog() async {
-    TDialog dialog = TDialog.boolWarning(
-      titleText: 'Did you export your changes?',
-      bodyText: 'Are you sure you want to go back and load a different save '
-          'file? Any changes that have not been exported will be discarded!',
+    bool canReturn = await showConfirmation(
+      'Are you sure you want to go back and load a different save file? Any '
+      'changes that have not been exported will be discarded!',
+      title: 'Did you export your changes?',
       confirmText: 'Yes, change files',
       cancelText: 'No, keep me here',
     );
-    bool canReturn = await showBoolDialog(dialog);
     if (canReturn) {
-      await log(
-        LogLevel.info,
-        'User confirmed going back to file select without exporting',
-      );
+      await log(TLogLevel.info, 'User confirmed going back to file select');
     }
     return canReturn;
   }
@@ -115,22 +97,20 @@ class MenuState extends State<MenuWidget>
   Future<void> navigateToSettings() async {
     await super.navigateToSettings();
     setState(() {
-      loadSettings();
+      readSettings();
     });
-    unawaited(checkForUpdates(MainWidget.version));
+    if (settings.checkUpdates) {
+      unawaited(checkForUpdates(MainWidget.version));
+    }
   }
 
   @override
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
     await CharacterRoster.precachePortraits(context);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    loadSettings();
-    unawaited(checkForUpdates(MainWidget.version));
+    if (settings.checkUpdates) {
+      unawaited(checkForUpdates(MainWidget.version));
+    }
   }
 
   @override
@@ -138,83 +118,96 @@ class MenuState extends State<MenuWidget>
     return PopScope(
       canPop: !hasChanges,
       onPopInvokedWithResult: onPopInvoked,
-      child: CommonScaffold(
+      child: TCommonScaffold(
         title: 'Touhou Labyrinth 2 Save Editor - Menu',
         settingsLink: navigateToSettings,
         children: <Widget>[
-          const TSpacedRow(
-            spacer: SizedBox(width: 20),
-            children: <Widget>[
-              TButton(
-                text: 'General Data',
-                icon: Icons.info_outline,
+          TGridRow(
+            lgFlexLimit: 2,
+            xlFlexLimit: 3,
+            xxlFlexLimit: 4,
+            children: <TGridItem>[
+              TGridItem(
+                child: TButton.elevated(
+                  usesMaxWidth: true,
+                  text: 'General Data',
+                  icon: const TIcon(icon: Icons.info_outline),
+                ),
               ),
-              TButton(
-                text: 'Event Data',
-                icon: Icons.warning_amber,
+              TGridItem(
+                child: TButton.elevated(
+                  usesMaxWidth: true,
+                  text: 'Event Data',
+                  icon: const TIcon(icon: Icons.warning_amber),
+                ),
               ),
-            ],
-          ),
-          TSpacedRow(
-            spacer: const SizedBox(width: 20),
-            children: <Widget>[
-              TButton(
-                text: 'Character Data',
-                icon: Icons.person,
-                onPressed: navigateToCharacterData,
+              TGridItem(
+                child: TButton.elevated(
+                  usesMaxWidth: true,
+                  text: 'Character Data',
+                  icon: const TIcon(icon: Icons.person),
+                  onPressed: navigateToCharacterData,
+                ),
               ),
-              TButton(
-                text: 'Party Data',
-                icon: Icons.groups,
-                onPressed: navigateToPartyEdit,
+              TGridItem(
+                child: TButton.elevated(
+                  usesMaxWidth: true,
+                  text: 'Party Data',
+                  icon: const TIcon(icon: Icons.groups),
+                  onPressed: navigateToPartyEdit,
+                ),
               ),
-            ],
-          ),
-          const TSpacedRow(
-            spacer: SizedBox(width: 20),
-            children: <Widget>[
-              TButton(
-                text: 'Achievement Data',
-                icon: Icons.star_border_purple500,
+              TGridItem(
+                child: TButton.elevated(
+                  usesMaxWidth: true,
+                  text: 'Achievement Data',
+                  icon: const TIcon(icon: Icons.star_border_purple500),
+                ),
               ),
-              TButton(
-                text: 'Bestiary Data',
-                icon: Icons.school_outlined,
+              TGridItem(
+                child: TButton.elevated(
+                  usesMaxWidth: true,
+                  text: 'Bestiary Data',
+                  icon: const TIcon(icon: Icons.school_outlined),
+                ),
               ),
-            ],
-          ),
-          TSpacedRow(
-            spacer: const SizedBox(width: 20),
-            children: <Widget>[
-              TButton(
-                text: 'Inventory Data',
-                icon: Icons.inventory_2_outlined,
-                onPressed: navigateToItemEdit,
+              TGridItem(
+                child: TButton.elevated(
+                  usesMaxWidth: true,
+                  text: 'Inventory Data',
+                  icon: const TIcon(icon: Icons.inventory_2_outlined),
+                  onPressed: navigateToItemEdit,
+                ),
               ),
-              const TButton(
-                text: 'Map Data',
-                icon: Icons.map,
+              TGridItem(
+                child: TButton.elevated(
+                  usesMaxWidth: true,
+                  text: 'Map Data',
+                  icon: const TIcon(icon: Icons.map),
+                ),
               ),
             ],
           ),
           const Divider(),
-          TSpacedRow(
-            spacer: const SizedBox(width: 20),
+          Row(
+            spacing: 20,
             children: <Widget>[
-              const TButton(
+              TButton.elevated(
+                usesMaxWidth: true,
                 text: 'Export as DLSite save',
-                icon: Icons.save,
+                icon: const TIcon(icon: Icons.save),
               ),
-              TButton(
+              TButton.elevated(
+                usesMaxWidth: true,
                 text: 'Export as Steam save',
+                icon: const TIcon(icon: Icons.save),
                 onPressed: _saveSteamSaveFile,
-                icon: Icons.save,
               ),
             ],
           ),
           const Text('Version ${MainWidget.version}'),
           if (settings.checkUpdates)
-            UpdateStatus(
+            TUpdateStatus(
               hasCheckedForUpdates: updateChecker.hasCheckedForUpdates,
               updateCheckSucceeded: updateChecker.updateCheckSucceeded,
               hasUpdate: updateChecker.hasUpdate,

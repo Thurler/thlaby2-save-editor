@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:thlaby2_save_editor/extensions/int_extension.dart';
+import 'package:tfields/extensions.dart';
 
 abstract class Item {
   final int id;
@@ -80,14 +80,14 @@ enum MainEquip implements Item {
 
   const MainEquip(this.id, this.name);
 
-  factory MainEquip.fromName(String? name) {
-    return MainEquip.values.firstWhere((MainEquip e) => e.name == name);
-  }
+  factory MainEquip.fromName(String? name) =>
+      MainEquip.values.firstWhere((MainEquip e) => e.name == name);
+
+  factory MainEquip.fromId(int id) =>
+      MainEquip.values.firstWhere((MainEquip e) => e.id == id);
 
   @override
-  Iterable<int> toBytes(Endian endianness) {
-    return id.toU16(endianness);
-  }
+  Iterable<int> toBytes(Endian endianness) => id.toU16(endianness);
 }
 
 enum SubEquip implements Item {
@@ -340,14 +340,14 @@ enum SubEquip implements Item {
 
   const SubEquip(this.id, this.name);
 
-  factory SubEquip.fromName(String? name) {
-    return SubEquip.values.firstWhere((SubEquip e) => e.name == name);
-  }
+  factory SubEquip.fromName(String? name) =>
+      SubEquip.values.firstWhere((SubEquip e) => e.name == name);
+
+  factory SubEquip.fromId(int id) =>
+      SubEquip.values.firstWhere((SubEquip e) => e.id == id);
 
   @override
-  Iterable<int> toBytes(Endian endianness) {
-    return id.toU16(endianness);
-  }
+  Iterable<int> toBytes(Endian endianness) => id.toU16(endianness);
 }
 
 enum Material implements Item {
@@ -459,14 +459,11 @@ enum Material implements Item {
 
   const Material(this.id, this.name);
 
-  factory Material.fromName(String? name) {
-    return Material.values.firstWhere((Material e) => e.name == name);
-  }
+  factory Material.fromName(String? name) =>
+      Material.values.firstWhere((Material e) => e.name == name);
 
   @override
-  Iterable<int> toBytes(Endian endianness) {
-    return id.toU16(endianness);
-  }
+  Iterable<int> toBytes(Endian endianness) => id.toU16(endianness);
 }
 
 enum SpecialItem implements Item {
@@ -658,12 +655,9 @@ enum SpecialItem implements Item {
 
   const SpecialItem(this.id, this.name);
 
-  factory SpecialItem.fromName(String? name) {
-    return SpecialItem.values.firstWhere((SpecialItem e) => e.name == name);
-  }
+  factory SpecialItem.fromName(String? name) =>
+      SpecialItem.values.firstWhere((SpecialItem e) => e.name == name);
 
   @override
-  Iterable<int> toBytes(Endian endianness) {
-    return id.toU16(endianness);
-  }
+  Iterable<int> toBytes(Endian endianness) => id.toU16(endianness);
 }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tfields/logger.dart';
-import 'package:tfields/mixins/alert.dart';
-import 'package:tfields/mixins/discardable_changes.dart';
-import 'package:tfields/mixins/loggable.dart';
-import 'package:tfields/widgets/common_scaffold.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
+import 'package:tfields/extensions.dart';
+import 'package:tfields/logging.dart';
+import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
@@ -21,10 +18,10 @@ class PartyDataWidget extends StatefulWidget {
 
 class PartyDataState extends State<PartyDataWidget>
     with
-        SaveReader,
-        Loggable,
-        AlertHandler<PartyDataWidget>,
-        DiscardableChanges<PartyDataWidget>,
+        SaveEditor,
+        TLoggable,
+        TDialogDisplayer<PartyDataWidget>,
+        TDiscardableChanges<PartyDataWidget>,
         BreakableChanges<PartyDataWidget>,
         Navigatable<PartyDataWidget> {
   late List<PartySlot> _editable;
@@ -68,7 +65,7 @@ class PartyDataState extends State<PartyDataWidget>
       }
     }
     if (hasDuplicates) {
-      await log(LogLevel.warning, 'Attempting to include duplicates in party');
+      await log(TLogLevel.warning, 'Attempting to include duplicates in party');
       bool doSave = await showSaveWarningDialog(
         'Having duplicates in the frontline can confuse the game when '
         "computing a duplicated character's MP and TP after a battle",
@@ -79,7 +76,7 @@ class PartyDataState extends State<PartyDataWidget>
     }
     // Display a warning if trying to empty the front line
     if (_editable.sublist(0, 4).every((PartySlot s) => !s.isUsed)) {
-      await log(LogLevel.warning, 'Attempting to empty the entire front row');
+      await log(TLogLevel.warning, 'Attempting to empty the entire front row');
       bool doSave = await showSaveWarningDialog(
         'An empty frontline can crash the game if you go into battle',
       );
@@ -87,9 +84,9 @@ class PartyDataState extends State<PartyDataWidget>
         return;
       }
     }
-    await log(LogLevel.info, 'Saved party data changes');
+    await log(TLogLevel.info, 'Saved party data changes');
     setState(() {
-      _original = _editable.deepCopyElements(PartySlot.from);
+      _original = _editable.deepCopyElements(PartySlot.from).toList();
       saveFile.partyData = _original;
     });
   }
@@ -98,16 +95,18 @@ class PartyDataState extends State<PartyDataWidget>
     Character? selected = await navigateToCharacterSelect();
     if (selected != null) {
       setState(() {
-        slot.isUsed = true;
         slot.character = selected;
       });
     }
   }
 
   Future<void> _removePartyMember(PartySlot slot) async {
-    await log(LogLevel.debug, 'Removed ${slot.character.name}');
+    if (slot.character == null) {
+      return;
+    }
+    await log(TLogLevel.debug, 'Removed ${slot.character!.name}');
     setState(() {
-      slot.isUsed = false;
+      slot.character = null;
       _hoverRm = null;
     });
   }
@@ -117,7 +116,7 @@ class PartyDataState extends State<PartyDataWidget>
     super.initState();
     // Make a reference and a deep copy of the list we're changing
     _original = saveFile.partyData;
-    _editable = _original.deepCopyElements(PartySlot.from);
+    _editable = _original.deepCopyElements(PartySlot.from).toList();
   }
 
   @override
@@ -125,7 +124,7 @@ class PartyDataState extends State<PartyDataWidget>
     return PopScope(
       canPop: !hasChanges,
       onPopInvokedWithResult: onPopInvoked,
-      child: CommonScaffold(
+      child: TCommonScaffold(
         title: 'Edit which characters are in the party',
         floatingActionButton: saveButton,
         children: <int>[8, 4, 0].map<Widget>(

@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:tfields/widgets/clickable.dart';
+import 'package:tfields/widgets.dart';
 
 class CharacterBox extends StatelessWidget {
   static const List<double> identityR = <double>[1, 0, 0, 0, 0];

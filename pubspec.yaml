@@ -14,10 +14,8 @@ dependencies:
   flutter:
     sdk: flutter
   tfields:
-    git:
-      url: https://github.com/thurler/tfields
-      ref: 1.0.0
-  url_launcher: ^6.3.1
+    path: ../tfields
+  url_launcher: ^6.1.11
   window_size:
     git:
       url: https://github.com/google/flutter-desktop-embedding

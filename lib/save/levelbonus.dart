@@ -1,18 +1,16 @@
 import 'dart:typed_data';
-import 'package:thlaby2_save_editor/extensions/int_extension.dart';
-import 'package:thlaby2_save_editor/extensions/uint8list_extension.dart';
+
+import 'package:tfields/extensions.dart';
 
 class LevelBonus {
-  late int hp;
-  late int atk;
-  late int def;
-  late int mag;
-  late int mnd;
-  late int spd;
+  int hp;
+  int atk;
+  int def;
+  int mag;
+  int mnd;
+  int spd;
 
-  int getStatData(int index) {
-    return <int>[hp, atk, def, mag, mnd, spd][index];
-  }
+  int getStatData(int index) => <int>[hp, atk, def, mag, mnd, spd][index];
 
   void setStatData(int index, int value) {
     switch (index) {
@@ -31,32 +29,28 @@ class LevelBonus {
     }
   }
 
-  LevelBonus.fromBytes(Endian endianness, Uint8List bytes, int offset) {
-    hp = bytes.getU32(endianness, offset: offset);
-    atk = bytes.getU32(endianness, offset: offset + 4);
-    def = bytes.getU32(endianness, offset: offset + 8);
-    mag = bytes.getU32(endianness, offset: offset + 12);
-    mnd = bytes.getU32(endianness, offset: offset + 16);
+  LevelBonus.fromBytes(Endian endianness, Uint8List bytes, int offset) :
+    hp = bytes.getU32(endianness, offset: offset),
+    atk = bytes.getU32(endianness, offset: offset + 4),
+    def = bytes.getU32(endianness, offset: offset + 8),
+    mag = bytes.getU32(endianness, offset: offset + 12),
+    mnd = bytes.getU32(endianness, offset: offset + 16),
     spd = bytes.getU32(endianness, offset: offset + 20);
-  }
 
-  LevelBonus.from(LevelBonus other) {
-    hp = other.hp;
-    atk = other.atk;
-    def = other.def;
-    mag = other.mag;
-    mnd = other.mnd;
+  LevelBonus.from(LevelBonus other) :
+    hp = other.hp,
+    atk = other.atk,
+    def = other.def,
+    mag = other.mag,
+    mnd = other.mnd,
     spd = other.spd;
-  }
 
-  Iterable<int> toBytes(Endian endianness) {
-    return <int>[
-      ...hp.toU32(endianness),
-      ...atk.toU32(endianness),
-      ...def.toU32(endianness),
-      ...mag.toU32(endianness),
-      ...mnd.toU32(endianness),
-      ...spd.toU32(endianness),
-    ];
-  }
+  Iterable<int> toBytes(Endian endianness) => <int>[
+    ...hp.toU32(endianness),
+    ...atk.toU32(endianness),
+    ...def.toU32(endianness),
+    ...mag.toU32(endianness),
+    ...mnd.toU32(endianness),
+    ...spd.toU32(endianness),
+  ];
 }

@@ -20,7 +20,7 @@ void main() {
   File settingsFile = File('./settings.json');
   try {
     if (!settingsFile.existsSync()) {
-      CommonSettings settings = CommonSettings.fromDefault();
+      TCommonSettings settings = TCommonSettings.fromDefault();
       settingsFile.writeAsStringSync('${settings.toJson()}\n');
     }
   } catch (e) {
@@ -46,7 +46,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         scrollbarTheme: ScrollbarThemeData(
-          trackColor: WidgetStateProperty.all(Colors.white.withOpacity(0.5)),
+          trackColor:
+              WidgetStateProperty.all(Colors.white.withValues(alpha: 0.5)),
           thumbColor: WidgetStateProperty.all(Colors.green),
           trackVisibility: WidgetStateProperty.all(true),
           thumbVisibility: WidgetStateProperty.all(true),

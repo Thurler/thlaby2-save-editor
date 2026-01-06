@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:tfields/widgets/clickable.dart';
+import 'package:tfields/widgets.dart';
 
 class PartyRemoveButton extends StatelessWidget {
   final bool enabled;
@@ -28,8 +28,8 @@ class PartyRemoveButton extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: (enabled ? Colors.red.shade700 : Colors.grey).withOpacity(
-            highlighted ? 1.0 : 0.7,
+          color: (enabled ? Colors.red.shade700 : Colors.grey).withValues(
+            alpha: highlighted ? 1.0 : 0.7,
           ),
         ),
         child: Padding(

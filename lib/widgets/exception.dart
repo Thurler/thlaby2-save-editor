@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tfields/extensions/iterable.dart';
-import 'package:tfields/widgets/common_scaffold.dart';
+import 'package:tfields/widgets.dart';
 
 class ExceptionWidget extends StatelessWidget {
   static const String dialogBody = 'Please report this as an issue at the link '
@@ -17,7 +16,7 @@ class ExceptionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonScaffold(
+    return TCommonScaffold(
       title: 'An error occured',
       children: <Widget>[
         const SelectableText(
@@ -26,7 +25,7 @@ class ExceptionWidget extends StatelessWidget {
         ),
         const SelectableText('Please include the below information as well:'),
         SelectableText(detailMessage),
-      ].separateWith(const SizedBox(height: 10)),
+      ],
     );
   }
 }

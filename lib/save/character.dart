@@ -1,7 +1,5 @@
 import 'dart:typed_data';
-import 'package:thlaby2_save_editor/extensions/int_extension.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
-import 'package:thlaby2_save_editor/extensions/uint8list_extension.dart';
+import 'package:tfields/extensions.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 import 'package:thlaby2_save_editor/save/enums/skill.dart';
@@ -13,21 +11,21 @@ import 'package:thlaby2_save_editor/save/skill.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
 
 class CharacterData {
-  late Character character;
-  late int level;
-  late int unusedSkillPoints;
-  late int unusedBonusPoints;
-  late int usedManuals;
-  late int bp;
-  late BigInt experience;
-  late Subclass subclass;
-  late LibraryData libraryLevels;
-  late LevelBonus levelBonus;
-  late SkillData skills;
-  late TomeData tomes;
-  late GemData gems;
-  late MainEquip mainEquip;
-  late List<SubEquip> subEquips;
+  final Character character;
+  int level;
+  int unusedSkillPoints;
+  int unusedBonusPoints;
+  int usedManuals;
+  int bp;
+  BigInt experience;
+  Subclass subclass;
+  LibraryData libraryLevels;
+  LevelBonus levelBonus;
+  SkillData skills;
+  TomeData tomes;
+  GemData gems;
+  MainEquip mainEquip;
+  List<SubEquip> subEquips;
 
   bool get isKourin => character == Character.rinnosuke;
 
@@ -45,15 +43,13 @@ class CharacterData {
     return result ?? defaultSkill;
   }
 
-  List<Skill?> _boostSkills(int index) {
-    return <Skill?>[
-      BoostSkill.values.elementAtSafe(index),
-      Boost2Skill.values.elementAtSafe(index),
-      BoostMegaSkill.values.elementAtSafe(index),
-      BoostHighSkill.values.elementAtSafe(index),
-      BoostGigaSkill.values.elementAtSafe(index),
-    ];
-  }
+  List<Skill?> _boostSkills(int index) => <Skill?>[
+    BoostSkill.values.elementAtSafe(index),
+    Boost2Skill.values.elementAtSafe(index),
+    BoostMegaSkill.values.elementAtSafe(index),
+    BoostHighSkill.values.elementAtSafe(index),
+    BoostGigaSkill.values.elementAtSafe(index),
+  ];
 
   List<Skill> getCommonSkills(Iterable<String> tomeSelections) {
     List<Skill> commonSkills = <Skill>[];
@@ -71,49 +67,45 @@ class CharacterData {
     required Endian endianness,
     required int index,
     required Uint8List bytes,
-  }) {
-    character = Character.values.elementAt(index);
-    level = bytes.getU32(endianness);
-    experience = bytes.getU64(endianness, offset: 0x4);
-    libraryLevels = LibraryData.fromBytes(endianness, bytes, 0xc);
-    levelBonus = LevelBonus.fromBytes(endianness, bytes, 0x44);
-    subclass = Subclass.values.elementAt(
-      bytes[0x5c] > 0 ? bytes[0x5c] - 99 : 0,
+  }) :
+    character = Character.values.elementAt(index),
+    level = bytes.getU32(endianness),
+    experience = bytes.getU64(endianness, offset: 0x4),
+    libraryLevels = LibraryData.fromBytes(endianness, bytes, 0xc),
+    levelBonus = LevelBonus.fromBytes(endianness, bytes, 0x44),
+    subclass =
+        Subclass.values.elementAt(bytes[0x5c] > 0 ? bytes[0x5c] - 99 : 0),
+    skills = SkillData.fromBytes(bytes, 0x60),
+    tomes = TomeData.fromBytes(bytes, 0xd8),
+    unusedSkillPoints = bytes.getI16(endianness, offset: 0xec),
+    unusedBonusPoints = bytes.getI32(endianness, offset: 0xee),
+    gems = GemData.fromBytes(bytes, 0xf2),
+    usedManuals = bytes[0x102],
+    bp = bytes.getU32(endianness, offset: 0x103),
+    mainEquip = MainEquip.fromId(bytes.getU16(endianness, offset: 0x107)),
+    subEquips = List<SubEquip>.generate(
+      3,
+      (int i) => SubEquip.fromId(
+        bytes.getU16(endianness, offset: 0x109 + (i * 2)),
+      ),
     );
-    skills = SkillData.fromBytes(bytes, 0x60);
-    tomes = TomeData.fromBytes(bytes, 0xd8);
-    unusedSkillPoints = bytes.getI16(endianness, offset: 0xec);
-    unusedBonusPoints = bytes.getI32(endianness, offset: 0xee);
-    gems = GemData.fromBytes(bytes, 0xf2);
-    usedManuals = bytes[0x102];
-    bp = bytes.getU32(endianness, offset: 0x103);
-    mainEquip = MainEquip.values.elementAt(
-      bytes.getU16(endianness, offset: 0x107),
-    );
-    subEquips = <SubEquip>[];
-    for (int i = 0; i < 3; i++) {
-      int id = bytes.getU16(endianness, offset: 0x109 + (i * 2));
-      subEquips.add(SubEquip.values.elementAt(id > 0 ? id - 200 : 0));
-    }
-  }
 
-  CharacterData.from(CharacterData other) {
-    character = other.character;
-    level = other.level;
-    unusedSkillPoints = other.unusedSkillPoints;
-    unusedBonusPoints = other.unusedBonusPoints;
-    usedManuals = other.usedManuals;
-    bp = other.bp;
-    experience = other.experience;
-    subclass = other.subclass;
-    libraryLevels = LibraryData.from(other.libraryLevels);
-    levelBonus = LevelBonus.from(other.levelBonus);
-    skills = SkillData.from(other.skills);
-    tomes = TomeData.from(other.tomes);
-    gems = GemData.from(other.gems);
-    mainEquip = other.mainEquip;
+  CharacterData.from(CharacterData other) :
+    character = other.character,
+    level = other.level,
+    unusedSkillPoints = other.unusedSkillPoints,
+    unusedBonusPoints = other.unusedBonusPoints,
+    usedManuals = other.usedManuals,
+    bp = other.bp,
+    experience = other.experience,
+    subclass = other.subclass,
+    libraryLevels = LibraryData.from(other.libraryLevels),
+    levelBonus = LevelBonus.from(other.levelBonus),
+    skills = SkillData.from(other.skills),
+    tomes = TomeData.from(other.tomes),
+    gems = GemData.from(other.gems),
+    mainEquip = other.mainEquip,
     subEquips = List<SubEquip>.from(other.subEquips);
-  }
 
   Iterable<int> toBytes(Endian endianness) {
     Iterable<int> bytes = <int>[];
@@ -138,7 +130,5 @@ class CharacterData {
   }
 
   @override
-  String toString() {
-    return character.name;
-  }
+  String toString() => character.name;
 }

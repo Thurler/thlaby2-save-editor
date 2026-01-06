@@ -1,18 +1,15 @@
 import 'dart:typed_data';
-import 'package:thlaby2_save_editor/extensions/int_extension.dart';
-import 'package:thlaby2_save_editor/extensions/uint8list_extension.dart';
+import 'package:tfields/extensions.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 
 class ItemSlot {
   final Item item;
   bool isUnlocked;
-  int amount = 0;
+  int amount;
 
-  ItemSlot(this.item, {required this.isUnlocked});
+  ItemSlot(this.item, {required this.isUnlocked, this.amount = 0});
 
-  int toUnlockByte() {
-    return isUnlocked ? 1 : 0;
-  }
+  int toUnlockByte() => isUnlocked ? 1 : 0;
 
   void amountFromBytes({
     required Endian endianness,
@@ -22,9 +19,7 @@ class ItemSlot {
     amount = bytes.getU16(endianness, offset: offset);
   }
 
-  Iterable<int> toAmountBytes(Endian endianness) {
-    return amount.toU16(endianness);
-  }
+  Iterable<int> toAmountBytes(Endian endianness) => amount.toU16(endianness);
 
   @override
   String toString() => '${item.name} x$amount (Unlocked: $isUnlocked)';
