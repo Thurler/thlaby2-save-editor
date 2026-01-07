@@ -5,20 +5,16 @@ import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/widgets/character_box.dart';
 
 class CharacterRoster extends StatelessWidget {
-  final Character? highlight;
   final Future<void> Function(Character character) onTap;
-  final void Function(Character character) onEnter;
-  final void Function(Character character) onExit;
   final Map<Character, Widget> titleAppendMap;
   final List<CharacterUnlockFlag> unlockFlags;
   final bool interactWhenLocked;
+  final void Function() stateUpdateCallback;
 
   const CharacterRoster({
-    required this.highlight,
     required this.onTap,
-    required this.onEnter,
-    required this.onExit,
     required this.unlockFlags,
+    required this.stateUpdateCallback,
     this.titleAppendMap = const <Character, Widget>{},
     this.interactWhenLocked = false,
     super.key,
@@ -47,15 +43,13 @@ class CharacterRoster extends StatelessWidget {
       spacing: 10,
       runSpacing: 10,
       children: Character.values.map(
-        (Character character) => CharacterBox(
+        (Character character) => CharacterBoxHover(
           title: character.name.upperCaseFirstChar(),
           titleAppend: titleAppendMap[character],
           filename: character.filename,
           unlocked: unlockFlags[character.index].isUnlocked,
-          onTap: () async => onTap(character),
-          onEnter: (PointerEvent e) => onEnter(character),
-          onExit: (PointerEvent e) => onExit(character),
-          highlighted: character == highlight,
+          onHoverTap: () async => onTap(character),
+          hoverUpdateCallback: stateUpdateCallback,
           interactWhenLocked: interactWhenLocked,
         ),
       ).toList(),

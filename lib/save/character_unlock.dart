@@ -15,4 +15,13 @@ class CharacterUnlockFlag {
 
   @override
   String toString() => '${character.name}: $isUnlocked';
+
+  @override
+  bool operator ==(Object other) =>
+      other is CharacterUnlockFlag &&
+      character.name == other.character.name &&
+      isUnlocked == other.isUnlocked;
+
+  @override
+  int get hashCode => Object.hash(character.name, isUnlocked);
 }
