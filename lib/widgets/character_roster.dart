@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tfields/extensions.dart';
+import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/widgets/character_box.dart';
 
 class CharacterRoster extends StatelessWidget {
-  final Future<void> Function(Character character) onTap;
-  final Map<Character, Widget> titleAppendMap;
+  final void Function(Character character) onTap;
   final List<CharacterUnlockFlag> unlockFlags;
   final bool interactWhenLocked;
   final void Function() stateUpdateCallback;
@@ -15,7 +15,6 @@ class CharacterRoster extends StatelessWidget {
     required this.onTap,
     required this.unlockFlags,
     required this.stateUpdateCallback,
-    this.titleAppendMap = const <Character, Widget>{},
     this.interactWhenLocked = false,
     super.key,
   });
@@ -39,18 +38,20 @@ class CharacterRoster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
+    return TGridRow(
+      xsFlexLimit: 4,
+      mdFlexLimit: 7,
+      xxlFlexLimit: 8,
       children: Character.values.map(
-        (Character character) => CharacterBoxHover(
-          title: character.name.upperCaseFirstChar(),
-          titleAppend: titleAppendMap[character],
-          filename: character.filename,
-          unlocked: unlockFlags[character.index].isUnlocked,
-          onHoverTap: () async => onTap(character),
-          hoverUpdateCallback: stateUpdateCallback,
-          interactWhenLocked: interactWhenLocked,
+        (Character character) => TGridItem(
+          child: CharacterBoxHover(
+            title: character.name.upperCaseFirstChar(),
+            filename: character.filename,
+            unlocked: unlockFlags[character.index].isUnlocked,
+            onHoverTap: () async => onTap(character),
+            hoverUpdateCallback: stateUpdateCallback,
+            interactWhenLocked: interactWhenLocked,
+          ),
         ),
       ).toList(),
     );
