@@ -8,7 +8,7 @@ typedef CharacterUnlockFormKey = GlobalKey<CharacterUnlockFormState>;
 
 class CharacterUnlockForm extends TForm<CharacterUnlockFlag> with THoverWidget {
   @override
-  final bool hoverEnabled = true;
+  final bool hoverEnabled;
 
   @override
   final void Function()? onHoverTap = null;
@@ -24,7 +24,7 @@ class CharacterUnlockForm extends TForm<CharacterUnlockFlag> with THoverWidget {
     super.enabled = true,
     super.readonly,
     super.key,
-  }) : super(title: initialValue.character.name);
+  }) : hoverEnabled = enabled, super(title: initialValue.character.name);
 
   @override
   CharacterUnlockFormState createState() => CharacterUnlockFormState();
@@ -34,8 +34,12 @@ class CharacterUnlockFormState
     extends TFormState<CharacterUnlockFlag, CharacterUnlockForm>
     with TLoggable, THoverState<CharacterUnlockForm> {
   @override
-  Future<void> onHoverTap() async =>
-      value != null ? setLockValue(isUnlocked: !value!.isUnlocked) : null;
+  bool get hoverEnabled => enabled;
+
+  @override
+  Future<void> onHoverTap() async => value != null && enabled && !readonly
+    ? setLockValue(isUnlocked: !value!.isUnlocked)
+    : null;
 
   @override
   CharacterUnlockFlag? copyValue(CharacterUnlockFlag? source) =>

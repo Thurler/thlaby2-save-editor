@@ -197,7 +197,7 @@ class CharacterUnlockState extends State<CharacterUnlockWidget>
           TGridRow(
             xsFlexLimit: 4,
             mdFlexLimit: 7,
-            xlFlexLimit: 8,
+            xxlFlexLimit: 8,
             children: _unlockForms.values.map(
               (CharacterUnlockForm form) => TGridItem(child: form),
             ).toList(),

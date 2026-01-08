@@ -95,10 +95,11 @@ class CharacterBoxHover extends StatefulWidget with THoverWidget {
     required this.unlocked,
     required this.onHoverTap,
     required this.hoverUpdateCallback,
-    this.titleAppend,
+    bool hoverEnabled = true,
     this.interactWhenLocked = false,
+    this.titleAppend,
     super.key,
-  }) : hoverEnabled = unlocked || interactWhenLocked;
+  }) : hoverEnabled = hoverEnabled && (unlocked || interactWhenLocked);
 
   @override
   State<StatefulWidget> createState() => CharacterBoxState();

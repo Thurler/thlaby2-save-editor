@@ -15,4 +15,11 @@ class PartySlot {
 
   @override
   String toString() => character?.name ?? 'empty';
+
+  @override
+  bool operator ==(Object other) =>
+      other is PartySlot && character?.name == other.character?.name;
+
+  @override
+  int get hashCode => (character?.name).hashCode;
 }
