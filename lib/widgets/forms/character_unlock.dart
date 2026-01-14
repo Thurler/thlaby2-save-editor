@@ -21,6 +21,7 @@ class CharacterUnlockForm extends TForm<CharacterUnlockFlag> with THoverWidget {
     required this.hoverUpdateCallback,
     super.onValueChanged,
     super.validationCallback,
+    super.saveWithErrorOptions,
     super.enabled = true,
     super.readonly,
     super.key,

@@ -3,9 +3,9 @@ import 'package:tfields/extensions.dart';
 
 abstract class Item {
   final int id;
-  final String name;
+  final String prettyName;
 
-  const Item(this.id, this.name);
+  const Item(this.id, this.prettyName);
 
   Iterable<int> toBytes(Endian endianness);
 }
@@ -76,12 +76,12 @@ enum MainEquip implements Item {
   @override
   final int id;
   @override
-  final String name;
+  final String prettyName;
 
-  const MainEquip(this.id, this.name);
+  const MainEquip(this.id, this.prettyName);
 
-  factory MainEquip.fromName(String? name) =>
-      MainEquip.values.firstWhere((MainEquip e) => e.name == name);
+  factory MainEquip.fromPrettyName(String? prettyName) =>
+      MainEquip.values.firstWhere((MainEquip e) => e.prettyName == prettyName);
 
   factory MainEquip.fromId(int id) =>
       MainEquip.values.firstWhere((MainEquip e) => e.id == id);
@@ -336,12 +336,12 @@ enum SubEquip implements Item {
   @override
   final int id;
   @override
-  final String name;
+  final String prettyName;
 
-  const SubEquip(this.id, this.name);
+  const SubEquip(this.id, this.prettyName);
 
-  factory SubEquip.fromName(String? name) =>
-      SubEquip.values.firstWhere((SubEquip e) => e.name == name);
+  factory SubEquip.fromPrettyName(String? prettyName) =>
+      SubEquip.values.firstWhere((SubEquip e) => e.prettyName == prettyName);
 
   factory SubEquip.fromId(int id) =>
       SubEquip.values.firstWhere((SubEquip e) => e.id == id);
@@ -455,12 +455,12 @@ enum Material implements Item {
   @override
   final int id;
   @override
-  final String name;
+  final String prettyName;
 
-  const Material(this.id, this.name);
+  const Material(this.id, this.prettyName);
 
-  factory Material.fromName(String? name) =>
-      Material.values.firstWhere((Material e) => e.name == name);
+  factory Material.fromPrettyName(String? prettyName) =>
+      Material.values.firstWhere((Material e) => e.prettyName == prettyName);
 
   @override
   Iterable<int> toBytes(Endian endianness) => id.toU16(endianness);
@@ -651,12 +651,14 @@ enum SpecialItem implements Item {
   @override
   final int id;
   @override
-  final String name;
+  final String prettyName;
 
-  const SpecialItem(this.id, this.name);
+  const SpecialItem(this.id, this.prettyName);
 
-  factory SpecialItem.fromName(String? name) =>
-      SpecialItem.values.firstWhere((SpecialItem e) => e.name == name);
+  factory SpecialItem.fromPrettyName(String? prettyName) =>
+      SpecialItem.values.firstWhere(
+    (SpecialItem e) => e.prettyName == prettyName,
+  );
 
   @override
   Iterable<int> toBytes(Endian endianness) => id.toU16(endianness);

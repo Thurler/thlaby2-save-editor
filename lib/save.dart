@@ -4,6 +4,7 @@ import 'package:thlaby2_save_editor/save/character.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
+import 'package:thlaby2_save_editor/save/enums/subclass.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
 
@@ -28,15 +29,18 @@ class SaveFile with TLoggable {
   late List<PartySlot> partyData;
   Uint8List generalGameData = Uint8List(0);
   Uint8List eventFlagData = Uint8List(0);
-  late List<ItemSlot> mainInventoryData;
-  late List<ItemSlot> subInventoryData;
-  late List<ItemSlot> materialInventoryData;
-  late List<ItemSlot> specialInventoryData;
+  late List<ItemSlot<MainEquip>> mainInventoryData;
+  late List<ItemSlot<SubEquip>> subInventoryData;
+  late List<ItemSlot<Material>> materialInventoryData;
+  late List<ItemSlot<SpecialItem>> specialInventoryData;
   late List<CharacterData> characterData;
   Uint8List mainMapData = Uint8List(0);
   Uint8List undergroundMapData = Uint8List(0);
 
   bool loadedWithErrors = false;
+
+  Subclass getCharacterSubclass(Character character) =>
+      characterData[character.index].subclass;
 
   SaveFile.fromSteamBytes(Uint8List bytes) {
     if (bytes.length != steamFileSize) {
@@ -123,28 +127,36 @@ class SaveFile with TLoggable {
 
   Iterable<int> _exportMainInventoryFlagData() {
     logBuffer(TLogLevel.debug, 'Inventory data: $mainInventoryData');
-    return mainInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+    return mainInventoryData.map(
+      (ItemSlot<MainEquip> slot) => slot.toUnlockByte(),
+    );
   }
 
   Iterable<int> _exportSubInventoryFlagData() {
     logBuffer(TLogLevel.debug, 'Inventory data: $subInventoryData');
-    return subInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+    return subInventoryData.map(
+      (ItemSlot<SubEquip> slot) => slot.toUnlockByte(),
+    );
   }
 
   Iterable<int> _exportMaterialFlagData() {
     logBuffer(TLogLevel.debug, 'Inventory data: $materialInventoryData');
-    return materialInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+    return materialInventoryData.map(
+      (ItemSlot<Material> slot) => slot.toUnlockByte(),
+    );
   }
 
   Iterable<int> _exportSpecialItemFlagData() {
     logBuffer(TLogLevel.debug, 'Inventory data: $specialInventoryData');
-    return specialInventoryData.map((ItemSlot slot) => slot.toUnlockByte());
+    return specialInventoryData.map(
+      (ItemSlot<SpecialItem> slot) => slot.toUnlockByte(),
+    );
   }
 
   Iterable<int> _exportMainInventoryAmountData() {
     return mainInventoryData.fold(
       <int>[],
-      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+      (Iterable<int> acc, ItemSlot<MainEquip> slot) => acc.followedBy(
         slot.toAmountBytes(Endian.little),
       ),
     );
@@ -153,7 +165,7 @@ class SaveFile with TLoggable {
   Iterable<int> _exportSubInventoryAmountData() {
     return subInventoryData.fold(
       <int>[],
-      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+      (Iterable<int> acc, ItemSlot<SubEquip> slot) => acc.followedBy(
         slot.toAmountBytes(Endian.little),
       ),
     );
@@ -162,7 +174,7 @@ class SaveFile with TLoggable {
   Iterable<int> _exportMaterialInventoryAmountData() {
     return materialInventoryData.fold(
       <int>[],
-      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+      (Iterable<int> acc, ItemSlot<Material> slot) => acc.followedBy(
         slot.toAmountBytes(Endian.little),
       ),
     );
@@ -171,7 +183,7 @@ class SaveFile with TLoggable {
   Iterable<int> _exportSpecialInventoryAmountData() {
     return specialInventoryData.fold(
       <int>[],
-      (Iterable<int> acc, ItemSlot slot) => acc.followedBy(
+      (Iterable<int> acc, ItemSlot<SpecialItem> slot) => acc.followedBy(
         slot.toAmountBytes(Endian.little),
       ),
     );
@@ -239,12 +251,12 @@ class SaveFile with TLoggable {
 
   void _setMainInventoryFlagData(Uint8List bytes) {
     logBuffer(TLogLevel.debug, 'Main Equip unlock flag bytes: $bytes');
-    mainInventoryData = <ItemSlot>[];
+    mainInventoryData = <ItemSlot<MainEquip>>[];
     for (MainEquip item in MainEquip.values) {
       // Ignore the empty slot
       if (item != MainEquip.slot0) {
         mainInventoryData.add(
-          ItemSlot(item, isUnlocked: bytes[item.index - 1] > 0),
+          ItemSlot<MainEquip>(item, isUnlocked: bytes[item.index - 1] > 0),
         );
       }
     }
@@ -252,12 +264,12 @@ class SaveFile with TLoggable {
 
   void _setSubInventoryFlagData(Uint8List bytes) {
     logBuffer(TLogLevel.debug, 'Sub Equip unlock flag bytes: $bytes');
-    subInventoryData = <ItemSlot>[];
+    subInventoryData = <ItemSlot<SubEquip>>[];
     for (SubEquip item in SubEquip.values) {
       // Ignore the empty slot
       if (item != SubEquip.slot0) {
         subInventoryData.add(
-          ItemSlot(item, isUnlocked: bytes[item.index - 1] > 0),
+          ItemSlot<SubEquip>(item, isUnlocked: bytes[item.index - 1] > 0),
         );
       }
     }
@@ -265,20 +277,20 @@ class SaveFile with TLoggable {
 
   void _setMaterialInventoryFlagData(Uint8List bytes) {
     logBuffer(TLogLevel.debug, 'Material unlock flag bytes: $bytes');
-    materialInventoryData = <ItemSlot>[];
+    materialInventoryData = <ItemSlot<Material>>[];
     for (Material item in Material.values) {
       materialInventoryData.add(
-        ItemSlot(item, isUnlocked: bytes[item.index] > 0),
+        ItemSlot<Material>(item, isUnlocked: bytes[item.index] > 0),
       );
     }
   }
 
   void _setSpecialInventoryFlagData(Uint8List bytes) {
     logBuffer(TLogLevel.debug, 'Special item unlock flag bytes: $bytes');
-    specialInventoryData = <ItemSlot>[];
+    specialInventoryData = <ItemSlot<SpecialItem>>[];
     for (SpecialItem item in SpecialItem.values) {
       specialInventoryData.add(
-        ItemSlot(item, isUnlocked: bytes[item.index] > 0),
+        ItemSlot<SpecialItem>(item, isUnlocked: bytes[item.index] > 0),
       );
     }
   }

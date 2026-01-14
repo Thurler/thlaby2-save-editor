@@ -3,63 +3,44 @@ import 'dart:typed_data';
 import 'package:tfields/extensions.dart';
 
 class LibraryData {
-  int hp;
-  int atk;
-  int def;
-  int mag;
-  int mnd;
-  int spd;
-  int fir;
-  int cld;
-  int wnd;
-  int ntr;
-  int mys;
-  int spi;
-  int drk;
-  int phy;
+  static const int libraryCap = 99999999; // Hard cap at library
+  static const int libraryElementCap = 100; // Hard cap at library
 
-  int getStatData(int index) => <int>[hp, atk, def, mag, mnd, spd][index];
+  final int hp;
+  final int atk;
+  final int def;
+  final int mag;
+  final int mnd;
+  final int spd;
+  final int fir;
+  final int cld;
+  final int wnd;
+  final int ntr;
+  final int mys;
+  final int spi;
+  final int drk;
+  final int phy;
 
-  int getElementData(int index) =>
-      <int>[fir, cld, wnd, ntr, mys, spi, drk, phy][index];
+  int getData(int index) => index < 6
+    ? <int>[hp, atk, def, mag, mnd, spd][index]
+    : <int>[fir, cld, wnd, ntr, mys, spi, drk, phy][index - 6];
 
-  void setStatData(int index, int value) {
-    switch (index) {
-      case 0: hp = value;
-      break;
-      case 1: atk = value;
-      break;
-      case 2: def = value;
-      break;
-      case 3: mag = value;
-      break;
-      case 4: mnd = value;
-      break;
-      case 5: spd = value;
-      break;
-    }
-  }
-
-  void setElementData(int index, int value) {
-    switch (index) {
-      case 0: fir = value;
-      break;
-      case 1: cld = value;
-      break;
-      case 2: wnd = value;
-      break;
-      case 3: ntr = value;
-      break;
-      case 4: mys = value;
-      break;
-      case 5: spi = value;
-      break;
-      case 6: drk = value;
-      break;
-      case 7: phy = value;
-      break;
-    }
-  }
+  LibraryData({
+    required this.hp,
+    required this.atk,
+    required this.def,
+    required this.mag,
+    required this.mnd,
+    required this.spd,
+    required this.fir,
+    required this.cld,
+    required this.wnd,
+    required this.ntr,
+    required this.mys,
+    required this.spi,
+    required this.drk,
+    required this.phy,
+  });
 
   LibraryData.fromBytes(Endian endianness, Uint8List bytes, int offset) :
     hp = bytes.getU32(endianness, offset: offset),
@@ -76,22 +57,6 @@ class LibraryData {
     spi = bytes.getU32(endianness, offset: offset + 44),
     drk = bytes.getU32(endianness, offset: offset + 48),
     phy = bytes.getU32(endianness, offset: offset + 52);
-
-  LibraryData.from(LibraryData other) :
-    hp = other.hp,
-    atk = other.atk,
-    def = other.def,
-    mag = other.mag,
-    mnd = other.mnd,
-    spd = other.spd,
-    fir = other.fir,
-    cld = other.cld,
-    wnd = other.wnd,
-    ntr = other.ntr,
-    mys = other.mys,
-    spi = other.spi,
-    drk = other.drk,
-    phy = other.phy;
 
   Iterable<int> toBytes(Endian endianness) => <int>[
     ...hp.toU32(endianness),

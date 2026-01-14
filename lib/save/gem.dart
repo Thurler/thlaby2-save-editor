@@ -3,38 +3,30 @@ import 'dart:typed_data';
 import 'package:tfields/extensions.dart';
 
 class GemData {
-  int hp;
-  int mp;
-  int tp;
-  int atk;
-  int def;
-  int mag;
-  int mnd;
-  int spd;
+  static const int gemCap = 20; // Hard cap at shrine
+
+  final int hp;
+  final int mp;
+  final int tp;
+  final int atk;
+  final int def;
+  final int mag;
+  final int mnd;
+  final int spd;
 
   int getStatData(int index) =>
       <int>[hp, mp, tp, atk, def, mag, mnd, spd][index];
 
-  void setStatData(int index, int value) {
-    switch (index) {
-      case 0: hp = value;
-      break;
-      case 1: mp = value;
-      break;
-      case 2: tp = value;
-      break;
-      case 3: atk = value;
-      break;
-      case 4: def = value;
-      break;
-      case 5: mag = value;
-      break;
-      case 6: mnd = value;
-      break;
-      case 7: spd = value;
-      break;
-    }
-  }
+  GemData({
+    required this.hp,
+    required this.mp,
+    required this.tp,
+    required this.atk,
+    required this.def,
+    required this.mag,
+    required this.mnd,
+    required this.spd,
+  });
 
   GemData.fromBytes(Uint8List bytes, int offset) :
     hp = bytes[offset],
@@ -45,16 +37,6 @@ class GemData {
     mag = bytes[offset + 10],
     mnd = bytes[offset + 12],
     spd = bytes[offset + 14];
-
-  GemData.from(GemData other) :
-    hp = other.hp,
-    mp = other.mp,
-    tp = other.tp,
-    atk = other.atk,
-    def = other.def,
-    mag = other.mag,
-    mnd = other.mnd,
-    spd = other.spd;
 
   Iterable<int> toBytes(Endian endianness) => <int>[
     ...hp.toU16(endianness),

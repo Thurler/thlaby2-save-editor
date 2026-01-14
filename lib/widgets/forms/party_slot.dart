@@ -16,6 +16,7 @@ class PartySlotForm extends TForm<PartySlot> {
     required this.hoverUpdateCallback,
     super.onValueChanged,
     super.validationCallback,
+    super.saveWithErrorOptions,
     super.enabled = true,
     super.readonly,
     super.key,

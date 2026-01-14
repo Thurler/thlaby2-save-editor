@@ -2,9 +2,23 @@ abstract class Skill {
   final int minLevel = 0;
   final int maxLevel;
   final int levelCost;
-  final String name;
+  final String prettyName;
 
-  Skill(this.maxLevel, this.levelCost, this.name);
+  String get subtitle;
+
+  static String _subtitleLimits(int minLevel, int maxLevel) => minLevel > 0
+    ? 'Must be between $minLevel and $maxLevel'
+    : 'Must be at most $maxLevel';
+
+  static String _subtitleCost(int levelCost) =>
+      'Uses $levelCost skill points per level';
+
+  static String _subtitleBuilder(Skill skill) => skill.maxLevel > 0
+    ? '${_subtitleLimits(skill.minLevel, skill.maxLevel)} | '
+        '${_subtitleCost(skill.levelCost)}'
+    : 'Innate skill';
+
+  Skill(this.maxLevel, this.levelCost, this.prettyName);
 }
 
 enum BoostSkill implements Skill {
@@ -28,9 +42,12 @@ enum BoostSkill implements Skill {
   @override
   final int levelCost = 2;
   @override
-  final String name;
+  final String prettyName;
 
-  const BoostSkill(this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const BoostSkill(this.prettyName);
 }
 
 enum Boost2Skill implements Skill {
@@ -50,9 +67,12 @@ enum Boost2Skill implements Skill {
   @override
   final int levelCost = 10;
   @override
-  final String name;
+  final String prettyName;
 
-  const Boost2Skill(this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const Boost2Skill(this.prettyName);
 }
 
 enum BoostMegaSkill implements Skill {
@@ -72,9 +92,12 @@ enum BoostMegaSkill implements Skill {
   @override
   final int levelCost = 50;
   @override
-  final String name;
+  final String prettyName;
 
-  const BoostMegaSkill(this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const BoostMegaSkill(this.prettyName);
 }
 
 enum BoostHighSkill implements Skill {
@@ -98,9 +121,12 @@ enum BoostHighSkill implements Skill {
   @override
   final int levelCost;
   @override
-  final String name;
+  final String prettyName;
 
-  const BoostHighSkill(this.levelCost, this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const BoostHighSkill(this.levelCost, this.prettyName);
 }
 
 enum BoostGigaSkill implements Skill {
@@ -120,9 +146,12 @@ enum BoostGigaSkill implements Skill {
   @override
   final int levelCost = 75;
   @override
-  final String name;
+  final String prettyName;
 
-  const BoostGigaSkill(this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const BoostGigaSkill(this.prettyName);
 }
 
 enum ExpSkill implements Skill {
@@ -136,9 +165,12 @@ enum ExpSkill implements Skill {
   @override
   final int levelCost = 5;
   @override
-  final String name;
+  final String prettyName;
 
-  const ExpSkill(this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const ExpSkill(this.prettyName);
 }
 
 enum CommonSkill implements Skill {
@@ -630,9 +662,12 @@ enum CommonSkill implements Skill {
   @override
   final int levelCost;
   @override
-  final String name;
+  final String prettyName;
 
-  const CommonSkill(this.maxLevel, this.levelCost, this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const CommonSkill(this.maxLevel, this.levelCost, this.prettyName);
 }
 
 enum Spell implements Skill {
@@ -848,9 +883,12 @@ enum Spell implements Skill {
   @override
   final int levelCost = 5;
   @override
-  final String name;
+  final String prettyName;
 
-  const Spell(this.maxLevel, this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const Spell(this.maxLevel, this.prettyName);
 }
 
 enum AwakeningSpell implements Skill {
@@ -867,9 +905,12 @@ enum AwakeningSpell implements Skill {
   @override
   final int levelCost = 25;
   @override
-  final String name;
+  final String prettyName;
 
-  const AwakeningSpell(this.maxLevel, this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const AwakeningSpell(this.maxLevel, this.prettyName);
 }
 
 enum SubclassSpell implements Skill {
@@ -928,7 +969,10 @@ enum SubclassSpell implements Skill {
   @override
   final int levelCost;
   @override
-  final String name;
+  final String prettyName;
 
-  const SubclassSpell(this.levelCost, this.name);
+  @override
+  String get subtitle => Skill._subtitleBuilder(this);
+
+  const SubclassSpell(this.levelCost, this.prettyName);
 }

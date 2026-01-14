@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'package:tfields/extensions.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 
-class ItemSlot {
-  final Item item;
+class ItemSlot<I extends Item> {
+  final I item;
   bool isUnlocked;
   int amount;
 
@@ -22,5 +22,5 @@ class ItemSlot {
   Iterable<int> toAmountBytes(Endian endianness) => amount.toU16(endianness);
 
   @override
-  String toString() => '${item.name} x$amount (Unlocked: $isUnlocked)';
+  String toString() => '${item.prettyName} x$amount (Unlocked: $isUnlocked)';
 }

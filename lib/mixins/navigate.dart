@@ -65,7 +65,7 @@ mixin Navigatable<T extends StatefulWidget> on TLoggable, State<T> {
   Future<void> navigateToItemEdit() =>
       _navigate(const ItemDataWidget(), 'item data edit');
 
-  Future<Item?> navigateToItemSelect(List<ItemSlot> items) async {
+  Future<I?> navigateToItemSelect<I extends Item>() async {
     Item? selected =
         await _navigate(ItemSelectWidget(items: items), 'item select');
     if (selected != null) {

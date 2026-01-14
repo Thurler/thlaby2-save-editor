@@ -9,39 +9,43 @@ import 'package:thlaby2_save_editor/save/levelbonus.dart';
 import 'package:thlaby2_save_editor/save/library.dart';
 import 'package:thlaby2_save_editor/save/skill.dart';
 import 'package:thlaby2_save_editor/save/tome.dart';
+import 'package:thlaby2_save_editor/widgets/forms/groups/character_basic.dart';
 
 class CharacterData {
+  static const int skillPointBonusCap = CharacterBasic.levelCap + 2;
+  static const int trainingManualsCap = 255;
+
   final Character character;
-  int level;
-  int unusedSkillPoints;
-  int unusedBonusPoints;
-  int usedManuals;
-  int bp;
-  BigInt experience;
-  Subclass subclass;
-  LibraryData libraryLevels;
-  LevelBonus levelBonus;
-  SkillData skills;
-  TomeData tomes;
-  GemData gems;
-  MainEquip mainEquip;
-  List<SubEquip> subEquips;
+  final int level;
+  final int unusedSkillPoints;
+  final int unusedBonusPoints;
+  final int usedManuals;
+  final int bp;
+  final BigInt experience;
+  final Subclass subclass;
+  final LibraryData libraryLevels;
+  final LevelBonus levelBonus;
+  final SkillData skills;
+  final TomeData tomes;
+  final GemData gems;
+  final MainEquip mainEquip;
+  final List<SubEquip> subEquips;
 
   bool get isKourin => character == Character.rinnosuke;
 
-  Skill _getSkill(TomeLevel tomeLevel, List<Skill?> skills) {
+  bool getCommonSkillLocked(int index) =>
+      tomes.getStatData(index) == TomeLevel.unused &&
+      !character.isNaturalTomeStat(TomeStat.values[index]);
+
+  Skill _getSkill(TomeLevel tomeLevel, List<Skill?> skills) =>
+      switch (tomeLevel) {
     // Order is regular / 2 / mega / high / giga
-    Skill defaultSkill = skills.elementAt(0)!; // Regular always has everything
-    Skill? result;
-    if (tomeLevel.index < TomeLevel.spartanNatural.index) {
-      result = isKourin ? skills.elementAt(3) : skills.elementAt(0);
-    } else if (tomeLevel.index < TomeLevel.veteranNatural.index) {
-      result = skills.elementAt(1);
-    } else {
-      result = isKourin ? skills.elementAt(4) : skills.elementAt(2);
-    }
-    return result ?? defaultSkill;
-  }
+    TomeLevel.unused || TomeLevel.insight => isKourin ? skills[3] : skills[0],
+    TomeLevel.spartan || TomeLevel.spartanNatural => skills[1],
+    TomeLevel.veteran ||
+    TomeLevel.veteranNatural =>
+      isKourin ? skills[4] : skills[2]
+  } ?? skills[0]!; // Regular always has everything
 
   List<Skill?> _boostSkills(int index) => <Skill?>[
     BoostSkill.values.elementAtSafe(index),
@@ -51,17 +55,31 @@ class CharacterData {
     BoostGigaSkill.values.elementAtSafe(index),
   ];
 
-  List<Skill> getCommonSkills(Iterable<String> tomeSelections) {
-    List<Skill> commonSkills = <Skill>[];
-    for (int i = 0; i < tomeSelections.length; i++) {
-      TomeLevel level = TomeData.levelFromString(
-        tomeSelections.elementAt(i),
-        isNatural: character.isNaturalTomeStat(TomeStat.values.elementAt(i)),
-      );
-      commonSkills.add(_getSkill(level, _boostSkills(i)));
-    }
-    return commonSkills;
-  }
+  Skill getCommonSkill(TomeLevel level, TomeStat stat) =>
+      _getSkill(level, _boostSkills(stat.index));
+
+  List<Skill> getCommonSkills(TomeData tomeData) => List<Skill>.generate(
+    TomeStat.values.length,
+    (int index) => _getSkill(tomeData.getStatData(index), _boostSkills(index)),
+  );
+
+  CharacterData({
+    required this.character,
+    required this.level,
+    required this.unusedSkillPoints,
+    required this.unusedBonusPoints,
+    required this.usedManuals,
+    required this.bp,
+    required this.experience,
+    required this.subclass,
+    required this.libraryLevels,
+    required this.levelBonus,
+    required this.skills,
+    required this.tomes,
+    required this.gems,
+    required this.mainEquip,
+    required this.subEquips,
+  });
 
   CharacterData.fromBytes({
     required Endian endianness,
@@ -89,23 +107,6 @@ class CharacterData {
         bytes.getU16(endianness, offset: 0x109 + (i * 2)),
       ),
     );
-
-  CharacterData.from(CharacterData other) :
-    character = other.character,
-    level = other.level,
-    unusedSkillPoints = other.unusedSkillPoints,
-    unusedBonusPoints = other.unusedBonusPoints,
-    usedManuals = other.usedManuals,
-    bp = other.bp,
-    experience = other.experience,
-    subclass = other.subclass,
-    libraryLevels = LibraryData.from(other.libraryLevels),
-    levelBonus = LevelBonus.from(other.levelBonus),
-    skills = SkillData.from(other.skills),
-    tomes = TomeData.from(other.tomes),
-    gems = GemData.from(other.gems),
-    mainEquip = other.mainEquip,
-    subEquips = List<SubEquip>.from(other.subEquips);
 
   Iterable<int> toBytes(Endian endianness) {
     Iterable<int> bytes = <int>[];

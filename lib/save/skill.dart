@@ -3,25 +3,25 @@ import 'dart:typed_data';
 import 'package:tfields/extensions.dart';
 
 class SkillData {
-  int hpBoost;
-  int mpBoost;
-  int tpBoost;
-  int atkBoost;
-  int defBoost;
-  int magBoost;
-  int mndBoost;
-  int spdBoost;
-  int evaBoost;
-  int accBoost;
-  int affBoost;
-  int resBoost;
-  int motivatedHeart;
-  int handsOnExperience;
-  List<int> personalSkills;
-  List<int> personalSpells;
-  List<int> subclassSkills;
+  final int hpBoost;
+  final int mpBoost;
+  final int tpBoost;
+  final int atkBoost;
+  final int defBoost;
+  final int magBoost;
+  final int mndBoost;
+  final int spdBoost;
+  final int evaBoost;
+  final int accBoost;
+  final int affBoost;
+  final int resBoost;
+  final int motivatedHeart;
+  final int handsOnExperience;
+  final List<int> personalSkills;
+  final List<int> personalSpells;
+  final List<int> subclassSkills;
 
-  int getBoostData(int index) => <int>[
+  int getCommonData(int index) => <int>[
     hpBoost,
     mpBoost,
     tpBoost,
@@ -34,47 +34,36 @@ class SkillData {
     accBoost,
     affBoost,
     resBoost,
+    motivatedHeart,
+    handsOnExperience,
   ][index];
 
-  int getExpData(int index) => <int>[motivatedHeart, handsOnExperience][index];
-
-  void setBoostData(int index, int value) {
-    switch (index) {
-      case 0: hpBoost = value;
-      break;
-      case 1: mpBoost = value;
-      break;
-      case 2: tpBoost = value;
-      break;
-      case 3: atkBoost = value;
-      break;
-      case 4: defBoost = value;
-      break;
-      case 5: magBoost = value;
-      break;
-      case 6: mndBoost = value;
-      break;
-      case 7: spdBoost = value;
-      break;
-      case 8: evaBoost = value;
-      break;
-      case 9: accBoost = value;
-      break;
-      case 10: affBoost = value;
-      break;
-      case 11: resBoost = value;
-      break;
-    }
-  }
-
-  void setExpData(int index, int value) {
-    switch (index) {
-      case 0: motivatedHeart = value;
-      break;
-      case 1: handsOnExperience = value;
-      break;
-    }
-  }
+  SkillData({
+    required List<int> commonSkills,
+    required List<int> personalSkills,
+    required List<int> personalSpells,
+    required List<int> subclassSkills,
+  }) :
+    hpBoost = commonSkills.elementAtSafe(0) ?? 0,
+    mpBoost = commonSkills.elementAtSafe(1) ?? 0,
+    tpBoost = commonSkills.elementAtSafe(2) ?? 0,
+    atkBoost = commonSkills.elementAtSafe(3) ?? 0,
+    defBoost = commonSkills.elementAtSafe(4) ?? 0,
+    magBoost = commonSkills.elementAtSafe(5) ?? 0,
+    mndBoost = commonSkills.elementAtSafe(6) ?? 0,
+    spdBoost = commonSkills.elementAtSafe(7) ?? 0,
+    evaBoost = commonSkills.elementAtSafe(8) ?? 0,
+    accBoost = commonSkills.elementAtSafe(9) ?? 0,
+    affBoost = commonSkills.elementAtSafe(10) ?? 0,
+    resBoost = commonSkills.elementAtSafe(11) ?? 0,
+    motivatedHeart = commonSkills.elementAtSafe(12) ?? 0,
+    handsOnExperience = commonSkills.elementAtSafe(13) ?? 0,
+    personalSkills =
+        List<int>.generate(10, (int i) => personalSkills.elementAtSafe(i) ?? 0),
+    personalSpells =
+        List<int>.generate(10, (int i) => personalSpells.elementAtSafe(i) ?? 0),
+    subclassSkills =
+        List<int>.generate(10, (int i) => subclassSkills.elementAtSafe(i) ?? 0);
 
   SkillData.fromBytes(Uint8List bytes, int offset) :
     hpBoost = bytes[offset],
@@ -97,25 +86,6 @@ class SkillData {
         List<int>.generate(10, (int i) => bytes[offset + 60 + (i * 2)]),
     subclassSkills =
         List<int>.generate(20, (int i) => bytes[offset + 80 + (i * 2)]);
-
-  SkillData.from(SkillData other) :
-    hpBoost = other.hpBoost,
-    mpBoost = other.mpBoost,
-    tpBoost = other.tpBoost,
-    atkBoost = other.atkBoost,
-    defBoost = other.defBoost,
-    magBoost = other.magBoost,
-    mndBoost = other.mndBoost,
-    spdBoost = other.spdBoost,
-    evaBoost = other.evaBoost,
-    accBoost = other.accBoost,
-    affBoost = other.affBoost,
-    resBoost = other.resBoost,
-    motivatedHeart = other.motivatedHeart,
-    handsOnExperience = other.handsOnExperience,
-    personalSkills = List<int>.from(other.personalSkills),
-    personalSpells = List<int>.from(other.personalSpells),
-    subclassSkills = List<int>.from(other.subclassSkills);
 
   Iterable<int> _skillListToBytes(List<int> skills, Endian endianness) {
     return skills.fold<Iterable<int>>(
