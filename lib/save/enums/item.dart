@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:tfields/extensions.dart';
 
-abstract class Item {
+sealed class Item {
   final int id;
   final String prettyName;
 

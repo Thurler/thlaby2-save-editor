@@ -9,6 +9,11 @@ class ItemSlot<I extends Item> {
 
   ItemSlot(this.item, {required this.isUnlocked, this.amount = 0});
 
+  ItemSlot.from(ItemSlot<I> other) :
+    item = other.item,
+    isUnlocked = other.isUnlocked,
+    amount = other.amount;
+
   int toUnlockByte() => isUnlocked ? 1 : 0;
 
   void amountFromBytes({

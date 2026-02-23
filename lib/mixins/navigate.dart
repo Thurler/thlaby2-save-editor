@@ -3,7 +3,6 @@ import 'package:tfields/logging.dart';
 import 'package:tfields/settings.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
-import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/views/character_data.dart';
 import 'package:thlaby2_save_editor/views/character_edit.dart';
 import 'package:thlaby2_save_editor/views/character_select.dart';
@@ -66,10 +65,9 @@ mixin Navigatable<T extends StatefulWidget> on TLoggable, State<T> {
       _navigate(const ItemDataWidget(), 'item data edit');
 
   Future<I?> navigateToItemSelect<I extends Item>() async {
-    Item? selected =
-        await _navigate(ItemSelectWidget(items: items), 'item select');
+    I? selected = await _navigate(ItemSelectWidget<I>(), 'item select');
     if (selected != null) {
-      await log(TLogLevel.debug, 'Chosen item: ${selected.name}');
+      await log(TLogLevel.debug, 'Chosen item: ${selected.prettyName}');
     }
     return selected;
   }
