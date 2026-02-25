@@ -52,7 +52,7 @@ class PartySlotFormState extends TFormState<PartySlot, PartySlotForm>
   @override
   Widget build(BuildContext context) {
     return Column(
-      spacing: 2,
+      spacing: 10,
       children: <Widget>[
         CharacterBoxHover(
           title: title,

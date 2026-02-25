@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tfields/logging.dart';
+import 'package:tfields/theme.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
 import 'package:thlaby2_save_editor/save.dart';
@@ -101,10 +103,12 @@ class PartyDataState extends State<PartyDataWidget>
       onPopInvokedWithResult: onPopInvoked,
       child: TCommonScaffold(
         title: 'Edit which characters are in the party',
+        themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
         floatingActionButton: saveButton,
         children: <Widget>[
           TGridRow(
             xxlFlexLimit: 4,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <int>[8, 9, 10, 11, 4, 5, 6, 7].map<TGridItem>(
               (int index) => TGridItem(child: _slotForms[index]),
             ).toList(),
@@ -112,6 +116,7 @@ class PartyDataState extends State<PartyDataWidget>
           const Divider(),
           TGridRow(
             xxlFlexLimit: 4,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <int>[0, 1, 2, 3].map<TGridItem>(
               (int index) => TGridItem(child: _slotForms[index]),
             ).toList(),
