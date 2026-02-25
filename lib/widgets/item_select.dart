@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:tfields/widgets.dart';
+import 'package:thlaby2_save_editor/mixins/item_page.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
-import 'package:thlaby2_save_editor/widgets/item_page.dart';
+import 'package:thlaby2_save_editor/widgets/item_lock.dart';
 
 typedef ItemSelectKey<I extends Item> = GlobalKey<ItemSelectState<I>>;
 
-class ItemSelect<I extends Item> extends ItemPageBrowser<I>
-    with TStandardColorer {
+class ItemSelect<I extends Item> extends StatefulWidget
+    with TStandardColorer, ItemPageBrowser<I> {
   final bool allowLockedSelection;
   final void Function(ItemSlot<I>) onItemSelect;
+
+  @override
+  final List<ItemSlot<I>> items;
 
   const ItemSelect({
     required this.allowLockedSelection,
     required this.onItemSelect,
-    required super.items,
+    required this.items,
     super.key,
   });
 
@@ -22,8 +26,8 @@ class ItemSelect<I extends Item> extends ItemPageBrowser<I>
   ItemSelectState<I> createState() => ItemSelectState<I>();
 }
 
-class ItemSelectState<I extends Item>
-    extends ItemPageBrowserState<I, ItemSelect<I>> {
+class ItemSelectState<I extends Item> extends State<ItemSelect<I>>
+    with ItemPageBrowserState<I, ItemSelect<I>> {
   late bool _allowLockedSelection;
 
   bool get allowLockedSelection => _allowLockedSelection;
@@ -38,7 +42,8 @@ class ItemSelectState<I extends Item>
   }
 
   @override
-  Widget buildItem(ItemSlot<I> item, BuildContext context) {
+  Widget buildItem(int itemIndex, BuildContext context) {
+    ItemSlot<I> item = widget.items[itemIndex];
     return TClickableRoundedBorder(
       hoverEnabled: item.isUnlocked || allowLockedSelection,
       hoverUpdateCallback: () => setState(() {}),
@@ -46,15 +51,7 @@ class ItemSelectState<I extends Item>
       child: Row(
         children: <Widget>[
           Flexible(child: Text('${item.item.prettyName} x${item.amount}')),
-          Flexible(
-            flex: 0,
-            child: Icon(
-              item.isUnlocked ? Icons.lock_open : Icons.lock,
-              color: item.isUnlocked
-                ? widget.successColor(context)
-                : widget.errorColor(context),
-            ),
-          ),
+          Flexible(flex: 0, child: ItemSlotIcon(isUnlocked: item.isUnlocked)),
         ],
       ),
     );

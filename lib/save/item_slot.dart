@@ -28,4 +28,14 @@ class ItemSlot<I extends Item> {
 
   @override
   String toString() => '${item.prettyName} x$amount (Unlocked: $isUnlocked)';
+
+  @override
+  bool operator ==(Object other) =>
+      other is ItemSlot<I> &&
+      item.prettyName == other.item.prettyName &&
+      amount == other.amount &&
+      isUnlocked == other.isUnlocked;
+
+  @override
+  int get hashCode => Object.hash(item.prettyName, amount, isUnlocked);
 }

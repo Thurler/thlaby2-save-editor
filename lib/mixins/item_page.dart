@@ -4,6 +4,8 @@ import 'package:thlaby2_save_editor/save/enums/item.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
 import 'package:thlaby2_save_editor/widgets/item_section.dart';
 
+const int itemPageSize = 20;
+
 typedef _ItemPageKey<I extends Item> = GlobalKey<_ItemPageState<I>>;
 
 class _PageSelector<I extends Item> extends StatelessWidget {
@@ -28,13 +30,15 @@ class _PageSelector<I extends Item> extends StatelessWidget {
 class _ItemPage<I extends Item> extends StatefulWidget {
   final int pageNumber;
   final bool startsSelected;
-  final List<ItemSlot<I>> items;
-  final Widget Function(ItemSlot<I>, BuildContext) buildItem;
+  final int itemCount;
+  final void Function() onHeaderPressed;
+  final Widget Function(int, BuildContext) buildItem;
 
   const _ItemPage({
     required this.pageNumber,
+    required this.onHeaderPressed,
     required this.buildItem,
-    required this.items,
+    required this.itemCount,
     this.startsSelected = false,
     super.key,
   });
@@ -56,7 +60,7 @@ class _ItemPageState<I extends Item> extends State<_ItemPage<I>> {
     text: 'Page ${widget.pageNumber + 1}',
     hasChanges: false,
     isSelected: isSelected,
-    //onPressed: onHeaderPressed,
+    onPressed: widget.onHeaderPressed,
     usesMaxWidth: false,
   );
 
@@ -71,12 +75,12 @@ class _ItemPageState<I extends Item> extends State<_ItemPage<I>> {
     return Column(
       spacing: 10,
       children: List<Widget>.generate(
-        (widget.items.length / 2).ceil(),
+        (widget.itemCount / 2).ceil(),
         (int i) => Row(
           spacing: 20,
           children: <Widget>[
-            widget.buildItem(widget.items[i * 2], context),
-            widget.buildItem(widget.items[i * 2 + 1], context),
+            widget.buildItem(i * 2, context),
+            widget.buildItem(i * 2 + 1, context),
           ],
         ),
       ),
@@ -84,28 +88,32 @@ class _ItemPageState<I extends Item> extends State<_ItemPage<I>> {
   }
 }
 
-abstract class ItemPageBrowser<I extends Item> extends StatefulWidget {
-  final List<ItemSlot<I>> items;
-
-  const ItemPageBrowser({required this.items, super.key});
+mixin ItemPageBrowser<I extends Item> on StatefulWidget {
+  List<ItemSlot<I>> get items;
 
   @override
   ItemPageBrowserState<I, ItemPageBrowser<I>> createState();
 }
 
-abstract class ItemPageBrowserState<I extends Item,
-    W extends ItemPageBrowser<I>> extends State<W> {
+mixin ItemPageBrowserState<I extends Item, W extends ItemPageBrowser<I>>
+    on State<W> {
   late _ItemPage<I> _selected;
   late final List<_ItemPageKey<I>> _pageKeys;
   late final List<_ItemPage<I>> _pages;
 
-  Widget buildItem(ItemSlot<I> item, BuildContext context);
+  Widget buildItem(int itemIndex, BuildContext context);
+
+  void _changePage(int index) {
+    setState(() {
+      _selected = _pages[index];
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _pageKeys = List<_ItemPageKey<I>>.generate(
-      (widget.items.length / 20).ceil(),
+      (widget.items.length / itemPageSize).ceil(),
       (int i) => _ItemPageKey<I>(),
     );
     _pages = List<_ItemPage<I>>.generate(
@@ -113,7 +121,8 @@ abstract class ItemPageBrowserState<I extends Item,
       (int i) => _ItemPage<I>(
         pageNumber: i,
         startsSelected: i == 0, // Start with first page selected
-        items: widget.items.sublist(i * 20, (i + 1) * 20),
+        itemCount: widget.items.length,
+        onHeaderPressed: () => _changePage(i),
         buildItem: buildItem,
         key: _pageKeys[i],
       ),
