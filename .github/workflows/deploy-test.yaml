@@ -1,0 +1,55 @@
+name: Main PR Branch CI
+
+on:
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  analyze-tests:
+    name: Analyze and Test Code
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Validate Branch Name
+        run: echo '${{ github.head_ref }}' | grep -E '(release/|hotfix/)([0-9]+\.){2}[0-9]+'
+
+      - name: Get pubspec version
+        run: |
+          VERSION=$(grep 'version:' pubspec.yaml | cut -c 10- | cut -f 1 -d '+')${{ env.SUFFIX }}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Install Dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends clang cmake curl libgtk-3-dev ninja-build pkg-config unzip xvfb
+
+      - name: Flutter Environment
+        uses: subosito/flutter-action@v2.12.0
+        with:
+          flutter-version: '3.35.5'
+
+      - name: Flutter Config
+        run: flutter config --enable-linux-desktop --no-analytics
+
+      - name: Flutter Pub Get
+        run: flutter pub get
+
+      - name: Dart Analyze
+        run: dart analyze --fatal-infos
+
+      - name: Install Custom Formatter
+        run: |
+          git clone https://github.com/Thurler/dart_style
+          git -C dart_style checkout custom-sdk-3 
+          dart pub global activate --source path dart_style/
+
+      - name: Dart Format
+        run: dartformat --set-exit-if-changed lib/
+
+      - name: Flutter Build Linux Native
+        run: flutter build linux
