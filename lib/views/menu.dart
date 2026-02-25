@@ -3,8 +3,10 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tfields/logging.dart';
 import 'package:tfields/settings.dart';
+import 'package:tfields/theme.dart';
 import 'package:tfields/update_check.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
@@ -121,10 +123,11 @@ class MenuState extends State<MenuWidget>
       child: TCommonScaffold(
         title: 'Touhou Labyrinth 2 Save Editor - Menu',
         settingsLink: navigateToSettings,
+        themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
         children: <Widget>[
           TGridRow(
-            lgFlexLimit: 2,
-            xlFlexLimit: 3,
+            mdFlexLimit: 2,
+            lgFlexLimit: 3,
             xxlFlexLimit: 4,
             children: <TGridItem>[
               TGridItem(
@@ -190,15 +193,14 @@ class MenuState extends State<MenuWidget>
           ),
           const Divider(),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             spacing: 20,
             children: <Widget>[
               TButton.elevated(
-                usesMaxWidth: true,
                 text: 'Export as DLSite save',
                 icon: const TIcon(icon: Icons.save),
               ),
               TButton.elevated(
-                usesMaxWidth: true,
                 text: 'Export as Steam save',
                 icon: const TIcon(icon: Icons.save),
                 onPressed: _saveSteamSaveFile,
