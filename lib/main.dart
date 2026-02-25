@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tfields/settings.dart';
+import 'package:tfields/theme.dart';
 import 'package:thlaby2_save_editor/views/main.dart';
 import 'package:thlaby2_save_editor/widgets/exception.dart';
 import 'package:window_size/window_size.dart';
@@ -33,35 +34,18 @@ void main() {
       const Size(GlobalWindowConstraints.width, GlobalWindowConstraints.height),
     );
   }
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  runApp(
+    TThemedApp(
+      themeBuilder: (Color color, _) => CommonSettingsThemeProvider(color),
       title: 'Touhou Labyrinth 2 Save Editor',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        scrollbarTheme: ScrollbarThemeData(
-          trackColor:
-              WidgetStateProperty.all(Colors.white.withValues(alpha: 0.5)),
-          thumbColor: WidgetStateProperty.all(Colors.green),
-          trackVisibility: WidgetStateProperty.all(true),
-          thumbVisibility: WidgetStateProperty.all(true),
-        ),
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false,
+      seedColor: Colors.green,
       home: const MainWidget(),
-      builder: (BuildContext context, Widget? widget) {
+      materialAppBuilder: (BuildContext context, Widget? widget) {
         ErrorWidget.builder = (FlutterErrorDetails details) {
           return ExceptionWidget(details: details);
         };
         return widget!;
       },
-    );
-  }
+    ),
+  );
 }
