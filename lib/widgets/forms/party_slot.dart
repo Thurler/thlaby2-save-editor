@@ -66,9 +66,12 @@ class PartySlotFormState extends TFormState<PartySlot, PartySlotForm>
         TButton.iconAndLabel(
           icon: TIcon(
             icon: Icons.cancel_outlined,
-            color: Theme.of(context).colorScheme.errorContainer,
+            color: Theme.of(context).colorScheme.primaryContainer,
           ),
           text: 'Remove',
+          textStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
           onPressed: enabled && !readonly ? () => _changeCharacter(null) : null,
         ),
       ],

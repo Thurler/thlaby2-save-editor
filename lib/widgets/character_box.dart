@@ -57,10 +57,10 @@ class CharacterBox extends StatelessWidget {
           position: DecorationPosition.foreground,
           decoration: BoxDecoration(
             border: Border.all(
-              width: isHighlighted ? 2 : 1,
+              width: isHighlighted ? 4 : 1,
               color: isHighlighted
-                ? Theme.of(context).primaryColor
-                : Theme.of(context).colorScheme.onSurface,
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.onSurface.withAlpha(127),
             ),
           ),
           child: ColorFiltered(
