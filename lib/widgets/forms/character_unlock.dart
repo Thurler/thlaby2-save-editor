@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/extensions.dart';
 import 'package:tfields/logging.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save/character_unlock.dart';
@@ -61,19 +62,20 @@ class CharacterUnlockFormState
   Widget buildChild(BuildContext context) {
     bool isUnlocked = value?.isUnlocked ?? false;
     return CharacterBox(
-      title: title,
+      title: title.upperCaseFirstChar(),
       titleAppend: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
             isUnlocked ? 'Unlocked' : 'Locked',
             style: TextStyle(
-              color: isHighlighted ? Theme.of(context).primaryColor : null,
+              color:
+                  isHighlighted ? Theme.of(context).colorScheme.primary : null,
             ),
           ),
           Icon(
             isUnlocked ? Icons.lock_open : Icons.lock,
-            color: isHighlighted ? Theme.of(context).primaryColor : null,
+            color: isHighlighted ? Theme.of(context).colorScheme.primary : null,
             size: 14,
           ),
         ],
