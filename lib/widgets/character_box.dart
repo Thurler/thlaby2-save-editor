@@ -44,7 +44,9 @@ class CharacterBox extends StatelessWidget {
               '$title${titleAppend != null ? ':' : ''}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isHighlighted ? Colors.green : null,
+                color: isHighlighted
+                  ? Theme.of(context).colorScheme.primary
+                  : null,
               ),
             ),
             if (titleAppend != null) ...<Widget>[
