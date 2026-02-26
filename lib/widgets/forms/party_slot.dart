@@ -49,6 +49,10 @@ class PartySlotFormState extends TFormState<PartySlot, PartySlotForm>
     value = value;
   }
 
+  bool get _isEmpty => value?.character == null;
+
+  bool get _isNotEmpty => !_isEmpty;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -57,8 +61,7 @@ class PartySlotFormState extends TFormState<PartySlot, PartySlotForm>
         CharacterBoxHover(
           title: title,
           unlocked: true,
-          filename:
-              value?.character != null ? value!.character!.filename : 'Empty',
+          filename: _isNotEmpty ? value!.character!.filename : 'Empty',
           hoverEnabled: enabled,
           hoverUpdateCallback: widget.hoverUpdateCallback,
           onHoverTap: enabled && !readonly ? _selectNewCharacter : null,
@@ -66,13 +69,19 @@ class PartySlotFormState extends TFormState<PartySlot, PartySlotForm>
         TButton.iconAndLabel(
           icon: TIcon(
             icon: Icons.cancel_outlined,
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: Theme.of(context).colorScheme.primaryContainer.withAlpha(
+              _isNotEmpty ? 255 : 127,
+            ),
           ),
           text: 'Remove',
           textStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            color: Theme.of(context).colorScheme.onPrimaryContainer.withAlpha(
+              _isNotEmpty ? 255 : 127,
+            ),
           ),
-          onPressed: enabled && !readonly ? () => _changeCharacter(null) : null,
+          onPressed: enabled && !readonly && _isNotEmpty
+            ? () => _changeCharacter(null)
+            : null,
         ),
       ],
     );
