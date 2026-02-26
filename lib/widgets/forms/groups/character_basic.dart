@@ -69,6 +69,8 @@ class CharacterBasicFormGroup
       minValue: 1,
       maxValue: CharacterBasic.levelCap,
       onValueChanged: onLevelChange,
+      validationCallback: (int? value) =>
+          value == null ? 'Level cannot be empty!' : '',
       commaSeparate: true,
       snapToMaxWhenOver: true,
     );
