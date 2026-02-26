@@ -92,7 +92,7 @@ class CharacterUnlockState extends State<CharacterUnlockWidget>
     Iterable<CharacterUnlockFlag> lockedPartyCharacters =
         newFlags.where(_flagLocksAPartyCharacter);
     if (lockedPartyCharacters.isNotEmpty) {
-      bool proceed = await _showPartyMembersWarning(newFlags);
+      bool proceed = await _showPartyMembersWarning(lockedPartyCharacters);
       if (!proceed) {
         return;
       }
