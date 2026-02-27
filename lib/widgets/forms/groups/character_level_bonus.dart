@@ -15,6 +15,9 @@ enum CharacterLevelBonusFormField implements TFormField {
 
   const CharacterLevelBonusFormField({this.isStat = true});
 
+  static List<CharacterLevelBonusFormField> get statValues =>
+      <CharacterLevelBonusFormField>[hp, atk, def, mag, mnd, spd];
+
   factory CharacterLevelBonusFormField.fromIndex(int index) =>
       CharacterLevelBonusFormField.values[index];
 }
@@ -33,7 +36,7 @@ class CharacterLevelBonusFormGroup
     required super.setState,
   }) {
     addIntegerForm(
-      enabledOverride: false,
+      readonly: true,
       formName: CharacterLevelBonusFormField.unused,
       initialValue: initialUnused,
       title: 'Unused points',
@@ -50,7 +53,7 @@ class CharacterLevelBonusFormGroup
       addIntegerForm(
         formName: field,
         initialValue: initialBonus.getStatData(field.index),
-        title: 'Points in ${field.name.toUpperCase()}',
+        title: field.name.toUpperCase(),
         minValue: 0,
         maxValue: LevelBonus.levelBonusCap,
         onValueChanged: onLevelChange,
@@ -59,13 +62,6 @@ class CharacterLevelBonusFormGroup
         snapToMaxWhenOver: true,
       );
     }
-  }
-
-  @override
-  set enabled(bool newValue) {
-    super.enabled = newValue;
-    this[CharacterLevelBonusFormField.unused].genericKey.currentState?.enabled =
-        false;
   }
 
   void updateCapForStat({required int index, required int cap}) {
@@ -114,11 +110,18 @@ class CharacterLevelBonusFormWidget
 
   @override
   Widget build(BuildContext context) {
-    return TGridRow(
-      xxlFlexLimit: 1,
-      children: CharacterLevelBonusFormField.values.map(
-        (CharacterLevelBonusFormField field) => TGridItem(child: form[field]),
-      ).toList(),
+    return Column(
+      children: <Widget>[
+        TGridRow(
+          lgFlexLimit: 3,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: CharacterLevelBonusFormField.statValues.map(
+            (CharacterLevelBonusFormField field) =>
+                TGridItem(child: form[field]),
+          ).toList(),
+        ),
+        form[CharacterLevelBonusFormField.unused],
+      ],
     );
   }
 }
