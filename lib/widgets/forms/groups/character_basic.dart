@@ -167,7 +167,9 @@ class CharacterBasicFormWidget
   @override
   Widget build(BuildContext context) {
     return TGridRow(
-      xxlFlexLimit: 1,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mdFlexLimit: 1,
+      lgFlexLimit: 2,
       children: CharacterBasicFormField.values.map(
         (CharacterBasicFormField field) => TGridItem(child: form[field]),
       ).toList(),
