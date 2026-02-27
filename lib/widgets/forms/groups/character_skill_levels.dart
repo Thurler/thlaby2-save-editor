@@ -42,6 +42,8 @@ class CharacterSkillLevelFormGroup
         onValueChanged: onLevelChange,
         snapToMinOnEmpty: skill.minLevel == 0,
         snapToMaxWhenOver: true,
+        validationCallback: (int? value) =>
+            value == null ? 'Spell level cannot be empty!' : '',
       );
     }
   }
@@ -82,6 +84,8 @@ class CharacterSkillLevelFormGroup
         onValueChanged: onLevelChange,
         snapToMinOnEmpty: skill.minLevel == 0,
         snapToMaxWhenOver: true,
+        validationCallback: (int? value) =>
+            value == null ? 'Spell level cannot be empty!' : '',
       );
       _currentData.add((skill, 0));
     }
@@ -120,7 +124,9 @@ class CharacterSkillLevelFormWidget
   @override
   Widget build(BuildContext context) {
     return TGridRow(
-      xxlFlexLimit: 1,
+      mdFlexLimit: 1,
+      lgFlexLimit: 2,
+      xxlFlexLimit: 3,
       children: List<TGridItem>.generate(
         form.initialData.length,
         (int index) =>
