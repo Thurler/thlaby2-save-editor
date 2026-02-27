@@ -21,6 +21,12 @@ enum CharacterLibraryFormField implements TFormField {
 
   final bool isElement;
 
+  static List<CharacterLibraryFormField> get statValues =>
+      <CharacterLibraryFormField>[hp, atk, def, mag, mnd, spd];
+
+  static List<CharacterLibraryFormField> get elementValues =>
+      <CharacterLibraryFormField>[fir, cld, wnd, ntr, mys, spi, drk, phy];
+
   const CharacterLibraryFormField({this.isElement = true});
 }
 
@@ -37,10 +43,7 @@ class CharacterLibraryFormGroup
       addIntegerForm(
         formName: field,
         initialValue: initialData.getData(field.index),
-        title: '${field.name.toUpperCase()} Level',
-        subtitle: field.isElement
-          ? 'Must be at most ${LibraryData.libraryElementCap.commaSeparate()}'
-          : 'Must be at most ${LibraryData.libraryCap.commaSeparate()}',
+        title: field.name.toUpperCase(),
         minValue: 0,
         maxValue: field.isElement
           ? LibraryData.libraryElementCap
@@ -81,11 +84,36 @@ class CharacterLibraryFormWidget
 
   @override
   Widget build(BuildContext context) {
-    return TGridRow(
-      xxlFlexLimit: 1,
-      children: CharacterLibraryFormField.values.map(
-        (CharacterLibraryFormField field) => TGridItem(child: form[field]),
-      ).toList(),
+    return Column(
+      spacing: 20,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        TIconChip.information(
+          'Stat library levels cap at '
+          '${LibraryData.libraryCap.commaSeparate()}',
+          mainAxisSize: MainAxisSize.max,
+        ),
+        TGridRow(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          lgFlexLimit: 3,
+          children: CharacterLibraryFormField.statValues.map(
+            (CharacterLibraryFormField field) => TGridItem(child: form[field]),
+          ).toList(),
+        ),
+        const Divider(),
+        TIconChip.information(
+          'Element library levels cap at '
+          '${LibraryData.libraryElementCap.commaSeparate()}',
+          mainAxisSize: MainAxisSize.max,
+        ),
+        TGridRow(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          lgFlexLimit: 4,
+          children: CharacterLibraryFormField.elementValues.map(
+            (CharacterLibraryFormField field) => TGridItem(child: form[field]),
+          ).toList(),
+        ),
+      ],
     );
   }
 }
