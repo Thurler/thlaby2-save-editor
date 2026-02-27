@@ -22,7 +22,7 @@ class CharacterSkillPointsFormGroup
     required super.setState,
   }) {
     addIntegerForm(
-      enabledOverride: false,
+      readonly: true,
       formName: CharacterSkillPointsFormField.unused,
       initialValue: initialUnused,
       title: 'Unused skill points',
@@ -39,18 +39,13 @@ class CharacterSkillPointsFormGroup
       title: 'Training manuals used',
       subtitle:
           'Must be at most ${CharacterData.trainingManualsCap.commaSeparate()}',
+      minValue: 0,
       maxValue: CharacterData.trainingManualsCap,
+      snapToMinOnEmpty: true,
+      snapToMaxWhenOver: true,
       onValueChanged: onManualsChange,
       commaSeparate: true,
     );
-  }
-
-  @override
-  set enabled(bool newValue) {
-    super.enabled = newValue;
-    CharacterSkillPointsFormField forceFalse =
-        CharacterSkillPointsFormField.unused;
-    this[forceFalse].genericKey.currentState?.enabled = false;
   }
 
   @override
@@ -80,7 +75,7 @@ class CharacterSkillPointsFormWidget
   @override
   Widget build(BuildContext context) {
     return TGridRow(
-      xxlFlexLimit: 1,
+      mdFlexLimit: 1,
       children: CharacterSkillPointsFormField.values.map(
         (CharacterSkillPointsFormField field) => TGridItem(child: form[field]),
       ).toList(),
