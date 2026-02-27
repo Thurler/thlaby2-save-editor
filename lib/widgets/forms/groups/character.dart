@@ -268,7 +268,7 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
   void _onLevelDataChange() {
     int remainingCap = LevelBonus.levelBonusCap;
     // The available points are always 1 less than current level
-    int available = basicData.level;
+    int available = basicData.level - 1;
     LevelBonus levelBonus = levelBonusData.$2;
     // For each point allocated, we decrease the global cap and how many points
     // are left over - this second one can go into the negatives
