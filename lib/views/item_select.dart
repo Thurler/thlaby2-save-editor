@@ -53,7 +53,8 @@ class ItemSelectState<I extends Item> extends State<ItemSelectWidget<I>>
       enabled: true,
       text: 'Allow locked items to be selected',
       title: 'Locked item selection',
-      subtitle: 'Selecting a locked item will automatically unlock it',
+      subtitle: 'Selecting a locked item will automatically unlock it when '
+          'saving character data',
       initialValue: false,
       onValueChanged: _changeLockedItemToggle,
       key: _lockedItemCheckboxKey,

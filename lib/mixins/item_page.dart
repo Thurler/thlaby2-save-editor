@@ -11,7 +11,16 @@ typedef _ItemPageKey<I extends Item> = GlobalKey<_ItemPageState<I>>;
 class _PageSelector<I extends Item> extends StatelessWidget {
   final List<_ItemPageKey<I>> pageKeys;
 
-  const _PageSelector({required this.pageKeys, super.key});
+  final void Function(int) onHeaderPressed;
+
+  final int selectedIndex;
+
+  const _PageSelector({
+    required this.pageKeys,
+    required this.onHeaderPressed,
+    required this.selectedIndex,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,27 +28,29 @@ class _PageSelector<I extends Item> extends StatelessWidget {
       spacing: 10,
       runSpacing: 10,
       alignment: WrapAlignment.center,
-      children: pageKeys.map(
-        (_ItemPageKey<I> key) =>
-            key.currentState?.buildHeader(context) ?? Container(),
-      ).toList(),
+      children: pageKeys.indexed.map(((int, _ItemPageKey<I>) indexedKey) {
+        _ItemPageState<I>? state = indexedKey.$2.currentState;
+        return ItemSectionHeader(
+          text: 'Page ${(state?.widget.pageNumber ?? indexedKey.$1) + 1}',
+          hasChanges: false,
+          isSelected: selectedIndex == indexedKey.$1,
+          onPressed: () => onHeaderPressed(indexedKey.$1),
+          usesMaxWidth: false,
+        );
+      }).toList(),
     );
   }
 }
 
 class _ItemPage<I extends Item> extends StatefulWidget {
   final int pageNumber;
-  final bool startsSelected;
   final int itemCount;
-  final void Function() onHeaderPressed;
   final Widget Function(int, BuildContext) buildItem;
 
   const _ItemPage({
     required this.pageNumber,
-    required this.onHeaderPressed,
     required this.buildItem,
     required this.itemCount,
-    this.startsSelected = false,
     super.key,
   });
 
@@ -56,22 +67,11 @@ class _ItemPageState<I extends Item> extends State<_ItemPage<I>> {
     });
   }
 
-  Widget buildHeader(BuildContext context) => ItemSectionHeader(
-    text: 'Page ${widget.pageNumber + 1}',
-    hasChanges: false,
-    isSelected: isSelected,
-    onPressed: widget.onHeaderPressed,
-    usesMaxWidth: false,
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    isSelected = widget.startsSelected;
-  }
+  void forceRedraw() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
+    int offset = widget.pageNumber * widget.itemCount;
     return Column(
       spacing: 10,
       children: List<Widget>.generate(
@@ -79,8 +79,8 @@ class _ItemPageState<I extends Item> extends State<_ItemPage<I>> {
         (int i) => Row(
           spacing: 20,
           children: <Widget>[
-            widget.buildItem(i * 2, context),
-            widget.buildItem(i * 2 + 1, context),
+            Flexible(child: widget.buildItem(i * 2 + offset, context)),
+            Flexible(child: widget.buildItem(i * 2 + offset + 1, context)),
           ],
         ),
       ),
@@ -97,7 +97,7 @@ mixin ItemPageBrowser<I extends Item> on StatefulWidget {
 
 mixin ItemPageBrowserState<I extends Item, W extends ItemPageBrowser<I>>
     on State<W> {
-  late _ItemPage<I> _selected;
+  int _selectedIndex = 0;
   late final List<_ItemPageKey<I>> _pageKeys;
   late final List<_ItemPage<I>> _pages;
 
@@ -105,7 +105,7 @@ mixin ItemPageBrowserState<I extends Item, W extends ItemPageBrowser<I>>
 
   void _changePage(int index) {
     setState(() {
-      _selected = _pages[index];
+      _selectedIndex = index;
     });
   }
 
@@ -120,14 +120,20 @@ mixin ItemPageBrowserState<I extends Item, W extends ItemPageBrowser<I>>
       _pageKeys.length,
       (int i) => _ItemPage<I>(
         pageNumber: i,
-        startsSelected: i == 0, // Start with first page selected
-        itemCount: widget.items.length,
-        onHeaderPressed: () => _changePage(i),
+        itemCount: itemPageSize,
         buildItem: buildItem,
         key: _pageKeys[i],
       ),
     );
-    _selected = _pages[0];
+    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+  }
+
+  @override
+  void setState(void Function() fn) {
+    for (_ItemPageKey<I> key in _pageKeys) {
+      key.currentState?.forceRedraw();
+    }
+    super.setState(fn);
   }
 
   @override
@@ -136,9 +142,17 @@ mixin ItemPageBrowserState<I extends Item, W extends ItemPageBrowser<I>>
     return Column(
       spacing: 20,
       children: <Widget>[
-        _PageSelector<I>(pageKeys: _pageKeys),
-        IndexedStack(index: _pages.indexOf(_selected), children: _pages),
-        _PageSelector<I>(pageKeys: _pageKeys),
+        _PageSelector<I>(
+          pageKeys: _pageKeys,
+          selectedIndex: _selectedIndex,
+          onHeaderPressed: _changePage,
+        ),
+        IndexedStack(index: _selectedIndex, children: _pages),
+        _PageSelector<I>(
+          pageKeys: _pageKeys,
+          selectedIndex: _selectedIndex,
+          onHeaderPressed: _changePage,
+        ),
       ],
     );
   }

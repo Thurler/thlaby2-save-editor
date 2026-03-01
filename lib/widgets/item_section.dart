@@ -25,7 +25,11 @@ class ItemSectionHeader extends StatelessWidget {
       child: Column(
         spacing: 8,
         children: <Widget>[
-          TButton.elevated(text: text, onPressed: onPressed),
+          TButton.elevated(
+            text: text,
+            onPressed: onPressed,
+            usesMaxWidth: true,
+          ),
           Stack(
             alignment: Alignment.center,
             children: <Widget>[
@@ -37,7 +41,7 @@ class ItemSectionHeader extends StatelessWidget {
                 opacity: hasChanges ? 1 : 0,
                 child: TBadge(
                   text: 'Has Changes',
-                  color: Theme.of(context).primaryColor.withAlpha(127),
+                  color: Theme.of(context).primaryColor,
                 ),
               ),
             ],

@@ -64,6 +64,7 @@ class EquipmentFormState<I extends Item> extends TFormState<I, EquipmentForm<I>>
       enabled: enabled,
       controller: _controller,
       readOnly: true,
+      selectAllOnFocus: false,
       decoration: TInputDecoration(
         enabled: enabled,
         labelText: title,
@@ -86,7 +87,10 @@ class EquipmentFormState<I extends Item> extends TFormState<I, EquipmentForm<I>>
                 )
               else
                 TButton.iconOnly(
-                  icon: const TIcon(icon: Icons.edit),
+                  icon: TIcon(
+                    icon: Icons.edit,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                   text: 'Change equipment',
                   onPressed: enabled && !readonly ? _selectNewItem : null,
                 ),

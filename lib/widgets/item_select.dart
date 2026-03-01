@@ -48,11 +48,14 @@ class ItemSelectState<I extends Item> extends State<ItemSelect<I>>
       hoverEnabled: item.isUnlocked || allowLockedSelection,
       hoverUpdateCallback: () => setState(() {}),
       onHoverTap: () => widget.onItemSelect(item),
-      child: Row(
-        children: <Widget>[
-          Flexible(child: Text('${item.item.prettyName} x${item.amount}')),
-          Flexible(flex: 0, child: ItemSlotIcon(isUnlocked: item.isUnlocked)),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Row(
+          children: <Widget>[
+            Expanded(child: Text('${item.item.prettyName} x${item.amount}')),
+            Flexible(flex: 0, child: ItemSlotIcon(isUnlocked: item.isUnlocked)),
+          ],
+        ),
       ),
     );
   }
