@@ -333,6 +333,7 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
     _subclassSkillsFormKey.currentState?.widget.group.updateAllSkills(
       subclass.allSkills,
     );
+    _subclassSkillsFormKey.currentState?.redrawGroup();
   }
 
   void _fixLockedEquip<I extends Item>(List<ItemSlot<I>> slots, I item) {
