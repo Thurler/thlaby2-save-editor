@@ -98,6 +98,8 @@ class CharacterSkillLevelFormGroup
         indexData.$2.$1 != initialData[indexData.$1].$1,
   );
 
+  bool get hasSkills => _currentData.isNotEmpty;
+
   @override
   bool get hasChanges => _hasSkillChanges || super.hasChanges;
 
@@ -123,16 +125,21 @@ class CharacterSkillLevelFormWidget
 
   @override
   Widget build(BuildContext context) {
-    return TGridRow(
-      mdFlexLimit: 1,
-      lgFlexLimit: 2,
-      xxlFlexLimit: 3,
-      children: List<TGridItem>.generate(
-        form.initialData.length,
-        (int index) =>
-            TGridItem(child: form[CharacterSkillLevelFormField(index)]),
-      ),
-    );
+    return form.hasSkills
+      ? TGridRow(
+          mdFlexLimit: 1,
+          lgFlexLimit: 2,
+          xxlFlexLimit: 3,
+          children: List<TGridItem>.generate(
+            form.initialData.length,
+            (int index) =>
+                TGridItem(child: form[CharacterSkillLevelFormField(index)]),
+          ),
+        )
+      : const Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: TIconText.error('Character does not have a subclass selected'),
+        );
   }
 }
 
