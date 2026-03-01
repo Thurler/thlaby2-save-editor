@@ -19,6 +19,13 @@ abstract class Skill {
     : 'Innate skill';
 
   Skill(this.maxLevel, this.levelCost, this.prettyName);
+
+  @override
+  bool operator ==(Object other) =>
+      other is Skill && prettyName == other.prettyName;
+
+  @override
+  int get hashCode => prettyName.hashCode;
 }
 
 enum BoostSkill implements Skill {
