@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tfields/extensions.dart';
 import 'package:tfields/logging.dart';
+import 'package:tfields/theme.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
@@ -91,6 +93,7 @@ class CharacterEditState extends State<CharacterEditWidget>
       child: TCommonScaffold(
         title: "Edit ${widget.character.name.upperCaseFirstChar()}'s data",
         floatingActionButton: saveButton,
+        themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
         padding: const EdgeInsets.fromLTRB(20, 0, 250, 0),
         background: Opacity(
           opacity: 0.8,
