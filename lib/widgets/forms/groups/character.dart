@@ -54,11 +54,11 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
 
   final int skillCount;
 
-  late final List<(Skill, int)> initialCommonSkillsValue;
+  late final Map<Skill, int> initialCommonSkillsValue;
 
-  late final List<(Skill, int)> initialPersonalSkillsValue;
+  late final Map<Skill, int> initialPersonalSkillsValue;
 
-  late final List<(Skill, int)> initialSubclassSkillsValue;
+  late final Map<Skill, int> initialSubclassSkillsValue;
 
   final CharacterBasicFormKey _basicFormKey = CharacterBasicFormKey();
 
@@ -150,12 +150,10 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
 
     List<Skill> tomeSkills = initialData.getCommonSkills(initialData.tomes);
     List<Skill> baseSkills = <Skill>[...tomeSkills, ...ExpSkill.values];
-    initialCommonSkillsValue = baseSkills.indexed.map(
-      ((int, Skill) indexSkill) => (
-        indexSkill.$2,
-        initialData.skills.getCommonData(indexSkill.$1),
-      ),
-    ).toList();
+    initialCommonSkillsValue = <Skill, int>{
+      for ((int, Skill) indexedSkill in baseSkills.indexed)
+        indexedSkill.$2: initialData.skills.getCommonData(indexedSkill.$1),
+    };
     addGenericForm(
       formName: CharacterFormField.commonSkills,
       key: _genericSkillsFormKey,
@@ -174,14 +172,12 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
       ),
     );
 
-    initialPersonalSkillsValue = initialData.character.allSkills.indexed.map(
-      ((int, Skill) indexSkill) => (
-        indexSkill.$2,
-        indexSkill.$1 < skillCount
-          ? initialData.skills.personalSkills[indexSkill.$1]
-          : initialData.skills.personalSpells[indexSkill.$1 - skillCount],
-      ),
-    ).toList();
+    initialPersonalSkillsValue = <Skill, int>{
+      for ((int, Skill) indexedSkill in initialData.character.allSkills.indexed)
+        indexedSkill.$2: indexedSkill.$1 < skillCount
+        ? initialData.skills.personalSkills[indexedSkill.$1]
+        : initialData.skills.personalSpells[indexedSkill.$1 - skillCount],
+    };
     addGenericForm(
       formName: CharacterFormField.personalSkills,
       key: _personalSkillsFormKey,
@@ -194,7 +190,12 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
       ),
     );
 
-    initialSubclassSkillsValue = initialData.subclass.allSkills.indexed.map(
+    initialSubclassSkillsValue = <Skill, int>{
+      for ((int, Skill) indexedSkill in initialData.subclass.allSkills.indexed)
+        indexedSkill.$2: initialData.skills.subclassSkills[indexedSkill.$1],
+    };
+
+    initialData.subclass.allSkills.indexed.map(
       ((int, Skill) indexSkill) =>
           (indexSkill.$2, initialData.skills.subclassSkills[indexSkill.$1]),
     ).toList();
@@ -292,15 +293,15 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
     // Available count is level + training manuals + 2
     int available = basicData.level + skillPointsData.$2 + 2;
     // First we map out all the skill data that is up for editing
-    List<(Skill, int)> allSkillsData = <(Skill, int)>[
-      ...commonSkills,
-      ...personalSkills,
-      ...subclassSkills,
+    List<MapEntry<Skill, int>> allSkillsData = <MapEntry<Skill, int>>[
+      ...commonSkills.entries,
+      ...personalSkills.entries,
+      ...subclassSkills.entries,
     ];
     // Subtract points for each skill learned based on its data
-    for ((Skill, int) skillData in allSkillsData) {
-      Skill skill = skillData.$1;
-      int level = skillData.$2;
+    for (MapEntry<Skill, int> skillData in allSkillsData) {
+      Skill skill = skillData.key;
+      int level = skillData.value;
       if (level > skill.minLevel) {
         available -= (level - skill.minLevel) * skill.levelCost;
       }
@@ -355,15 +356,10 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
     libraryLevels: libraryData,
     levelBonus: levelBonusData.$2,
     skills: SkillData(
-      commonSkills: commonSkills.map(((Skill, int) data) => data.$2).toList(),
-      personalSkills: personalSkills.sublist(0, skillCount).map(
-        ((Skill, int) data) => data.$2,
-      ).toList(),
-      personalSpells: personalSkills.sublist(skillCount).map(
-        ((Skill, int) data) => data.$2,
-      ).toList(),
-      subclassSkills:
-          subclassSkills.map(((Skill, int) data) => data.$2).toList(),
+      commonSkills: commonSkills.values.toList(),
+      personalSkills: personalSkills.values.toList().sublist(0, skillCount),
+      personalSpells: personalSkills.values.toList().sublist(skillCount),
+      subclassSkills: subclassSkills.values.toList(),
     ),
     tomes: tomeData,
     gems: gemData,
@@ -394,13 +390,13 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
     initialData.usedManuals
   );
 
-  List<(Skill, int)> get commonSkills =>
+  Map<Skill, int> get commonSkills =>
       _genericSkillsFormKey.currentState?.value ?? initialCommonSkillsValue;
 
-  List<(Skill, int)> get personalSkills =>
+  Map<Skill, int> get personalSkills =>
       _personalSkillsFormKey.currentState?.value ?? initialPersonalSkillsValue;
 
-  List<(Skill, int)> get subclassSkills =>
+  Map<Skill, int> get subclassSkills =>
       _subclassSkillsFormKey.currentState?.value ?? initialSubclassSkillsValue;
 
   TomeData get tomeData =>

@@ -3,22 +3,22 @@ import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save/enums/skill.dart';
 
 class CharacterSkillLevelFormField implements TFormField {
-  final int index;
+  final Skill skill;
 
-  const CharacterSkillLevelFormField(this.index);
+  const CharacterSkillLevelFormField(this.skill);
 
   @override
   bool operator ==(Object other) =>
-      other is CharacterSkillLevelFormField && index == other.index;
+      other is CharacterSkillLevelFormField && skill == other.skill;
 
   @override
-  int get hashCode => index;
+  int get hashCode => skill.hashCode;
 }
 
 class CharacterSkillLevelFormGroup
-    extends TFormGroup<List<(Skill, int)>, void, CharacterSkillLevelFormField> {
-  final List<(Skill, int)> initialData;
-  final List<(Skill, int)> _currentData;
+    extends TFormGroup<Map<Skill, int>, void, CharacterSkillLevelFormField> {
+  final Map<Skill, int> initialData;
+  final Set<Skill> _currentSkillList;
   final void Function(int?) onLevelChange;
 
   CharacterSkillLevelFormGroup({
@@ -27,13 +27,14 @@ class CharacterSkillLevelFormGroup
     required super.enabled,
     required super.setState,
     Map<Skill, ({bool? enabled, String? subtitle})>? dataOverrides,
-  }) : _currentData = initialData.toList() {
-    for (int index = 0; index < initialData.length; index++) {
-      Skill skill = initialData[index].$1;
-      int initialValue = initialData[index].$2;
+  }) : _currentSkillList = initialData.keys.toSet() {
+    for (MapEntry<Skill, int> entry in initialData.entries) {
+      Skill skill = entry.key;
+      int initialValue = entry.value;
       addIntegerForm(
-        formName: CharacterSkillLevelFormField(index),
+        formName: CharacterSkillLevelFormField(skill),
         enabledOverride: dataOverrides?[skill]?.enabled,
+        readonly: skill.maxLevel < 1,
         initialValue: initialValue,
         title: skill.prettyName,
         subtitle: dataOverrides?[skill]?.subtitle ?? skill.subtitle,
@@ -54,8 +55,10 @@ class CharacterSkillLevelFormGroup
     bool? updateEnabledTo,
     String? customSubtitle,
   }) {
-    _currentData[index] = (newSkill, 0);
-    TIntegerFormKey key = _skillLevelKey(index);
+    Skill oldSkill = _currentSkillList.elementAt(index);
+    _currentSkillList.remove(oldSkill);
+    _currentSkillList.add(newSkill);
+    TIntegerFormKey key = _skillLevelKey(oldSkill);
     if (updateEnabledTo != null) {
       key.currentState?.enabled = updateEnabledTo;
     }
@@ -68,14 +71,14 @@ class CharacterSkillLevelFormGroup
   }
 
   void updateAllSkills(List<Skill> newSkills) {
-    for (int index = 0; index < _currentData.length; index++) {
-      removeForm(CharacterSkillLevelFormField(index));
+    for (Skill skill in _currentSkillList) {
+      removeForm(CharacterSkillLevelFormField(skill));
     }
-    _currentData.clear();
-    for (int index = 0; index < newSkills.length; index++) {
-      Skill skill = newSkills[index];
+    _currentSkillList.clear();
+    for (Skill skill in newSkills) {
       addIntegerForm(
-        formName: CharacterSkillLevelFormField(index),
+        formName: CharacterSkillLevelFormField(skill),
+        readonly: skill.maxLevel < 1,
         initialValue: 0,
         title: skill.prettyName,
         subtitle: skill.subtitle,
@@ -87,7 +90,7 @@ class CharacterSkillLevelFormGroup
         validationCallback: (int? value) =>
             value == null ? 'Spell level cannot be empty!' : '',
       );
-      _currentData.add((skill, 0));
+      _currentSkillList.add(skill);
     }
     // Force state to be updated since skillset changed, also update the skill
     // point data
@@ -95,31 +98,35 @@ class CharacterSkillLevelFormGroup
     onGroupValueChanged();
   }
 
-  bool get _hasSkillChanges =>
-      _currentData.length != initialData.length ||
-      _currentData.indexed.any(
-    ((int, (Skill, int)) indexData) =>
-        indexData.$2.$1 != initialData[indexData.$1].$1,
+  bool get hasSkills => _currentSkillList.isNotEmpty;
+
+  List<Skill> get currentSkills => _currentSkillList.toList();
+
+  // We need to check if any of the displayed skills changed, or if their levels
+  // were changed from initial data (the forms lose track of initial data if the
+  // skill set changed)
+  @override
+  bool get hasChanges =>
+      // Differing lengths already implies a change happened
+      _currentSkillList.length != initialData.keys.length ||
+      _currentSkillList.any(
+    (Skill skill) =>
+        // If any skill name is different, or the individual level changed
+        !initialData.containsKey(skill) ||
+        skillLevel(skill) != initialData[skill],
   );
 
-  bool get hasSkills => _currentData.isNotEmpty;
-
   @override
-  bool get hasChanges => _hasSkillChanges || super.hasChanges;
+  Map<Skill, int> makeEntity(void additionalData) => <Skill, int>{
+    for (Skill skill in _currentSkillList) skill: skillLevel(skill),
+  };
 
-  @override
-  List<(Skill, int)> makeEntity(void additionalData) =>
-      List<(Skill, int)>.generate(
-    initialData.length,
-    (int index) => (_currentData[index].$1, skillLevel(index)),
-  );
+  int skillLevel(Skill skill) =>
+      this[CharacterSkillLevelFormField(skill)].integerValue ??
+      initialData[skill] ?? 0;
 
-  int skillLevel(int index) =>
-      this[CharacterSkillLevelFormField(index)].integerValue ??
-      _currentData[index].$2;
-
-  TIntegerFormKey _skillLevelKey(int index) =>
-      this[CharacterSkillLevelFormField(index)].integerKey;
+  TIntegerFormKey _skillLevelKey(Skill skill) =>
+      this[CharacterSkillLevelFormField(skill)].integerKey;
 }
 
 class CharacterSkillLevelFormWidget
@@ -134,11 +141,10 @@ class CharacterSkillLevelFormWidget
           mdFlexLimit: 1,
           lgFlexLimit: 2,
           xxlFlexLimit: 3,
-          children: List<TGridItem>.generate(
-            form.initialData.length,
-            (int index) =>
-                TGridItem(child: form[CharacterSkillLevelFormField(index)]),
-          ),
+          children: <TGridItem>[
+            for (Skill skill in form.currentSkills)
+              TGridItem(child: form[CharacterSkillLevelFormField(skill)]),
+          ],
         )
       : const Padding(
           padding: EdgeInsets.only(bottom: 10),
@@ -147,14 +153,14 @@ class CharacterSkillLevelFormWidget
   }
 }
 
-typedef CharacterSkillLevelFormKey = GlobalKey<
-    TGroupFormState<List<(Skill, int)>, CharacterSkillLevelFormGroup>>;
+typedef CharacterSkillLevelFormKey
+    = GlobalKey<TGroupFormState<Map<Skill, int>, CharacterSkillLevelFormGroup>>;
 
 class CharacterSkillLevelForm
-    extends TGroupForm<List<(Skill, int)>, CharacterSkillLevelFormGroup> {
+    extends TGroupForm<Map<Skill, int>, CharacterSkillLevelFormGroup> {
   CharacterSkillLevelForm({
     required void Function(int?) onLevelChange,
-    required List<(Skill, int)> super.initialValue,
+    required Map<Skill, int> super.initialValue,
     required super.enabled,
     required super.setState,
     Map<Skill, ({bool? enabled, String? subtitle})>? dataOverrides,
@@ -163,7 +169,7 @@ class CharacterSkillLevelForm
     groupBuilder: ({
       required bool enabled,
       required GroupSetState? setState,
-      List<(Skill, int)>? initialData,
+      Map<Skill, int>? initialData,
     }) {
       return CharacterSkillLevelFormGroup(
         initialData: initialValue,
