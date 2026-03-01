@@ -89,6 +89,10 @@ class CharacterSkillLevelFormGroup
       );
       _currentData.add((skill, 0));
     }
+    // Force state to be updated since skillset changed, also update the skill
+    // point data
+    onLevelChange(null);
+    onGroupValueChanged();
   }
 
   bool get _hasSkillChanges =>
