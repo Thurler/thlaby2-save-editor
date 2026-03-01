@@ -23,7 +23,7 @@ import 'package:thlaby2_save_editor/widgets/forms/groups/character_tomes.dart';
 
 enum CharacterFormField
     implements TFormField, TFormSubgroup<CharacterFormField> {
-  basic('Level, EXP, BP, Subclass'),
+  basic('Level, EXP, BP, Subclass', initiallyExpanded: true),
   library('Library points'),
   levelBonus('Level up bonuses'),
   skillPoints('Skill points'),
@@ -37,13 +37,13 @@ enum CharacterFormField
   @override
   final String title;
 
-  const CharacterFormField(this.title);
+  const CharacterFormField(this.title, {this.initiallyExpanded = false});
 
   @override
   List<CharacterFormField> get fields => <CharacterFormField>[this];
 
   @override
-  bool get initiallyExpanded => true;
+  final bool initiallyExpanded;
 }
 
 class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>

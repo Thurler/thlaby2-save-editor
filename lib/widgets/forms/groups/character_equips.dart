@@ -48,7 +48,6 @@ class CharacterEquipFormGroup
         key: mainKey,
         enabled: enabled,
         title: 'Main equipment',
-        subtitle: 'Item occupying the main slot',
         initialValue: initialData.$1,
         validationCallback: _checkForLockedMainEquip,
         onValueChanged: (_) => onGroupValueChanged(),
@@ -68,8 +67,7 @@ class CharacterEquipFormGroup
         form: EquipmentForm<SubEquip>(
           key: subKeys[i],
           enabled: enabled,
-          title: 'Sub equipment $i',
-          subtitle: 'Item occupying sub slot $i',
+          title: 'Sub equipment ${i + 1}',
           initialValue: initialData.$2[i],
           validationCallback: _checkForLockedSubEquip,
           onValueChanged: (_) => onGroupValueChanged(),

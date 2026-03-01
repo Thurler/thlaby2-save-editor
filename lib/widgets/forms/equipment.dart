@@ -50,6 +50,8 @@ class EquipmentFormState<I extends Item> extends TFormState<I, EquipmentForm<I>>
 
   bool get isEmpty => value == widget.emptyItem;
 
+  bool get isNotEmpty => value != widget.emptyItem;
+
   @override
   void initState() {
     super.initState();
@@ -68,25 +70,37 @@ class EquipmentFormState<I extends Item> extends TFormState<I, EquipmentForm<I>>
         helperText: subtitle,
         icon: widget.decoratorIcon,
         prefixIcon: widget.prefixIcon,
-        suffixIcon: Row(
-          spacing: 2,
-          children: <Widget>[
-            TClickable(
-              onTap: enabled && !readonly ? _selectNewItem : null,
-              child: Icon(
-                isEmpty ? Icons.add_circle : Icons.edit,
-                color: isEmpty ? Theme.of(context).primaryColor : null,
-              ),
-            ),
-            if (!isEmpty)
-              TClickable(
-                onTap: enabled && !readonly ? _removeItem : null,
-                child: Icon(
-                  Icons.cancel,
-                  color: Theme.of(context).colorScheme.errorContainer,
+        suffixIcon: Padding(
+          padding: const EdgeInsets.only(right: 5),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (isEmpty)
+                TButton.iconOnly(
+                  icon: TIcon(
+                    icon: Icons.add_circle,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  text: 'Add equipment',
+                  onPressed: enabled && !readonly ? _selectNewItem : null,
+                )
+              else
+                TButton.iconOnly(
+                  icon: const TIcon(icon: Icons.edit),
+                  text: 'Change equipment',
+                  onPressed: enabled && !readonly ? _selectNewItem : null,
                 ),
-              ),
-          ],
+              if (isNotEmpty)
+                TButton.iconOnly(
+                  icon: TIcon(
+                    icon: Icons.cancel,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  text: 'Remove equipment',
+                  onPressed: enabled && !readonly ? _removeItem : null,
+                ),
+            ],
+          ),
         ),
       ),
       autovalidateMode: AutovalidateMode.always,
