@@ -318,12 +318,18 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
     // subtitle to convey this new information
     bool newLevelLocksSkill = newLevel == TomeLevel.unused &&
         !initialData.character.isNaturalTomeStat(tomeStat);
-    _genericSkillsFormKey.currentState?.widget.group.updateSkill(
+    CharacterSkillLevelFormGroup? group =
+        _genericSkillsFormKey.currentState?.widget.group;
+    group?.updateSkill(
       newSkill,
       tomeStat.index,
       updateEnabledTo: !newLevelLocksSkill,
       customSubtitle: newLevelLocksSkill ? TomeData.lockedMessage : null,
     );
+    _genericSkillsFormKey.currentState?.redrawGroup((_) {
+      group?.onGroupValueChanged();
+      _onSkillLevelChange();
+    });
   }
 
   void _onSubclassChange(Subclass? subclass) {

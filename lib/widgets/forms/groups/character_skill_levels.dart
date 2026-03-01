@@ -18,7 +18,7 @@ class CharacterSkillLevelFormField implements TFormField {
 class CharacterSkillLevelFormGroup
     extends TFormGroup<Map<Skill, int>, void, CharacterSkillLevelFormField> {
   final Map<Skill, int> initialData;
-  final Set<Skill> _currentSkillList;
+  final List<Skill> _currentSkillList;
   final void Function(int?) onLevelChange;
 
   CharacterSkillLevelFormGroup({
@@ -27,7 +27,7 @@ class CharacterSkillLevelFormGroup
     required super.enabled,
     required super.setState,
     Map<Skill, ({bool? enabled, String? subtitle})>? dataOverrides,
-  }) : _currentSkillList = initialData.keys.toSet() {
+  }) : _currentSkillList = initialData.keys.toList() {
     for (MapEntry<Skill, int> entry in initialData.entries) {
       Skill skill = entry.key;
       int initialValue = entry.value;
@@ -49,6 +49,23 @@ class CharacterSkillLevelFormGroup
     }
   }
 
+  void _addNewSkillForm(Skill skill) {
+    addIntegerForm(
+      formName: CharacterSkillLevelFormField(skill),
+      readonly: skill.maxLevel < 1,
+      initialValue: 0,
+      title: skill.prettyName,
+      subtitle: skill.subtitle,
+      minValue: skill.minLevel,
+      maxValue: skill.maxLevel,
+      onValueChanged: onLevelChange,
+      snapToMinOnEmpty: skill.minLevel == 0,
+      snapToMaxWhenOver: true,
+      validationCallback: (int? value) =>
+          value == null ? 'Spell level cannot be empty!' : '',
+    );
+  }
+
   void updateSkill(
     Skill newSkill,
     int index, {
@@ -56,18 +73,25 @@ class CharacterSkillLevelFormGroup
     String? customSubtitle,
   }) {
     Skill oldSkill = _currentSkillList.elementAt(index);
-    _currentSkillList.remove(oldSkill);
-    _currentSkillList.add(newSkill);
-    TIntegerFormKey key = _skillLevelKey(oldSkill);
-    if (updateEnabledTo != null) {
-      key.currentState?.enabled = updateEnabledTo;
+    if (oldSkill == newSkill) {
+      // If skills match, simply update the enable flag, subtitle and value
+      TIntegerFormKey key = _skillLevelKey(oldSkill);
+      if (updateEnabledTo != null) {
+        key.currentState?.enabled = updateEnabledTo;
+      }
+      key.currentState?.subtitle = customSubtitle ?? newSkill.subtitle;
+      key.currentState?.value = 0;
+      key.currentState?.widget.onValueChanged?.call(0);
+    } else {
+      // Else, we need to completely rewrite the form with a new key
+      removeForm(CharacterSkillLevelFormField(oldSkill));
+      _currentSkillList[index] = newSkill;
+      _addNewSkillForm(newSkill);
     }
-    key.currentState?.title = newSkill.prettyName;
-    key.currentState?.subtitle = customSubtitle ?? newSkill.subtitle;
-    key.currentState?.minValue = newSkill.minLevel;
-    key.currentState?.maxValue = newSkill.maxLevel;
-    key.currentState?.value = 0;
-    key.currentState?.widget.onValueChanged?.call(0);
+    // Always call the group value changed function and the level change
+    // callback, to make sure skill points and info propagates
+    onLevelChange(null);
+    onGroupValueChanged();
   }
 
   void updateAllSkills(List<Skill> newSkills) {
@@ -76,20 +100,7 @@ class CharacterSkillLevelFormGroup
     }
     _currentSkillList.clear();
     for (Skill skill in newSkills) {
-      addIntegerForm(
-        formName: CharacterSkillLevelFormField(skill),
-        readonly: skill.maxLevel < 1,
-        initialValue: 0,
-        title: skill.prettyName,
-        subtitle: skill.subtitle,
-        minValue: skill.minLevel,
-        maxValue: skill.maxLevel,
-        onValueChanged: onLevelChange,
-        snapToMinOnEmpty: skill.minLevel == 0,
-        snapToMaxWhenOver: true,
-        validationCallback: (int? value) =>
-            value == null ? 'Spell level cannot be empty!' : '',
-      );
+      _addNewSkillForm(skill);
       _currentSkillList.add(skill);
     }
     // Force state to be updated since skillset changed, also update the skill
