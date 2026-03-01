@@ -331,10 +331,12 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
       return;
     }
     // Propagate the change to the group so it can reset the forms
-    _subclassSkillsFormKey.currentState?.widget.group.updateAllSkills(
-      subclass.allSkills,
+    CharacterSkillLevelFormGroup? group =
+        _subclassSkillsFormKey.currentState?.widget.group;
+    group?.updateAllSkills(subclass.allSkills);
+    _subclassSkillsFormKey.currentState?.redrawGroup(
+      (_) => group?.onGroupValueChanged(),
     );
-    _subclassSkillsFormKey.currentState?.redrawGroup();
   }
 
   void _fixLockedEquip<I extends Item>(List<ItemSlot<I>> slots, I item) {
