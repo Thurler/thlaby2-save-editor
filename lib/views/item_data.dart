@@ -112,11 +112,13 @@ class ItemDataState extends State<ItemDataWidget>
             spacing: 20,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: _groups.map(
-              (ItemCategoryForm<Item> group) => ItemSectionHeader(
-                text: group.title,
-                hasChanges: group.hasChanges,
-                isSelected: _selected == group,
-                onPressed: () => _changeSelected(group),
+              (ItemCategoryForm<Item> group) => Flexible(
+                child: ItemSectionHeader(
+                  text: group.title,
+                  hasChanges: group.hasChanges,
+                  isSelected: _selected == group,
+                  onPressed: () => _changeSelected(group),
+                ),
               ),
             ).toList(),
           ),
