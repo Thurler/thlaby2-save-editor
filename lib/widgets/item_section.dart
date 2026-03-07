@@ -35,14 +35,11 @@ class ItemSectionHeader extends StatelessWidget {
             children: <Widget>[
               Opacity(
                 opacity: isSelected ? 1 : 0,
-                child: Divider(color: Theme.of(context).primaryColor),
+                child: Divider(color: Theme.of(context).colorScheme.primary),
               ),
               Opacity(
                 opacity: hasChanges ? 1 : 0,
-                child: TBadge(
-                  text: 'Has Changes',
-                  color: Theme.of(context).primaryColor,
-                ),
+                child: const TBadge(text: 'Has Changes'),
               ),
             ],
           ),

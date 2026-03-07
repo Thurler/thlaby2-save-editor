@@ -43,14 +43,16 @@ class ItemSlotFormState<I extends Item>
 
   void _updateLock() {
     value!.isUnlocked = !_isUnlocked;
-    widget.onValueChanged?.call(value);
     // Propagate change to the amount form
     _amountFormKey.currentState?.readonly = readonly && _isUnlocked;
     _amountFormKey.currentState?.maxValue = _isUnlocked ? 200 : 0;
+    // Update the suffix icon appropriately
+    _amountFormKey.currentState?.suffixIcon = _suffixIcon;
     // If we just locked the form, reset the amount to zero
     if (!_isUnlocked) {
       _amountFormKey.currentState?.value = 0;
     }
+    widget.onValueChanged?.call(value);
     // This is done just to trigger super's value change
     value = value;
   }
@@ -69,7 +71,6 @@ class ItemSlotFormState<I extends Item>
       enabled: enabled,
       readonly: readonly && _isUnlocked,
       title: value?.item.prettyName ?? '',
-      subtitle: 'Amount must not exceed 200',
       initialValue: value?.amount ?? 0,
       minValue: 0,
       maxValue: _isUnlocked ? 200 : 0,
