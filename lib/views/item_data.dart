@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart' hide Material;
+import 'package:provider/provider.dart';
 import 'package:tfields/logging.dart';
+import 'package:tfields/theme.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
@@ -103,6 +105,7 @@ class ItemDataState extends State<ItemDataWidget>
       onPopInvokedWithResult: onPopInvoked,
       child: TCommonScaffold(
         title: 'Edit item unlock flags and amounts',
+        themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
         floatingActionButton: saveButton,
         children: <Widget>[
           Row(
