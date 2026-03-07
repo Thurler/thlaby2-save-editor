@@ -677,7 +677,11 @@ enum CommonSkill implements Skill {
   const CommonSkill(this.maxLevel, this.levelCost, this.prettyName);
 }
 
-enum Spell implements Skill {
+// This is done just to unify the following enums into a single type interface
+// that differs them from the Skill interface
+mixin Spell implements Skill {}
+
+enum CharacterSpell with Spell {
   yinYang(5, 'Yin-Yang Orb'),
   fantasySeal(5, 'Fantasy Seal'),
   exorcisingBorder(5, 'Exorcising Border'),
@@ -895,10 +899,10 @@ enum Spell implements Skill {
   @override
   String get subtitle => Skill._subtitleBuilder(this);
 
-  const Spell(this.maxLevel, this.prettyName);
+  const CharacterSpell(this.maxLevel, this.prettyName);
 }
 
-enum AwakeningSpell implements Skill {
+enum AwakeningSpell with Spell {
   preciseDiagnosis(5, 'Precise Diagnosis'),
   summonDragonTiger(5, 'Summon Dragon and Tiger'),
   badLadyScramble(9, 'Bad Lady Scramble'),
@@ -920,7 +924,7 @@ enum AwakeningSpell implements Skill {
   const AwakeningSpell(this.maxLevel, this.prettyName);
 }
 
-enum SubclassSpell implements Skill {
+enum SubclassSpell with Spell {
   shieldBash(3, 'Shield Bash'),
   shieldDefense(3, 'Shield Defense'),
   puncturingThrust(3, 'Puncturing Thrust'),
