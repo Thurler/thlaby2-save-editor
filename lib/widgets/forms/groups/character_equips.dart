@@ -136,8 +136,9 @@ class CharacterEquipFormWidget
 
   @override
   Widget build(BuildContext context) {
-    return TGridRow(
-      xxlFlexLimit: 1,
+    return TGridRow.withExpandedSizes(
+      mdFlexLimit: 1,
+      xxlFlexLimit: 2,
       children: CharacterEquipFormField.values.map(
         (CharacterEquipFormField field) => TGridItem(child: form[field]),
       ).toList(),

@@ -26,7 +26,7 @@ class CharacterGemsFormGroup
       addIntegerForm(
         formName: field,
         initialValue: initialData.getStatData(field.index),
-        title: 'Gems used in ${field.name.toUpperCase()}',
+        title: field.name.toUpperCase(),
         minValue: 0,
         maxValue: GemData.gemCap,
         snapToMinOnEmpty: true,
@@ -58,7 +58,7 @@ class CharacterGemsFormWidget extends TFormGroupWidget<CharacterGemsFormGroup> {
   @override
   Widget build(BuildContext context) {
     return TGridRow(
-      xxlFlexLimit: 1,
+      lgFlexLimit: 4,
       children: CharacterGemsFormField.values.map(
         (CharacterGemsFormField field) => TGridItem(child: form[field]),
       ).toList(),

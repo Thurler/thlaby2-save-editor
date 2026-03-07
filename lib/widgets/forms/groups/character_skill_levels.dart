@@ -74,14 +74,13 @@ class CharacterSkillLevelFormGroup
   }) {
     Skill oldSkill = _currentSkillList.elementAt(index);
     if (oldSkill == newSkill) {
-      // If skills match, simply update the enable flag, subtitle and value
+      // If skills match, simply update the enable flag and subtitle
       TIntegerFormKey key = _skillLevelKey(oldSkill);
       if (updateEnabledTo != null) {
         key.currentState?.enabled = updateEnabledTo;
       }
       key.currentState?.subtitle = customSubtitle ?? newSkill.subtitle;
-      key.currentState?.value = 0;
-      key.currentState?.widget.onValueChanged?.call(0);
+      key.currentState?.widget.onValueChanged?.call(null);
     } else {
       // Else, we need to completely rewrite the form with a new key
       removeForm(CharacterSkillLevelFormField(oldSkill));
@@ -147,20 +146,45 @@ class CharacterSkillLevelFormWidget
 
   @override
   Widget build(BuildContext context) {
-    return form.hasSkills
-      ? TGridRow(
+    if (!form.hasSkills) {
+      return const Padding(
+        padding: EdgeInsets.only(bottom: 10),
+        child: TIconText.error('Character does not have a subclass selected'),
+      );
+    }
+    Set<Spell> spells = form.currentSkills.whereType<Spell>().toSet();
+    Iterable<Skill> nonSpels = form.currentSkills.where(
+      (Skill skill) => !spells.contains(skill),
+    );
+    return Column(
+      children: <Widget>[
+        TGridRow(
           mdFlexLimit: 1,
           lgFlexLimit: 2,
           xxlFlexLimit: 3,
           children: <TGridItem>[
-            for (Skill skill in form.currentSkills)
+            for (Skill skill in nonSpels)
               TGridItem(child: form[CharacterSkillLevelFormField(skill)]),
           ],
-        )
-      : const Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: TIconText.error('Character does not have a subclass selected'),
-        );
+        ),
+        if (spells.isNotEmpty) ...<Widget>[
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Divider(),
+          ),
+          TGridRow(
+            mdFlexLimit: 1,
+            lgFlexLimit: 2,
+            // Force 2 per line if we have an even amount
+            xxlFlexLimit: spells.length == 4 ? 2 : 3,
+            children: <TGridItem>[
+              for (Spell spell in spells)
+                TGridItem(child: form[CharacterSkillLevelFormField(spell)]),
+            ],
+          ),
+        ],
+      ],
+    );
   }
 }
 

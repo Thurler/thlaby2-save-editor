@@ -36,8 +36,7 @@ class CharacterTomesFormGroup
       addDropdownForm(
         formName: field,
         initialValue: initialData.getStatData(field.index),
-        title: 'Tomes used in ${stat.prettyName}',
-        subtitle: 'Changing this will affect skills data!',
+        title: stat.prettyName,
         hintText: 'Select a tome level',
         options: character.tomeDropdownOptions(stat),
         toDropdownText: (TomeLevel level) => level.prettyName,
@@ -74,11 +73,23 @@ class CharacterTomesFormWidget
 
   @override
   Widget build(BuildContext context) {
-    return TGridRow(
-      xxlFlexLimit: 1,
-      children: CharacterTomesFormField.values.map(
-        (CharacterTomesFormField field) => TGridItem(child: form[field]),
-      ).toList(),
+    return Column(
+      spacing: 20,
+      children: <Widget>[
+        const TIconChip.information(
+          'Changing tome levels will affect common skills data!',
+          mainAxisSize: MainAxisSize.max,
+        ),
+        TGridRow.withExpandedSizes(
+          mdFlexLimit: 2,
+          lgFlexLimit: 3,
+          xxlFlexLimit: 4,
+          uhdFlexLimit: 6,
+          children: CharacterTomesFormField.values.map(
+            (CharacterTomesFormField field) => TGridItem(child: form[field]),
+          ).toList(),
+        ),
+      ],
     );
   }
 }

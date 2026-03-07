@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tfields/extensions.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save/levelbonus.dart';
 
@@ -112,15 +113,25 @@ class CharacterLevelBonusFormWidget
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
+        TIconChip.information(
+          'Level bonus caps at ${LevelBonus.levelBonusCap.commaSeparate()}',
+          mainAxisSize: MainAxisSize.max,
+        ),
+        const SizedBox(height: 20),
         TGridRow(
           lgFlexLimit: 3,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: CharacterLevelBonusFormField.statValues.map(
-            (CharacterLevelBonusFormField field) =>
-                TGridItem(child: form[field]),
-          ).toList(),
+          children: <TGridItem>[
+            ...CharacterLevelBonusFormField.statValues.map(
+              (CharacterLevelBonusFormField field) =>
+                  TGridItem(child: form[field]),
+            ),
+            TGridItem.fixedSize(
+              size: const TGridSize.fill(),
+              child: form[CharacterLevelBonusFormField.unused],
+            ),
+          ],
         ),
-        form[CharacterLevelBonusFormField.unused],
       ],
     );
   }
