@@ -130,6 +130,8 @@ class ItemDataState extends State<ItemDataWidget>
                   ItemCategoryFormWidget<Item>(form: group),
             ).toList(),
           ),
+          // Allows page selection behind save button
+          const SizedBox(height: 50),
         ],
       ),
     );
