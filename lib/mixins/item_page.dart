@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 import 'package:thlaby2_save_editor/save/item_slot.dart';
-import 'package:thlaby2_save_editor/widgets/item_section.dart';
 
 const int itemPageSize = 20;
 
@@ -24,18 +24,25 @@ class _PageSelector<I extends Item> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      alignment: WrapAlignment.center,
+    return Row(
       children: pageKeys.indexed.map(((int, _ItemPageKey<I>) indexedKey) {
         _ItemPageState<I>? state = indexedKey.$2.currentState;
-        return ItemSectionHeader(
-          text: 'Page ${(state?.widget.pageNumber ?? indexedKey.$1) + 1}',
-          hasChanges: false,
-          isSelected: selectedIndex == indexedKey.$1,
-          onPressed: () => onHeaderPressed(indexedKey.$1),
-          usesMaxWidth: false,
+        return Expanded(
+          child: TClickable(
+            onTap: () => onHeaderPressed(indexedKey.$1),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(strokeAlign: BorderSide.strokeAlignCenter),
+                color: selectedIndex == indexedKey.$1
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : Theme.of(context).colorScheme.surface,
+              ),
+              child: Text(
+                ((state?.widget.pageNumber ?? indexedKey.$1) + 1).toString(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
         );
       }).toList(),
     );
