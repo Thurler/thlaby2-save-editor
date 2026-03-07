@@ -32,7 +32,10 @@ class _PageSelector<I extends Item> extends StatelessWidget {
             onTap: () => onHeaderPressed(indexedKey.$1),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                border: Border.all(strokeAlign: BorderSide.strokeAlignCenter),
+                border: Border.all(
+                  strokeAlign: BorderSide.strokeAlignCenter,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 color: selectedIndex == indexedKey.$1
                   ? Theme.of(context).colorScheme.primaryContainer
                   : Theme.of(context).colorScheme.surface,
