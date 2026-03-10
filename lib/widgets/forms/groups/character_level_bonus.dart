@@ -119,6 +119,7 @@ class CharacterLevelBonusFormWidget
         ),
         const SizedBox(height: 20),
         TGridRow(
+          smFlexLimit: 2,
           lgFlexLimit: 3,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <TGridItem>[

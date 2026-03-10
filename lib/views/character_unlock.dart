@@ -198,6 +198,8 @@ class CharacterUnlockState extends State<CharacterUnlockWidget>
             ],
           ),
           TGridRow.withExpandedSizes(
+            mainAxisAlignment: MainAxisAlignment.center,
+            smFlexLimit: 2,
             xxlFlexLimit: 4,
             uhdFlexLimit: 7,
             children: _unlockForms.values.map(

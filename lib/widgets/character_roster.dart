@@ -39,6 +39,7 @@ class CharacterRoster extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TGridRow.withExpandedSizes(
+      smFlexLimit: 2,
       xxlFlexLimit: 4,
       uhdFlexLimit: 7,
       mainAxisAlignment: MainAxisAlignment.center,

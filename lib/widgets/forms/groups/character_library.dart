@@ -95,6 +95,7 @@ class CharacterLibraryFormWidget
         const SizedBox(height: 20),
         TGridRow(
           crossAxisAlignment: CrossAxisAlignment.start,
+          smFlexLimit: 2,
           lgFlexLimit: 3,
           children: CharacterLibraryFormField.statValues.map(
             (CharacterLibraryFormField field) => TGridItem(child: form[field]),
@@ -110,6 +111,7 @@ class CharacterLibraryFormWidget
         const SizedBox(height: 20),
         TGridRow(
           crossAxisAlignment: CrossAxisAlignment.start,
+          smFlexLimit: 2,
           lgFlexLimit: 4,
           children: CharacterLibraryFormField.elementValues.map(
             (CharacterLibraryFormField field) => TGridItem(child: form[field]),

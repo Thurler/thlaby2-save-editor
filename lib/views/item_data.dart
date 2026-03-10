@@ -108,11 +108,11 @@ class ItemDataState extends State<ItemDataWidget>
         themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
         floatingActionButton: saveButton,
         children: <Widget>[
-          Row(
-            spacing: 20,
+          TGridRow(
+            smFlexLimit: 2,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: _groups.map(
-              (ItemCategoryForm<Item> group) => Flexible(
+              (ItemCategoryForm<Item> group) => TGridItem(
                 child: ItemSectionHeader(
                   text: group.title,
                   hasChanges: group.hasChanges,

@@ -58,6 +58,7 @@ class CharacterGemsFormWidget extends TFormGroupWidget<CharacterGemsFormGroup> {
   @override
   Widget build(BuildContext context) {
     return TGridRow(
+      smFlexLimit: 2,
       lgFlexLimit: 4,
       children: CharacterGemsFormField.values.map(
         (CharacterGemsFormField field) => TGridItem(child: form[field]),

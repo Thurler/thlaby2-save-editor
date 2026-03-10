@@ -9,10 +9,10 @@ import 'package:window_size/window_size.dart';
 /// Globally access the minimum window width/height constraints
 class GlobalWindowConstraints {
   /// Minimum width
-  static const double width = 800;
+  static const double width = 640;
 
   /// Minimum height
-  static const double height = 400;
+  static const double height = 360;
 }
 
 void main() {

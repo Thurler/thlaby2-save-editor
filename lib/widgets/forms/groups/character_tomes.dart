@@ -81,6 +81,7 @@ class CharacterTomesFormWidget
           mainAxisSize: MainAxisSize.max,
         ),
         TGridRow.withExpandedSizes(
+          smFlexLimit: 1,
           mdFlexLimit: 2,
           lgFlexLimit: 3,
           xxlFlexLimit: 4,
