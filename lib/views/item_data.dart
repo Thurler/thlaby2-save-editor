@@ -123,6 +123,10 @@ class ItemDataState extends State<ItemDataWidget>
             ).toList(),
           ),
           const Divider(),
+          const TIconChip.information(
+            'Item amounts cap at 200',
+            mainAxisSize: MainAxisSize.max,
+          ),
           IndexedStack(
             index: _groups.indexOf(_selected),
             children: _groups.map(
