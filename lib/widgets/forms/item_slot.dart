@@ -36,9 +36,9 @@ class ItemSlotFormState<I extends Item>
       return;
     }
     value!.amount = newAmount;
-    widget.onValueChanged?.call(value);
     // This is done just to trigger super's value change
     value = value;
+    _updateSubtitle();
   }
 
   void _updateLock() {
@@ -52,9 +52,20 @@ class ItemSlotFormState<I extends Item>
     if (!_isUnlocked) {
       _amountFormKey.currentState?.value = 0;
     }
-    widget.onValueChanged?.call(value);
     // This is done just to trigger super's value change
     value = value;
+    _updateSubtitle();
+  }
+
+  void _updateSubtitle() {
+    // This will update the subtitle to inform the original value
+    String originalValueString = (initialValue?.isUnlocked ?? false)
+      ? initialValue!.amount.toString()
+      : 'locked';
+    subtitle =
+        value != initialValue ? 'Original value was $originalValueString' : '';
+    _amountFormKey.currentState?.subtitle = subtitle;
+    widget.onValueChanged?.call(value);
   }
 
   bool get _isUnlocked => value?.isUnlocked ?? false;
@@ -71,6 +82,7 @@ class ItemSlotFormState<I extends Item>
       enabled: enabled,
       readonly: readonly && _isUnlocked,
       title: value?.item.prettyName ?? '',
+      subtitle: subtitle,
       initialValue: value?.amount ?? 0,
       minValue: 0,
       maxValue: _isUnlocked ? 200 : 0,
