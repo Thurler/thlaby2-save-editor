@@ -351,9 +351,6 @@ enum Subclass {
     required this.isUnique,
   });
 
-  factory Subclass.fromName(String? name) {
-    return Subclass.values.firstWhere(
-      (Subclass s) => s.prettyName == name,
-    );
-  }
+  factory Subclass.fromName(String? name) =>
+      Subclass.values.firstWhere((Subclass s) => s.prettyName == name);
 }

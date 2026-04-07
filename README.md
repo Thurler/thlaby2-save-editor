@@ -13,7 +13,7 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
 
 ## Features and Roadmap
 
-- Current release (0.5.0)
+- Current release (0.6.0)
   - Edit character parameters
     - Level, EXP, BP, Subclass
     - Library points
@@ -27,15 +27,15 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
   - Steam format compatibility
   - Logging for debugging purposes
   - Automatic update checking
-- Version 0.6.0
-  - Edit general data (money amount, play time, IC floor, FOE kills, etc)
 - Version 0.7.0
-  - Edit achievement data
+  - Edit general data (money amount, play time, IC floor, FOE kills, etc)
 - Version 0.8.0
-  - Edit map data
+  - Edit achievement data
 - Version 0.9.0
-  - Edit bestiary data
+  - Edit map data
 - Version 0.10.0
+  - Edit bestiary data
+- Version 0.11.0
   - Edit event flags (dungeon events, story events, etc)
 - Version 1.0.0
   - DLSite format compatibility
@@ -54,7 +54,7 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
 
 If you have found a problem with the software, please open an issue and describe the problem - give as much information as you can so I can reliably replicate the problem! That might include sharing log files or the save file being used when the problem happened.
 
-If you would like to contribute to the code base, feel free to open a Pull Request with your proposed changes and ask for a review. The code is formatted using [this tool](https://github.com/Thurler/dart_style) instead of Dart's standard one, since it more closely matches my subjective takes on formatting. This project is still stuck on Flutter version 3.7.12, for the time being.
+If you would like to contribute to the code base, feel free to open a Pull Request with your proposed changes and ask for a review. The code is formatted using [this tool](https://github.com/Thurler/dart_style) instead of Dart's standard one, since it more closely matches my subjective takes on formatting.
 
 ## Disclaimers
 

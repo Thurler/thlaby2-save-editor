@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
-import 'package:thlaby2_save_editor/logger.dart';
-import 'package:thlaby2_save_editor/mixins/alert.dart';
+import 'package:provider/provider.dart';
+import 'package:tfields/logging.dart';
+import 'package:tfields/theme.dart';
+import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/mixins/breakablechanges.dart';
-import 'package:thlaby2_save_editor/mixins/discardablechanges.dart';
-import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
-import 'package:thlaby2_save_editor/save/enums/character.dart';
 import 'package:thlaby2_save_editor/save/party_slot.dart';
-import 'package:thlaby2_save_editor/widgets/common_scaffold.dart';
-import 'package:thlaby2_save_editor/widgets/party_row.dart';
+import 'package:thlaby2_save_editor/widgets/forms/party_slot.dart';
 
 class PartyDataWidget extends StatefulWidget {
   const PartyDataWidget({super.key});
@@ -20,133 +17,111 @@ class PartyDataWidget extends StatefulWidget {
 
 class PartyDataState extends State<PartyDataWidget>
     with
-        SaveReader,
-        Loggable,
-        AlertHandler<PartyDataWidget>,
-        DiscardableChanges<PartyDataWidget>,
-        BreakableChanges<PartyDataWidget>,
-        Navigatable<PartyDataWidget> {
-  late List<PartySlot> _editable;
-  late List<PartySlot> _original;
-  PartySlot? _hover;
-  PartySlot? _hoverRm;
+        SaveEditor,
+        TLoggable,
+        TDialogDisplayer<PartyDataWidget>,
+        TDiscardableChanges<PartyDataWidget>,
+        BreakableChanges<PartyDataWidget> {
+  final List<PartySlotForm> _slotForms = <PartySlotForm>[];
+
+  final List<PartySlotFormKey> _slotFormKeys = List<PartySlotFormKey>.generate(
+    12,
+    (_) => PartySlotFormKey(),
+    growable: false,
+  );
 
   @override
-  bool get hasChanges {
-    for (int i = 0; i < _editable.length; i++) {
-      bool isUsed = _editable[i].isUsed;
-      if (isUsed != _original[i].isUsed) {
-        return true;
-      }
-      if (isUsed && _editable[i].character != _original[i].character) {
-        return true;
-      }
+  bool get hasChanges => _slotFormKeys.any(
+    (PartySlotFormKey key) => key.currentState?.hasChanges ?? false,
+  );
+
+  Future<bool> _showDuplicatesWarning(List<PartySlot> slots) async {
+    Iterable<PartySlot> nonEmptySlots =
+        slots.where((PartySlot slot) => slot.isUsed);
+    Set<PartySlot> nonEmptySet = Set<PartySlot>.from(nonEmptySlots);
+    if (nonEmptySet.length == nonEmptySlots.length) {
+      return true;
     }
-    return false;
+    await log(TLogLevel.warning, 'Attempting to include duplicates in party');
+    return showSaveWarningDialog(
+      'Having duplicates in the frontline can confuse the game when computing '
+      "a duplicated character's MP and TP after a battle",
+    );
+  }
+
+  Future<bool> _showEmptyFrontWarning() async {
+    await log(TLogLevel.warning, 'Attempting to empty the entire front row');
+    return showSaveWarningDialog(
+      'An empty frontline can crash the game if you go into battle',
+    );
   }
 
   @override
   Future<void> saveChanges() async {
+    List<PartySlot> newSlots = _slotFormKeys.map(
+      (PartySlotFormKey key) => key.currentState?.value,
+    ).nonNulls.toList();
     // Display a warning if trying to include duplicates
-    bool hasDuplicates = false;
-    for (int i = 0; i < _editable.length; i++) {
-      if (!_editable[i].isUsed) {
-        continue;
-      }
-      for (int j = i + 1; j < _editable.length; j++) {
-        if (!_editable[j].isUsed) {
-          continue;
-        }
-        if (_editable[i].character == _editable[j].character) {
-          hasDuplicates = true;
-          break;
-        }
-      }
-      if (hasDuplicates) {
-        break;
-      }
-    }
-    if (hasDuplicates) {
-      await log(LogLevel.warning, 'Attempting to include duplicates in party');
-      bool doSave = await showSaveWarningDialog(
-        'Having duplicates in the frontline can confuse the game when '
-        "computing a duplicated character's MP and TP after a battle",
-      );
-      if (!doSave) {
-        return;
-      }
+    bool proceed = await _showDuplicatesWarning(newSlots);
+    if (!proceed) {
+      return;
     }
     // Display a warning if trying to empty the front line
-    if (_editable.sublist(0, 4).every((PartySlot s) => !s.isUsed)) {
-      await log(LogLevel.warning, 'Attempting to empty the entire front row');
-      bool doSave = await showSaveWarningDialog(
-        'An empty frontline can crash the game if you go into battle',
-      );
-      if (!doSave) {
+    if (newSlots.sublist(0, 4).every((PartySlot s) => !s.isUsed)) {
+      proceed = await _showEmptyFrontWarning();
+      if (!proceed) {
         return;
       }
     }
-    await log(LogLevel.info, 'Saved party data changes');
-    setState(() {
-      _original = _editable.deepCopyElements(PartySlot.from);
-      saveFile.partyData = _original;
-    });
-  }
-
-  Future<void> _changePartyMember(PartySlot slot) async {
-    Character? selected = await navigateToCharacterSelect();
-    if (selected != null) {
-      setState(() {
-        slot.isUsed = true;
-        slot.character = selected;
-      });
+    saveFile.partyData = newSlots;
+    for (PartySlotFormKey key in _slotFormKeys) {
+      key.currentState?.saveValue();
     }
-  }
-
-  Future<void> _removePartyMember(PartySlot slot) async {
-    await log(LogLevel.debug, 'Removed ${slot.character.name}');
-    setState(() {
-      slot.isUsed = false;
-      _hoverRm = null;
-    });
+    setState(() {});
+    await log(TLogLevel.info, 'Saved party data changes');
   }
 
   @override
   void initState() {
     super.initState();
-    // Make a reference and a deep copy of the list we're changing
-    _original = saveFile.partyData;
-    _editable = _original.deepCopyElements(PartySlot.from);
+    for (int i = 0; i < _slotFormKeys.length; i++) {
+      _slotForms.add(
+        PartySlotForm(
+          initialValue: saveFile.partyData[i],
+          hoverUpdateCallback: () => setState(() {}),
+          onValueChanged: (_) => setState(() {}),
+          key: _slotFormKeys[i],
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: checkChangesAndConfirm,
-      child: CommonScaffold(
+    return PopScope(
+      canPop: !hasChanges,
+      onPopInvokedWithResult: onPopInvoked,
+      child: TCommonScaffold(
         title: 'Edit which characters are in the party',
+        themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
         floatingActionButton: saveButton,
-        children: <int>[8, 4, 0].map<Widget>(
-          (int index) => PartyRow(
-            slots: _editable.sublist(index, index + 4),
-            characterOnTap: _changePartyMember,
-            removeOnTap: _removePartyMember,
-            characterHighlight: _hover,
-            removeHighlight: _hoverRm,
-            characterOnEnter: (PartySlot slot) => setState(() {
-              _hover = slot;
-            }),
-            removeOnEnter: (PartySlot slot) => setState(() {
-              _hoverRm = slot;
-            }),
-            characterOnExit: (PartySlot slot) => setState(() {
-              _hover = null;
-            }),
-            removeOnExit: (PartySlot slot) => setState(() {
-              _hoverRm = null;
-            }),
+        children: <Widget>[
+          TGridRow(
+            xxlFlexLimit: 4,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <int>[8, 9, 10, 11, 4, 5, 6, 7].map<TGridItem>(
+              (int index) => TGridItem(child: _slotForms[index]),
+            ).toList(),
           ),
-        ).toList()..insert(2, const Divider()),
+          const Divider(),
+          TGridRow(
+            xxlFlexLimit: 4,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <int>[0, 1, 2, 3].map<TGridItem>(
+              (int index) => TGridItem(child: _slotForms[index]),
+            ).toList(),
+          ),
+        ],
       ),
     );
   }

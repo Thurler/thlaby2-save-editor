@@ -1,28 +1,25 @@
 import 'package:thlaby2_save_editor/save/enums/character.dart';
 
 class PartySlot {
-  late Character character;
-  late bool isUsed;
+  Character? character;
 
-  PartySlot.empty() : isUsed = false;
-  PartySlot.filled(int byte) {
-    character = Character.values.elementAt(byte - 1);
-    isUsed = true;
-  }
+  PartySlot.empty();
 
-  PartySlot.from(PartySlot other) {
-    isUsed = other.isUsed;
-    if (isUsed) {
-      character = other.character;
-    }
-  }
+  PartySlot.filled(int byte) : character = Character.values.elementAt(byte - 1);
 
-  int toByte() {
-    return isUsed ? character.index + 1 : 0;
-  }
+  PartySlot.from(PartySlot other) : character = other.character;
+
+  bool get isUsed => character != null;
+
+  int toByte() => isUsed ? character!.index + 1 : 0;
 
   @override
-  String toString() {
-    return isUsed ? character.name : 'empty';
-  }
+  String toString() => character?.name ?? 'empty';
+
+  @override
+  bool operator ==(Object other) =>
+      other is PartySlot && character?.name == other.character?.name;
+
+  @override
+  int get hashCode => (character?.name).hashCode;
 }

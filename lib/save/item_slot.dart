@@ -1,31 +1,41 @@
 import 'dart:typed_data';
-import 'package:thlaby2_save_editor/extensions/int_extension.dart';
-import 'package:thlaby2_save_editor/extensions/list_extension.dart';
+import 'package:tfields/extensions.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
 
-class ItemSlot {
-  final Item item;
+class ItemSlot<I extends Item> {
+  final I item;
   bool isUnlocked;
-  int amount = 0;
+  int amount;
 
-  ItemSlot(this.item, {required this.isUnlocked});
+  ItemSlot(this.item, {required this.isUnlocked, this.amount = 0});
 
-  int toUnlockByte() {
-    return isUnlocked ? 1 : 0;
-  }
+  ItemSlot.from(ItemSlot<I> other) :
+    item = other.item,
+    isUnlocked = other.isUnlocked,
+    amount = other.amount;
+
+  int toUnlockByte() => isUnlocked ? 1 : 0;
 
   void amountFromBytes({
     required Endian endianness,
-    required List<int> bytes,
+    required Uint8List bytes,
     required int offset,
   }) {
     amount = bytes.getU16(endianness, offset: offset);
   }
 
-  Iterable<int> toAmountBytes(Endian endianness) {
-    return amount.toU16(endianness);
-  }
+  Iterable<int> toAmountBytes(Endian endianness) => amount.toU16(endianness);
 
   @override
-  String toString() => '${item.name} x$amount (Unlocked: $isUnlocked)';
+  String toString() => '${item.prettyName} x$amount (Unlocked: $isUnlocked)';
+
+  @override
+  bool operator ==(Object other) =>
+      other is ItemSlot<I> &&
+      item.prettyName == other.item.prettyName &&
+      amount == other.amount &&
+      isUnlocked == other.isUnlocked;
+
+  @override
+  int get hashCode => Object.hash(item.prettyName, amount, isUnlocked);
 }
