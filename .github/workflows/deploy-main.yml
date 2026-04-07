@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: thlaby2-save-editor-windows
-          path: build/windows/runner/Release/*
+          path: build/windows/x64/runner/release/*
 
   build-linux:
     name: Linux Native Build
