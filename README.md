@@ -13,7 +13,7 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
 
 ## Features and Roadmap
 
-- Current release (0.5.0)
+- Current release (0.6.0)
   - Edit character parameters
     - Level, EXP, BP, Subclass
     - Library points
@@ -27,8 +27,6 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
   - Steam format compatibility
   - Logging for debugging purposes
   - Automatic update checking
-- Version 0.6.0
-  - Update code base to modern Flutter theme and design and clean old code
 - Version 0.7.0
   - Edit general data (money amount, play time, IC floor, FOE kills, etc)
 - Version 0.8.0

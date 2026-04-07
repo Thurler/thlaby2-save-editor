@@ -20,7 +20,7 @@ class MainUpdateCheck extends TUpdateCheck {
 }
 
 class MainWidget extends StatefulWidget {
-  static const String version = '0.5.1';
+  static const String version = '0.6.0';
 
   const MainWidget({super.key});
 

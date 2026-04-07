@@ -3,7 +3,7 @@ description: A save editor for the game Touhou Labyrinth 2.
 
 publish_to: 'none'
 
-version: 0.5.1
+version: 0.6.0
 
 environment:
   sdk: ^3.5.4

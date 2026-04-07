@@ -1,4 +1,6 @@
 Release Notes
 =============
 
-- Fixed a bug where app would error if settings file wasn't loaded properly
+- Reworked the code base to use modern Flutter version and reusable widgets from my own widget lib
+- Redesigned app to use new Material 3 theme from modern Flutter
+- No new functionality has been added, as far as save editing goes
