@@ -14,7 +14,10 @@ dependencies:
   flutter:
     sdk: flutter
   provider: 6.1.4
-  tfields: 2.0.0
+  tfields:
+    git:
+      url: https://github.com/Thurler/tfields
+      ref: 2.0.0
   url_launcher: ^6.1.11
   window_size:
     git:
