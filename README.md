@@ -13,7 +13,7 @@ Windows and Linux binaries are provided in the [Releases page](https://github.co
 
 ## Features and Roadmap
 
-- Current release (0.6.0)
+- Current release (0.6.1)
   - Edit character parameters
     - Level, EXP, BP, Subclass
     - Library points
