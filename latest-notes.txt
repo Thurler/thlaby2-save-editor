@@ -1,6 +1,5 @@
 Release Notes
 =============
 
-- Reworked the code base to use modern Flutter version and reusable widgets from my own widget lib
-- Redesigned app to use new Material 3 theme from modern Flutter
-- No new functionality has been added, as far as save editing goes
+- Fixed a bug where a character's skill level data would not drop the "has changes" flag after saving the changes
+- Fixed a bug where attempting to save a character's data while warnings were present would result in a poorly-formatted message being displayed
