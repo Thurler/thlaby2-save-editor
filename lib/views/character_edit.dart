@@ -46,7 +46,7 @@ class CharacterEditState extends State<CharacterEditWidget>
       List<String> messages = _characterForm.errorSaveWarningMessages;
       bool doSave = await showSaveWarningDialog(
         'Some validation errors were detected, and some of them might require '
-        'an action to be taken in order to save:\n\n$messages\n\n '
+        'an action to be taken in order to save:\n\n${messages.join('\n')}\n\n '
         'Please make sure you are fine with the actions above',
         breaking: false,
       );
