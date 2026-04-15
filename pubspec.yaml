@@ -17,7 +17,7 @@ dependencies:
   tfields:
     git:
       url: https://github.com/Thurler/tfields
-      ref: 2.0.0
+      ref: 2.1.1
   url_launcher: ^6.1.11
   window_size:
     git:
