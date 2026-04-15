@@ -3,7 +3,7 @@ description: A save editor for the game Touhou Labyrinth 2.
 
 publish_to: 'none'
 
-version: 0.6.0
+version: 0.6.1
 
 environment:
   sdk: ^3.5.4
@@ -17,7 +17,7 @@ dependencies:
   tfields:
     git:
       url: https://github.com/Thurler/tfields
-      ref: 2.0.0
+      ref: 2.1.1
   url_launcher: ^6.1.11
   window_size:
     git:

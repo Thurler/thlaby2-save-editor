@@ -127,6 +127,17 @@ class CharacterSkillLevelFormGroup
   );
 
   @override
+  void saveValues() {
+    super.saveValues();
+    // Make sure we update the initial data reference so [hasChanges] can
+    // properly reset to a false value
+    initialData.clear();
+    for (Skill skill in _currentSkillList) {
+      initialData[skill] = skillLevel(skill);
+    }
+  }
+
+  @override
   Map<Skill, int> makeEntity(void additionalData) => <Skill, int>{
     for (Skill skill in _currentSkillList) skill: skillLevel(skill),
   };
