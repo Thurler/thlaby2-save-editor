@@ -58,7 +58,7 @@ class MenuState extends State<MenuWidget>
     } on FileSystemException catch (e) {
       await _handleFileSystemException(e);
       return;
-    } on Exception catch (e, s) {
+    } catch (e, s) {
       await showUnexpectedException(e, s, body: ExceptionWidget.dialogBody);
       return;
     }

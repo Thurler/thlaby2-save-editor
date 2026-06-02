@@ -103,7 +103,7 @@ class MainState extends State<MainWidget>
         'File loaded does not have the correct header bytes',
       );
       return;
-    } on Exception catch (e, s) {
+    } catch (e, s) {
       await showUnexpectedException(e, s, body: ExceptionWidget.dialogBody);
       return;
     }
