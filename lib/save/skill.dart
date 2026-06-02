@@ -63,7 +63,7 @@ class SkillData {
     personalSpells =
         List<int>.generate(10, (int i) => personalSpells.elementAtSafe(i) ?? 0),
     subclassSkills =
-        List<int>.generate(10, (int i) => subclassSkills.elementAtSafe(i) ?? 0);
+        List<int>.generate(20, (int i) => subclassSkills.elementAtSafe(i) ?? 0);
 
   SkillData.fromBytes(Uint8List bytes, int offset) :
     hpBoost = bytes[offset],
