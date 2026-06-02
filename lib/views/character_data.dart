@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tfields/logging.dart';
-import 'package:tfields/theme.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/mixins/navigate.dart';
 import 'package:thlaby2_save_editor/save.dart';
@@ -20,7 +18,6 @@ class CharacterUnlockState extends State<CharacterDataWidget>
   Widget build(BuildContext context) {
     return TCommonScaffold(
       title: 'Choose a character to edit',
-      themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
       children: <Widget>[
         TButton.elevated(
           text: 'Edit character unlock flags',
