@@ -48,7 +48,7 @@ class CharacterGemsFormGroup
   );
 
   int level(CharacterGemsFormField field) =>
-      this[field].dropdownValue() ?? initialData.getStatData(field.index);
+      this[field].integerValue ?? initialData.getStatData(field.index);
 }
 
 class CharacterGemsFormWidget extends TFormGroupWidget<CharacterGemsFormGroup> {

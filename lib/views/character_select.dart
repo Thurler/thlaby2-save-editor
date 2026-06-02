@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tfields/theme.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/enums/character.dart';
@@ -22,7 +20,6 @@ class CharacterSelectState extends State<CharacterSelectWidget>
   Widget build(BuildContext context) {
     return TCommonScaffold(
       title: 'Choose a character to include in the party',
-      themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
       children: <Widget>[
         CharacterRoster(
           onTap: _selectCharacter,

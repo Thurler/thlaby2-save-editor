@@ -3,7 +3,7 @@ description: A save editor for the game Touhou Labyrinth 2.
 
 publish_to: 'none'
 
-version: 0.6.1
+version: 0.6.2
 
 environment:
   sdk: ^3.5.4
@@ -13,11 +13,10 @@ dependencies:
   file_picker: ^9.0.1
   flutter:
     sdk: flutter
-  provider: 6.1.4
   tfields:
     git:
       url: https://github.com/Thurler/tfields
-      ref: 2.1.1
+      ref: 2.2.0
   url_launcher: ^6.1.11
   window_size:
     git:

@@ -1,5 +1,7 @@
 Release Notes
 =============
 
-- Fixed a bug where a character's skill level data would not drop the "has changes" flag after saving the changes
-- Fixed a bug where attempting to save a character's data while warnings were present would result in a poorly-formatted message being displayed
+- Fixed a bug that prevented changing the unused skill points count when editing a character's level
+- Fixed a bug that prevented saving changes to a character's data when editing skills
+- Fixed a bug that prevented saving changes to a character's gem count
+- Fixed a bug that could prevent error messages from popping up when an error happened while exporting save files

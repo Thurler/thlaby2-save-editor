@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart' hide Material;
-import 'package:provider/provider.dart';
-import 'package:tfields/theme.dart';
 import 'package:tfields/widgets.dart';
 import 'package:thlaby2_save_editor/save.dart';
 import 'package:thlaby2_save_editor/save/enums/item.dart';
@@ -73,7 +71,6 @@ class ItemSelectState<I extends Item> extends State<ItemSelectWidget<I>>
   Widget build(BuildContext context) {
     return TCommonScaffold(
       title: 'Choose which item to equip',
-      themeToggleCallback: Provider.of<TThemeProvider>(context).changeTheme,
       children: <Widget>[_lockedItemCheckbox, _itemSelect],
     );
   }
