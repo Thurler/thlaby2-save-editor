@@ -101,7 +101,7 @@ class CharacterForm extends TFormGroup<CharacterData, void, CharacterFormField>
       form: CharacterBasicForm(
         key: _basicFormKey,
         initialValue: CharacterBasic.fromCharacterData(initialData),
-        onLevelChange: (_) => _onLevelDataChange(),
+        onLevelChange: (_) => recalculateLimits(),
         onSubclassChange: _onSubclassChange,
         usedUniqueSubclasses: <Character, Subclass>{
           for (Character ch in Character.values)
